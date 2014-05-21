@@ -3,9 +3,10 @@ package controllers
 import play.api._
 import play.api.mvc._
 
-object Application extends Controller {
+object Books extends Controller {
 
   def index = Action {
-    Ok(views.html.home("Media"))
+    Ok(views.html.books.index("eBook"))
   }
+
 }
