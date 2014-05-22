@@ -2,16 +2,18 @@
 
 <!DOCTYPE html>
 
-<html>
+<html ng-app="mediaApp">
     <head>
         <title>@title</title>
         <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/bootstrap.min.css")">
         <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/modern-business.css")">
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
-        <script type="text/javascript" src="@routes.Assets.at("javascripts/jquery-1.9.0.min.js")" ></script>
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js" ></script>
         <script type="text/javascript" src="@routes.Assets.at("javascripts/bootstrap.min.js")" ></script>
+        <script type="text/javascript" src="@routes.Assets.at("javascripts/angular.min.js")" ></script>
+        <script type="text/javascript" src="@routes.Assets.at("javascripts/app.js")" ></script>
     </head>
-    <body>
+    <body ng-controller="MovieListCtrl">
     	<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
       		<div class="container">
 	        <div class="navbar-header">
