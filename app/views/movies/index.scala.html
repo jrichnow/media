@@ -10,21 +10,6 @@
 </div>
 <div class="row">
 	<div class="col-md-3 col-sm-4 sidebar">
-		<!-- 
-		<div class="well">
-			<h4>Search Movies:</h4>
-			<input class="form-control" ng-model="query">
-			<div class="row" style="margin-top:5px">
-				<div class="col-lg-4"><h6>Sort by:</h6></div>
-				<div class="col-lg-8">
-			  		<select class="form-control" ng-model="movieProp">
-			    		<option value="title">Title</option>
-			    		<option value="year">Release Year</option>
-			  		</select>
-		  		</div>
-	  		</div>
-  		</div>
-  		 -->
 		<ul class="nav nav-stacked nav-pills">
         	<li><a href="#">Recently Added</a>
         	<li><a href="#">Add Movie</a>
@@ -40,22 +25,6 @@
 				<td data-title="'Genre'" sortable="'genre'" filter="{'genre': 'text'}">{{movie.genre}}</td>
 				<td width="80px" align="center" data-title="'Year'" sortable="'year'" filter="{'year': 'text'}">{{movie.year}}</td>
         	</tr>
-        	<!--  
-			<thead>
-				<tr>
-					<th>Title</th>
-					<th>Genre</th>
-					<th>Year</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr ng-repeat="movie in movies | filter:query | orderBy:movieProp">
-					<td>{{movie.title}}</td>
-					<td>{{movie.genre}}</td>
-					<td>{{movie.year}}</td>
-				</tr>
-			</tbody>
-			-->
 		</table>
 	</div>
 </div>
