@@ -17,6 +17,7 @@ object Movie {
     def writes(movie: Movie) = Json.obj(
       "title" -> movie.title,
       "genre" -> movie.genres,
+      "language" -> movie.language,
       "year" -> movie.releaseYear)
   }
 

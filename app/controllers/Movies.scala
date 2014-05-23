@@ -30,17 +30,16 @@ object Movies extends Controller {
   }
 
   def image(title: String) = Action {
-    val request = url("http://www.omdbapi.com/?t=" + URLEncoder.encode(title, "UTF-8"))
-    val response = Http(request OK as.String)
-
-    val extractedLocalValue = Await.result(response, Duration(10, "s"))
-    val omdbJson = Json.parse(extractedLocalValue)
-    println(omdbJson)
+    val omdbJson = getOmdbJson(title)
     var posterUrl: String = ""
     val posterUrlOmdb = (omdbJson \ "Poster").validate[String]
     posterUrlOmdb match {
       case s: JsSuccess[String] => {
-        posterUrl = posterUrlOmdb.get
+        val omdb = posterUrlOmdb.get
+        omdb match {
+          case "N/A" => posterUrl = "/assets/images/no-image.jpg"
+          case _ => posterUrl = omdb
+        }
         Redirect(posterUrl)
       }
       case e: JsError => {
@@ -51,13 +50,7 @@ object Movies extends Controller {
   }
 
   def imdb(title: String) = Action {
-    val request = url("http://www.omdbapi.com/?t=" + URLEncoder.encode(title, "UTF-8"))
-    val response = Http(request OK as.String)
-
-    val extractedLocalValue = Await.result(response, Duration(10, "s"))
-    val omdbJson = Json.parse(extractedLocalValue)
-    println(omdbJson)
-    Ok(omdbJson)
+    Ok(getOmdbJson(title))
   }
 
   def init(moviesSeq: Seq[Movie]): Unit = {
@@ -66,5 +59,14 @@ object Movies extends Controller {
 
   def findByTitle(title: String): Movie = {
     movies.find(movie => movie.title == title).get
+  }
+  
+  private def getOmdbJson(title: String):JsValue = {
+    val request = url("http://www.omdbapi.com/?t=" + URLEncoder.encode(title, "UTF-8"))
+    val response = Http(request OK as.String)
+
+    val omdbJsonString = Await.result(response, Duration(10, "s"))
+    println(omdbJsonString)
+    Json.parse(omdbJsonString)
   }
 }

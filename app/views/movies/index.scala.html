@@ -23,6 +23,7 @@
 			<tr ng-repeat="movie in $data | filter:query | orderBy:movieProp">
             	<td width="50%" data-title="'Title'" sortable="'title'" filter="{'title': 'text'}"><a ng-href="/movies/{{movie.title}}">{{movie.title}}</a></td>
 				<td data-title="'Genre'" sortable="'genre'" filter="{'genre': 'text'}">{{movie.genre}}</td>
+				<td width="100px" data-title="'Language'" sortable="'language'" filter="{'language': 'text'}">{{movie.language}}</td>
 				<td width="80px" align="center" data-title="'Year'" sortable="'year'" filter="{'year': 'text'}">{{movie.year}}</td>
         	</tr>
 		</table>
