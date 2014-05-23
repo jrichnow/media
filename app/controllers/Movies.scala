@@ -41,11 +41,23 @@ object Movies extends Controller {
     posterUrlOmdb match {
       case s: JsSuccess[String] => {
         posterUrl = posterUrlOmdb.get
+        Redirect(posterUrl)
       }
-      case e: JsError => println("Errors: " + JsError.toFlatJson(e).toString())
+      case e: JsError => {
+        println("Errors: " + JsError.toFlatJson(e).toString())
+        Redirect("/assets/images/no-image.jpg")
+      }
     }
+  }
 
-    Redirect(posterUrl)
+  def imdb(title: String) = Action {
+    val request = url("http://www.omdbapi.com/?t=" + URLEncoder.encode(title, "UTF-8"))
+    val response = Http(request OK as.String)
+
+    val extractedLocalValue = Await.result(response, Duration(10, "s"))
+    val omdbJson = Json.parse(extractedLocalValue)
+    println(omdbJson)
+    Ok(omdbJson)
   }
 
   def init(moviesSeq: Seq[Movie]): Unit = {
