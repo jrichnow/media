@@ -5,6 +5,7 @@
 # Home page
 GET     /                           controllers.Application.index
 GET     /movies                     controllers.Movies.index
+GET     /movies/list                controllers.Movies.list
 GET     /audio                      controllers.Audio.index
 GET     /books                      controllers.Books.index
 
