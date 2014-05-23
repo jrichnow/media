@@ -5,7 +5,9 @@
 # Home page
 GET     /                           controllers.Application.index
 GET     /movies                     controllers.Movies.index
+GET     /movies/img/:title          controllers.Movies.image(title:String)
 GET     /movies/list                controllers.Movies.list
+GET     /movies/:title              controllers.Movies.title(title:String)
 GET     /audio                      controllers.Audio.index
 GET     /books                      controllers.Books.index
 

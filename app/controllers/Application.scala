@@ -6,6 +6,6 @@ import play.api.mvc._
 object Application extends Controller {
 
   def index = Action {
-    Ok(views.html.home("Media"))
+    Ok(views.html.home())
   }
 }

@@ -6,7 +6,7 @@ import play.api.mvc._
 object Books extends Controller {
 
   def index = Action {
-    Ok(views.html.books.index("eBook"))
+    Ok(views.html.books.index())
   }
 
 }
