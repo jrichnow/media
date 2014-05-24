@@ -46,3 +46,11 @@ mediaApp.controller('MovieCtrl', function($scope, $http, $attrs) {
 		window.history.back();
 	};
 });
+
+mediaApp.controller('AudioListCtrl', function($scope, $http) {
+	$scope.audioDataSize = 0
+});
+
+mediaApp.controller('NewAudioCtrl', function($scope, $http) {
+	
+});

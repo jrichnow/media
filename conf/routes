@@ -10,6 +10,7 @@ GET     /movies/img/:title          controllers.Movies.image(title:String)
 GET     /movies/list                controllers.Movies.list
 GET     /movies/:title              controllers.Movies.title(title:String)
 GET     /audio                      controllers.Audio.index
+GET     /audio/newForm              controllers.Audio.newForm
 GET     /books                      controllers.Books.index
 
 # Map static resources from the /public folder to the /assets URL path

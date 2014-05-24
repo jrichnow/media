@@ -18,7 +18,9 @@ object Global extends GlobalSettings {
           (movie \ "@subTitle").text,
           (movie \ "@genres").text,
           (movie \ "@url").text,
-          (movie \ "@releaseYear").text.toInt))
+          (movie \ "@releaseYear").text.toInt,
+          (movie \ "locations" \ "location" \ "@folder").text.toInt,
+          (movie \ "locations" \ "location" \ "@dvdNumber").text.toInt))
       Movies.init(movies)
       println(s"... finished reading of ${movies.size} movies")
     } catch {
