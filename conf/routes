@@ -10,6 +10,8 @@ GET     /movies/img/:title          controllers.Movies.image(title:String)
 GET     /movies/list                controllers.Movies.list
 GET     /movies/:title              controllers.Movies.title(title:String)
 GET     /audio                      controllers.Audio.index
+POST    /audio/add                  controllers.Audio.add
+GET     /audio/list                 controllers.Audio.list
 GET     /audio/newForm              controllers.Audio.newForm
 GET     /books                      controllers.Books.index
 
