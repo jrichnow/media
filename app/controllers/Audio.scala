@@ -35,7 +35,7 @@ object Audio extends Controller {
     }
   }
   
-  private def validateJson(audioJson:JsValue):Boolean = {
+  def validateJson(audioJson:JsValue):Boolean = {
     // TODO Validate audio JSON
     true
   }
