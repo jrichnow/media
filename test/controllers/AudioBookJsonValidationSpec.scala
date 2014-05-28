@@ -80,7 +80,37 @@ class AudioBookJsonValidationSpec extends Specification {
 
       status(result) must equalTo(OK)
       contentType(result) must beSome("application/json")
-      contentAsJson(result) must equalTo(failureValidationResponse("year", "error.expected.jsnumber"))
+      contentAsJson(result) must equalTo(failureValidationResponse("year", "error.min"))
+    }
+
+    "return a correct error list entry when year is too big in audio book Json" in new WithApplication {
+      val wrongYear = getValidAudioJsonRequiredOnly.as[JsObject] ++ Json.obj("year" -> JsNumber(2031))
+
+      val Some(result) = route(FakeRequest(POST, "/audio/add").withJsonBody(wrongYear))
+
+      status(result) must equalTo(OK)
+      contentType(result) must beSome("application/json")
+      contentAsJson(result) must equalTo(failureValidationResponse("year", "error.max"))
+    }
+
+    "return a correct error list entry when runtime is longer than 5 characters in audio book Json" in new WithApplication {
+      val wrongRuntime = getValidAudioJsonRequiredOnly.as[JsObject] ++ Json.obj("runtime" -> JsString("12:231"))
+
+      val Some(result) = route(FakeRequest(POST, "/audio/add").withJsonBody(wrongRuntime))
+
+      status(result) must equalTo(OK)
+      contentType(result) must beSome("application/json")
+      contentAsJson(result) must equalTo(failureValidationResponse("runtime", "error.maxLength"))
+    }
+
+    "return a correct error list entry when format is longer than 3 characters in audio book Json" in new WithApplication {
+      val wrongFormat = getValidAudioJsonRequiredOnly.as[JsObject] ++ Json.obj("format" -> JsString("mp34"))
+
+      val Some(result) = route(FakeRequest(POST, "/audio/add").withJsonBody(wrongFormat))
+
+      status(result) must equalTo(OK)
+      contentType(result) must beSome("application/json")
+      contentAsJson(result) must equalTo(failureValidationResponse("format", "error.maxLength"))
     }
 
     "return a correct error list entry when missing folder in audio book Json" in new WithApplication {
@@ -94,6 +124,26 @@ class AudioBookJsonValidationSpec extends Specification {
       contentAsJson(result) must equalTo(failureValidationResponse("folder", "error.path.missing"))
     }
 
+    "return a correct error list entry when folder is less than one in audio book Json" in new WithApplication {
+      val wrongFolder = getValidAudioJsonRequiredOnly.as[JsObject] ++ Json.obj("folder" -> JsNumber(0))
+
+      val Some(result) = route(FakeRequest(POST, "/audio/add").withJsonBody(wrongFolder))
+
+      status(result) must equalTo(OK)
+      contentType(result) must beSome("application/json")
+      contentAsJson(result) must equalTo(failureValidationResponse("folder", "error.min"))
+    }
+
+    "return a correct error list entry when folder is more than ten in audio book Json" in new WithApplication {
+      val wrongFolder = getValidAudioJsonRequiredOnly.as[JsObject] ++ Json.obj("folder" -> JsNumber(11))
+
+      val Some(result) = route(FakeRequest(POST, "/audio/add").withJsonBody(wrongFolder))
+
+      status(result) must equalTo(OK)
+      contentType(result) must beSome("application/json")
+      contentAsJson(result) must equalTo(failureValidationResponse("folder", "error.max"))
+    }
+
     "return a correct error list entry when missing dvd in audio book Json " in new WithApplication {
       val jsonTransformer = (__ \ 'dvd).json.prune
       val missingDvd = getValidAudioJsonRequiredOnly.transform(jsonTransformer).get
@@ -103,6 +153,26 @@ class AudioBookJsonValidationSpec extends Specification {
       status(result) must equalTo(OK)
       contentType(result) must beSome("application/json")
       contentAsJson(result) must equalTo(failureValidationResponse("dvd", "error.path.missing"))
+    }
+
+    "return a correct error list entry when dvd is less than one in audio book Json" in new WithApplication {
+      val wrongDvd = getValidAudioJsonRequiredOnly.as[JsObject] ++ Json.obj("dvd" -> JsNumber(0))
+
+      val Some(result) = route(FakeRequest(POST, "/audio/add").withJsonBody(wrongDvd))
+
+      status(result) must equalTo(OK)
+      contentType(result) must beSome("application/json")
+      contentAsJson(result) must equalTo(failureValidationResponse("dvd", "error.min"))
+    }
+
+    "return a correct error list entry when dvd is more than 200 in audio book Json" in new WithApplication {
+      val wrongDvd = getValidAudioJsonRequiredOnly.as[JsObject] ++ Json.obj("dvd" -> JsNumber(201))
+
+      val Some(result) = route(FakeRequest(POST, "/audio/add").withJsonBody(wrongDvd))
+
+      status(result) must equalTo(OK)
+      contentType(result) must beSome("application/json")
+      contentAsJson(result) must equalTo(failureValidationResponse("dvd", "error.max"))
     }
   }
 
