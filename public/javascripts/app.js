@@ -115,8 +115,13 @@ mediaApp.controller('NewAudioCtrl', function($scope, $http) {
 				'Content-Type' : 'application/json'
 			}
 		}).success(function(data, status, headers, config) {
-			$scope.changeRoute('/audio')
-			$scope.status = data
+			$scope.audioResponse = data;
+			if (data.validation == true) {
+				$scope.changeRoute('/audio')
+			}
+			else {
+				$scope.status = data
+			}
 		}).error(function(data, status, headers, config) {
 			$scope.status = status + ' ' + headers;
 		});

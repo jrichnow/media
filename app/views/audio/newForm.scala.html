@@ -40,7 +40,7 @@
 		<div class="form-group">
     		<label class="col-sm-2 control-label">Release Year</label>
     		<div class="col-sm-1">
-      			<input maxlength="4" class="form-control" placeholder="yyyy" ng-model="audio.year" onkeydown="javascript:maskInput()">
+      			<input type="number" class="form-control" placeholder="yyyy" ng-model="audio.year" onkeydown="javascript:maskInput()">
 		    </div>
 		</div>
 		<div class="form-group">
@@ -61,7 +61,7 @@
 		<div class="form-group">
     		<label class="col-sm-2 control-label">Image URL</label>
     		<div class="col-sm-9">
-      			<input type="text" class="form-control" placeholder="http://..." ng-model="audio.imageUrl">
+      			<input type="url" class="form-control" placeholder="http://..." ng-model="audio.imageUrl">
 		    </div>
 		</div>
 		<div class="form-group">
@@ -88,13 +88,13 @@
 		<div class="form-group">
     		<label class="col-sm-2 control-label">Folder</label>
     		<div class="col-sm-1">
-      			<input type="text" maxlength="1" class="form-control" ng-model="audio.folder" onkeydown="javascript:maskInput()">
+      			<input type="number" maxlength="1" class="form-control" ng-model="audio.folder" onkeydown="javascript:maskInput()">
 		    </div>
 		</div>
 		<div class="form-group">
     		<label class="col-sm-2 control-label">DVD</label>
     		<div class="col-sm-1">
-      			<input type="text" maxlength="3" class="form-control" ng-model="audio.dvd" onkeydown="javascript:maskInput()">
+      			<input type="number" maxlength="3" min="1" max="200" class="form-control" ng-model="audio.dvd" onkeydown="javascript:maskInput()">
 		    </div>
 		</div>
 		<div class="form-group">

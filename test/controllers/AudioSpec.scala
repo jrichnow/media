@@ -22,7 +22,8 @@ class AudioSpec extends Specification {
       val Some(resultAdd) = route(FakeRequest(POST, "/audio/add").withJsonBody(getValidAudioJson))
       
       status(resultAdd) must equalTo(OK)
-      contentAsString(resultAdd) must equalTo("/audio")
+      contentType(resultAdd) must beSome("application/json")
+      contentAsJson(resultAdd) must equalTo(successValidationResponse)
       
       val resultList = controllers.Audio.list()(FakeRequest())
 
@@ -32,9 +33,21 @@ class AudioSpec extends Specification {
     }
   }
   
+  private def successValidationResponse(): JsValue = {
+    Json.obj("validation" -> true, "redirectPath" -> "/audio")
+  }
+  
   private def getValidAudioJson(): JsValue = {
     Json.obj(
-        "title" -> "Dreamland",
-        "author" -> "David K. Randall")
+      "title" -> "Dreamland",
+      "author" -> "David K. Randall",
+      "plot" -> "some description",
+      "year" -> 2020,
+      "runtime" -> "13:55",
+      "format" -> "mp3",
+      "imageUrl" -> "http://image.url.com/path?foo=bar",
+      "genre" -> "History",
+      "folder" -> 1,
+      "dvd" -> 12)
   }
 }
