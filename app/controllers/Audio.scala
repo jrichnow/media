@@ -28,14 +28,7 @@ object Audio extends Controller {
     println(s"received add audio request: $audioJsonString")
     val audioJson = Json.toJson(audioJsonString)
     println(s"converted Json: $audioJson")
-    validateJson(audioJson) match {
-      case true => {
-        audios = audios.append(audioJson)
-        println(audios)
-        Ok("/audio")
-      }
-      case false => Ok("validation error")
-    }
+    Ok(validateJson(audioJson))
   }
 
   implicit val audioBookReads: Reads[AudioBook] = (
@@ -50,20 +43,19 @@ object Audio extends Controller {
     (__ \ "folder").read[Int](min(1) keepAnd max(10)) and
     (__ \ "dvd").read[Int](min(1) keepAnd max(200)))(AudioBook.apply _)
 
-  def validateJson(audioJson: JsValue): Boolean = {
+  def validateJson(audioJson: JsValue): JsValue = {
     audioJson.validate[AudioBook] match {
       case s: JsSuccess[AudioBook] => {
-        println(s)
-        true
+        Json.obj("validation" -> true, "redirectPath" -> "/audio")
       }
       case e: JsError => {
         e.errors.foreach(println(_))
         val p = for {
           entry <- e.errors
-        } yield Json.obj(entry._1.toString -> entry._2.head.message)
+        } yield Json.obj(entry._1.toString.drop(1) -> entry._2.head.message)
         println(JsArray(p))
         
-        false
+        Json.obj("validation" -> false, "errorList" -> JsArray(p))
       }
     }
   }
