@@ -9,10 +9,13 @@ GET     /movies/imdb/:title         controllers.Movies.imdb(title:String)
 GET     /movies/img/:title          controllers.Movies.image(title:String)
 GET     /movies/list                controllers.Movies.list
 GET     /movies/:title              controllers.Movies.title(title:String)
-GET     /audio                      controllers.Audio.index
-POST    /audio/add                  controllers.Audio.add
-GET     /audio/list                 controllers.Audio.list
-GET     /audio/newForm              controllers.Audio.newForm
+GET     /audio                      controllers.AudioBooks.index
+POST    /audio/add                  controllers.AudioBooks.add
+GET     /audio/detailsForm/:title   controllers.AudioBooks.detailsForm(title:String)
+GET     /audio/details/:title       controllers.AudioBooks.details(title:String)
+GET     /audio/list                 controllers.AudioBooks.list
+GET     /audio/newForm              controllers.AudioBooks.newForm
+GET     /audio/:title               controllers.AudioBooks.title(title:String)
 GET     /books                      controllers.Books.index
 
 # Map static resources from the /public folder to the /assets URL path

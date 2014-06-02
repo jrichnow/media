@@ -7,16 +7,28 @@ import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
 import model.AudioBook
 
-object Audio extends Controller {
+object AudioBooks extends Controller {
 
-  var audios: JsArray = JsArray()
+  var audioBooks: Seq[AudioBook] = Seq.empty
 
   def index = Action {
     Ok(views.html.audio.index())
   }
 
   def list = Action {
-    Ok(audios)
+    Ok(Json.toJson(audioBooks))
+  }
+  
+  def detailsForm(title: String) = Action {
+    Ok(views.html.audio.details(title))
+  }
+  
+  def details(title: String) = Action {
+	  Ok(Json.toJson(audioBooks.find(audio => audio.title == title).get))
+  }
+  
+  def title(title: String) = Action {
+	  Ok("")
   }
 
   def newForm = Action {
@@ -30,9 +42,6 @@ object Audio extends Controller {
     println(s"converted Json: $audioJson")
       
     val (isValid, jsonResult) = validateJson(audioJson)
-    if (isValid) {
-      audios = audios.append(audioJson)
-    }
     Ok(jsonResult)
   }
 
@@ -41,6 +50,7 @@ object Audio extends Controller {
     (__ \ "author").read[String] and
     (__ \ "plot").readNullable[String] and
     (__ \ "year").read[Int](min(1950) keepAnd max(2030)) and
+    (__ \ "language").readNullable[String] and
     (__ \ "runtime").readNullable[String](maxLength(5)) and
     (__ \ "format").readNullable[String](maxLength(3)) and
     (__ \ "imageUrl").readNullable[String] and
@@ -51,6 +61,7 @@ object Audio extends Controller {
   def validateJson(audioJson: JsValue): (Boolean, JsValue) = {
     audioJson.validate[AudioBook] match {
       case s: JsSuccess[AudioBook] => {
+        audioBooks = audioBooks :+ s.get
         (true, Json.obj("validation" -> true, "redirectPath" -> "/audio"))
       }
       case e: JsError => {
@@ -63,5 +74,4 @@ object Audio extends Controller {
       }
     }
   }
-  
 }
