@@ -11,7 +11,7 @@ case class AudioBook(
   val runtime: Option[String],
   val format: Option[String],
   val imageUrl: Option[String],
-  val genre: Option[String],
+  val genre: Option[Array[String]],
   val folder: Int,
   val dvd: Int)
   

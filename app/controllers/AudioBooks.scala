@@ -54,7 +54,7 @@ object AudioBooks extends Controller {
     (__ \ "runtime").readNullable[String](maxLength(5)) and
     (__ \ "format").readNullable[String](maxLength(3)) and
     (__ \ "imageUrl").readNullable[String] and
-    (__ \ "genre").readNullable[String] and
+    (__ \ "genre").readNullable[Array[String]] and
     (__ \ "folder").read[Int](min(1) keepAnd max(10)) and
     (__ \ "dvd").read[Int](min(1) keepAnd max(200)))(AudioBook.apply _)
 
