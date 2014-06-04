@@ -18,21 +18,25 @@ object AudioBooks extends Controller {
   def list = Action {
     Ok(Json.toJson(audioBooks))
   }
-  
+
   def detailsForm(title: String) = Action {
     Ok(views.html.audio.details(title))
   }
-  
+
   def details(title: String) = Action {
-	  Ok(Json.toJson(audioBooks.find(audio => audio.title == title).get))
+    Ok(Json.toJson(audioBooks.find(audio => audio.title == title).get))
   }
-  
+
   def title(title: String) = Action {
-	  Ok("")
+    Ok("")
   }
 
   def newForm = Action {
-    Ok(views.html.audio.newForm())
+    Ok(views.html.audio.form("NewAudioCtrl", ""))
+  }
+
+  def editForm(title:String) = Action {
+    Ok(views.html.audio.form("EditAudioCtrl", title))
   }
 
   def add = Action(parse.json) { request =>
@@ -40,7 +44,7 @@ object AudioBooks extends Controller {
     println(s"received add audio request: $audioJsonString")
     val audioJson = Json.toJson(audioJsonString)
     println(s"converted Json: $audioJson")
-      
+
     val (isValid, jsonResult) = validateJson(audioJson)
     Ok(jsonResult)
   }

@@ -91,6 +91,22 @@ mediaApp.controller('AudioListCtrl', function($scope, $http, audioService,
 });
 
 mediaApp.controller('NewAudioCtrl', function($scope, $http) {
+	// Setting some defaults:
+	$scope.audio = {
+		'title' : 'Dreamland',
+		'author' : 'Mr. moo',
+		'year' : 2000,
+		'language' : 'English',
+		'imageUrl' : 'http://i59.fastpic.ru/big/2013/0901/a7/01afd2d92e408eb701b3df62718c04a7.jpg',
+		'format' : 'mp3',
+		'folder' : 1,
+		'dvd' : 12,
+	};
+
+	$scope.back = function() {
+		window.history.back();
+	};
+	
 	$scope.changeRoute = function(url, forceReload) {
 		$scope = $scope || angular.element(document).scope();
 		if (forceReload || $scope.$$phase) { // that's right TWO dollar
@@ -101,20 +117,6 @@ mediaApp.controller('NewAudioCtrl', function($scope, $http) {
 			$scope.$apply();
 		}
 	};
-	// Setting some defaults:
-	$scope.audio = {
-		'title' : 'Dreamland',
-		'author' : 'Mr. moo',
-		'year' : 2000,
-		'language' : 'English',
-		'format' : 'mp3',
-		'folder' : 1,
-		'dvd' : 12,
-	};
-
-	$scope.audio.doList = function() {
-		$scope.changeRoute('/audio')
-	}
 
 	$scope.audio.doClick = function(item, event) {
 		var request = $http({
@@ -128,9 +130,9 @@ mediaApp.controller('NewAudioCtrl', function($scope, $http) {
 		}).success(function(data, status, headers, config) {
 			$scope.audioResponse = data;
 			if (data.validation == true) {
-				$scope.changeRoute('/audio')
+				$scope.changeRoute('/audio');
 			} else {
-				$scope.status = data
+				$scope.status = data;
 			}
 		}).error(function(data, status, headers, config) {
 			$scope.status = status + ' ' + headers;
@@ -139,7 +141,7 @@ mediaApp.controller('NewAudioCtrl', function($scope, $http) {
 });
 
 mediaApp.controller('AudioCtrl', function($scope, $http, $attrs, audioService) {
-	$http.get('/audio/details/' + $attrs.model).success(function(data) {
+	$http.get('/audio/details/' + $attrs.title).success(function(data) {
 		$scope.currentAudio = data;
 	});
 	
@@ -150,7 +152,33 @@ mediaApp.controller('AudioCtrl', function($scope, $http, $attrs, audioService) {
 	$scope.back = function() {
 		window.history.back();
 	};
+	
+	$scope.changeRoute = function(url, forceReload) {
+		$scope = $scope || angular.element(document).scope();
+		if (forceReload || $scope.$$phase) { // that's right TWO dollar
+			// signs: $$phase
+			window.location = url;
+		} else {
+			$location.path(url);
+			$scope.$apply();
+		}
+	};
+	$scope.edit = function() {
+		$scope.changeRoute('/audio/form/edit/' + $scope.currentAudio.title);
+	};
 });
+
+mediaApp.controller('EditAudioCtrl', function($scope, $http, $attrs) {
+	$scope.audio = {};
+	$http.get('/audio/details/' + $attrs.model).success(function(data) {
+		$scope.audio = data;
+	});
+	
+	$scope.back = function() {
+		window.history.back();
+	};
+});
+
 
 mediaApp.service('audioService', function() {
 	var currentAudio = {};
@@ -161,7 +189,6 @@ mediaApp.service('audioService', function() {
 			console.log(currentAudio);
 		},
 		getCurrentAudio : function() {
-			console.log("getting current audio")
 			console.log(currentAudio);
 			return currentAudio;
 		}

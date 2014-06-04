@@ -1,4 +1,4 @@
-@()
+@(ctrl: String, title:String)
 
 @main() {
 <div class="row">
@@ -8,7 +8,7 @@
      	</h1>
 	</div>
 </div>
-<div class="row" ng-controller="NewAudioCtrl">
+<div class="row" ng-controller="@ctrl" model="@title">
 	<form class="form-horizontal" role="form" novalidate>
 		<div class="form-group">
     		<label class="col-sm-2 control-label">Title</label>
@@ -99,7 +99,7 @@
 		</div>
 		<div class="form-group">
 		    <div class="col-sm-offset-2 col-sm-10">
-		    	<button type="submit" class="btn btn-default" ng-click="audio.doList()" >Cancel</button>
+		    	<button type="submit" class="btn btn-default" ng-click="back()" >Cancel</button>
 		    	<button type="submit" class="btn btn-default" ng-click="audio.doClick(item, $event)" >Save</button>
 		    </div>
 	  	</div>
