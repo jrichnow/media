@@ -13,7 +13,7 @@ class AudioSpec extends Specification {
   "Audio" should {
 
     "return the correct audio book path when adding a valid Audio book in the request" in new WithApplication {
-      val result = controllers.Audio.list()(FakeRequest())
+      val result = controllers.AudioBooks.list()(FakeRequest())
 
       status(result) must equalTo(OK)
       contentType(result) must beSome("application/json")
@@ -25,7 +25,7 @@ class AudioSpec extends Specification {
       contentType(resultAdd) must beSome("application/json")
       contentAsJson(resultAdd) must equalTo(successValidationResponse)
       
-      val resultList = controllers.Audio.list()(FakeRequest())
+      val resultList = controllers.AudioBooks.list()(FakeRequest())
 
       status(resultList) must equalTo(OK)
       contentType(resultList) must beSome("application/json")
@@ -46,7 +46,7 @@ class AudioSpec extends Specification {
       "runtime" -> "13:55",
       "format" -> "mp3",
       "imageUrl" -> "http://image.url.com/path?foo=bar",
-      "genre" -> "History",
+      "genre" -> Json.arr("History", "Documentary"),
       "folder" -> 1,
       "dvd" -> 12)
   }

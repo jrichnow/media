@@ -6,6 +6,7 @@ import play.api.libs.json._
 import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
 import model.AudioBook
+import org.bson.types.ObjectId
 
 object AudioBooks extends Controller {
 
@@ -48,8 +49,9 @@ object AudioBooks extends Controller {
     val (isValid, jsonResult) = validateJson(audioJson)
     Ok(jsonResult)
   }
-
+  
   implicit val audioBookReads: Reads[AudioBook] = (
+    (__ \ "id").readNullable[String] and 
     (__ \ "title").read[String] and
     (__ \ "author").read[String] and
     (__ \ "plot").readNullable[String] and

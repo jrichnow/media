@@ -174,6 +174,16 @@ class AudioBookJsonValidationSpec extends Specification {
       contentType(result) must beSome("application/json")
       contentAsJson(result) must equalTo(failureValidationResponse("dvd", "error.max"))
     }
+
+    "return a correct error list entry when genre is not an array in audio book Json" in new WithApplication {
+      val wrongGenre = getValidAudioJsonRequiredOnly.as[JsObject] ++ Json.obj("genre" -> JsString("History"))
+
+      val Some(result) = route(FakeRequest(POST, "/audio/add").withJsonBody(wrongGenre))
+
+      status(result) must equalTo(OK)
+      contentType(result) must beSome("application/json")
+      contentAsJson(result) must equalTo(failureValidationResponse("genre", "error.expected.jsarray"))
+    }
   }
 
   private def successValidationResponse(): JsValue = {
@@ -193,7 +203,7 @@ class AudioBookJsonValidationSpec extends Specification {
       "runtime" -> "13:55",
       "format" -> "mp3",
       "imageUrl" -> "http://image.url.com/path?foo=bar",
-      "genre" -> "History",
+      "genre" -> Json.arr("History", "Documentary"),
       "folder" -> 1,
       "dvd" -> 12)
   }
