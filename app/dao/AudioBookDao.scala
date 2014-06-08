@@ -24,7 +24,11 @@ object AudioBookDao {
     audioColl.insert(dbObject)
 
     val mongoId = dbObject.get("_id")
-    audioBook.copy(id = Option(mongoId.toString()))
+    val updatedAudioBook = audioBook.copy(id = Option(mongoId.toString()))
+
+    // synchronize the MongoDb object with the new id.
+    update(updatedAudioBook)
+    updatedAudioBook
   }
 
   def update(audioBook: AudioBook) {
@@ -36,6 +40,13 @@ object AudioBookDao {
     val query = MongoDBObject("_id" -> objectId)
 
     audioColl.findAndModify(query, dbObject)
+  }
+
+  def findAll(): Seq[AudioBook] = {
+    val results = audioColl.find()
+    val audioBooks = results.map(dbObjectToAudioBook(_).get)
+    audioBooks.toSeq
+//    Seq.empty
   }
 
   def findById(id: String): Option[AudioBook] = {
@@ -58,5 +69,17 @@ object AudioBookDao {
         None
       }
     }
+  }
+
+  private def dbObjectToAudioBook(dbObject: DBObject):Option[AudioBook] = {
+    Json.parse(dbObject.toString()).validate[AudioBook] match {
+      case s: JsSuccess[AudioBook] => Option(s.get)
+      case e: JsError => None
+    }
+  }
+
+  def delete(id: String) {
+    val audioBookOption: Option[audioColl.T] = audioColl.findOneByID(new ObjectId(id))
+    audioColl.remove(audioBookOption.get)
   }
 }
