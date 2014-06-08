@@ -1,6 +1,9 @@
 package model
 
 import play.api.libs.json._
+import play.api.libs.json.Reads._
+import play.api.libs.functional.syntax._
+
 
 case class AudioBook(
   val id: Option[String] = None,
@@ -17,6 +20,21 @@ case class AudioBook(
   val dvd: Int)
 
 object AudioBook {
+  
+  implicit val audioBookReads: Reads[AudioBook] = (
+      (__ \ "id").readNullable[String] and
+      (__ \ "title").read[String] and
+      (__ \ "author").read[String] and
+      (__ \ "plot").readNullable[String] and
+      (__ \ "year").read[Int](min(1950) keepAnd max(2030)) and
+      (__ \ "language").readNullable[String] and
+      (__ \ "runtime").readNullable[String](maxLength(5)) and
+      (__ \ "format").readNullable[String](maxLength(3)) and
+      (__ \ "imageUrl").readNullable[String] and
+      (__ \ "genre").readNullable[Array[String]] and
+      (__ \ "folder").read[Int](min(1) keepAnd max(10)) and
+      (__ \ "dvd").read[Int](min(1) keepAnd max(200)))(AudioBook.apply _)
+
 
   implicit val audioJsonWrites = new Writes[AudioBook] {
     def writes(audio: AudioBook) = Json.obj(
