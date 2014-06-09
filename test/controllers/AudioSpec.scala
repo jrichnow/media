@@ -18,13 +18,13 @@ class AudioSpec extends Specification {
       status(result) must equalTo(OK)
       contentType(result) must beSome("application/json")
       contentAsJson(result) must equalTo(JsArray())
-      
+
       val Some(resultAdd) = route(FakeRequest(POST, "/audio/add").withJsonBody(getValidAudioJson))
-      
+
       status(resultAdd) must equalTo(OK)
       contentType(resultAdd) must beSome("application/json")
       contentAsJson(resultAdd) must equalTo(successValidationResponse)
-      
+
       val resultList = controllers.AudioBooks.list()(FakeRequest())
 
       status(resultList) must equalTo(OK)
@@ -32,17 +32,19 @@ class AudioSpec extends Specification {
       contentAsJson(resultList) must equalTo(JsArray().append(getValidAudioJson))
     }
   }
-  
+
   private def successValidationResponse(): JsValue = {
     Json.obj("validation" -> true, "redirectPath" -> "/audio")
   }
-  
+
   private def getValidAudioJson(): JsValue = {
     Json.obj(
+      "id" -> JsNull,
       "title" -> "Dreamland",
       "author" -> "David K. Randall",
       "plot" -> "some description",
       "year" -> 2020,
+      "language" -> JsNull,
       "runtime" -> "13:55",
       "format" -> "mp3",
       "imageUrl" -> "http://image.url.com/path?foo=bar",

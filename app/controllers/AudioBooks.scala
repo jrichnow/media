@@ -36,7 +36,7 @@ object AudioBooks extends Controller {
     Ok(views.html.audio.form("NewAudioCtrl", ""))
   }
 
-  def editForm(title:String) = Action {
+  def editForm(title: String) = Action {
     Ok(views.html.audio.form("EditAudioCtrl", title))
   }
 
@@ -46,15 +46,17 @@ object AudioBooks extends Controller {
     val audioJson = Json.toJson(audioJsonString)
     println(s"converted Json: $audioJson")
 
-    val (isValid, jsonResult) = validateJson(audioJson)
+    val (isValid, jsonResult, audioBookOption) = validateJson(audioJson)
+    if (isValid) {
+    	audioBooks = audioBooks :+ audioBookOption.get
+    }
     Ok(jsonResult)
   }
-  
-  def validateJson(audioJson: JsValue): (Boolean, JsValue) = {
+
+  def validateJson(audioJson: JsValue): (Boolean, JsValue, Option[AudioBook]) = {
     audioJson.validate[AudioBook] match {
       case s: JsSuccess[AudioBook] => {
-        audioBooks = audioBooks :+ s.get
-        (true, Json.obj("validation" -> true, "redirectPath" -> "/audio"))
+        (true, Json.obj("validation" -> true, "redirectPath" -> "/audio"), Option(s.get))
       }
       case e: JsError => {
         e.errors.foreach(println(_))
@@ -62,7 +64,7 @@ object AudioBooks extends Controller {
           entry <- e.errors
         } yield Json.obj(entry._1.toString.drop(1) -> entry._2.head.message)
         println(JsArray(p))
-        (false, Json.obj("validation" -> false, "errorList" -> JsArray(p)))
+        (false, Json.obj("validation" -> false, "errorList" -> JsArray(p)), None)
       }
     }
   }

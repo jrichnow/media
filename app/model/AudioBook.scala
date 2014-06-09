@@ -45,6 +45,7 @@ object AudioBook {
       "year" -> audio.year,
       "language" -> audio.language,
       "runtime" -> audio.runtime,
+      "format" -> audio.format,
       "imageUrl" -> audio.imageUrl,
       "genre" -> audio.genre,
       "folder" -> audio.folder,

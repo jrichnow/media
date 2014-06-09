@@ -25,7 +25,7 @@ class AudioBookDaoSpec extends Specification {
       bookOption must beNone
     }
 
-    "adds an audio book" in new WithApplication {
+    "add an audio book" in new WithApplication {
       audioColl.drop();
       val audioBook = AudioBook(title = "Dreamland", author = "Mr. Writer", year = 2012, folder = 1, dvd = 2)
       audioBook.id must beNone
@@ -45,7 +45,7 @@ class AudioBookDaoSpec extends Specification {
       AudioBookDao.findAll.size === 1
     }
 
-    "can update an audio book" in new WithApplication {
+    "update an audio book" in new WithApplication {
       audioColl.drop();
       val audioBook = AudioBook(title = "Dreamland", author = "Mr. Writer", year = 2012, folder = 1, dvd = 2)
       val updatedAudioBook = AudioBookDao.add(audioBook)
@@ -63,7 +63,7 @@ class AudioBookDaoSpec extends Specification {
       AudioBookDao.findAll.size === 1
     }
 
-    "can delete an audio book" in new WithApplication {
+    "delete an audio book" in new WithApplication {
       audioColl.drop();
       val audioBook = AudioBook(title = "Dreamland", author = "Mr. Writer", year = 2012, folder = 1, dvd = 2)
       val updatedAudioBook = AudioBookDao.add(audioBook)
