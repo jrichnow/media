@@ -7,6 +7,7 @@ import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
 import model.AudioBook
 import org.bson.types.ObjectId
+import dao.AudioBookDao
 
 object AudioBooks extends Controller {
 
@@ -17,15 +18,19 @@ object AudioBooks extends Controller {
   }
 
   def list = Action {
+    if (audioBooks.isEmpty) {
+      audioBooks = AudioBookDao.findAll
+    }
     Ok(Json.toJson(audioBooks))
   }
 
-  def detailsForm(title: String) = Action {
-    Ok(views.html.audio.details(title))
+  def detailsForm(id: String) = Action {
+    Ok(views.html.audio.details(id))
   }
 
-  def details(title: String) = Action {
-    Ok(Json.toJson(audioBooks.find(audio => audio.title == title).get))
+  def details(id: String) = Action {
+    println(audioBooks)
+    Ok(Json.toJson(audioBooks.find(audio => audio.id.get == id).get))
   }
 
   def title(title: String) = Action {
@@ -36,8 +41,8 @@ object AudioBooks extends Controller {
     Ok(views.html.audio.form("NewAudioCtrl", ""))
   }
 
-  def editForm(title: String) = Action {
-    Ok(views.html.audio.form("EditAudioCtrl", title))
+  def editForm(id: String) = Action {
+    Ok(views.html.audio.form("EditAudioCtrl", id))
   }
 
   def add = Action(parse.json) { request =>
@@ -48,7 +53,22 @@ object AudioBooks extends Controller {
 
     val (isValid, jsonResult, audioBookOption) = validateJson(audioJson)
     if (isValid) {
-    	audioBooks = audioBooks :+ audioBookOption.get
+      audioBooks = audioBooks :+ AudioBookDao.add(audioBookOption.get)
+    }
+    Ok(jsonResult)
+  }
+
+  def edit = Action(parse.json) { request =>
+    val audioJsonString = request.body
+    println(s"received edit audio request: $audioJsonString")
+    val audioJson = Json.toJson(audioJsonString)
+    println(s"converted Json: $audioJson")
+
+    val (isValid, jsonResult, audioBookOption) = validateJson(audioJson)
+    if (isValid) {
+      val validatedAudioBook = audioBookOption.get
+      AudioBookDao.update(validatedAudioBook)
+      audioBooks = AudioBookDao.findAll
     }
     Ok(jsonResult)
   }

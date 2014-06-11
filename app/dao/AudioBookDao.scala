@@ -32,7 +32,7 @@ object AudioBookDao {
   }
 
   def update(audioBook: AudioBook) {
-    println(s"Saving new audio book $audioBook")
+    println(s"Updating audio book $audioBook")
     val audioBookJson = AudioBook.toJson(audioBook)
     val dbObject: DBObject = JSON.parse(audioBookJson.toString).asInstanceOf[DBObject]
 

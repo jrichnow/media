@@ -90,6 +90,50 @@ mediaApp.controller('AudioListCtrl', function($scope, $http, audioService,
 	};
 });
 
+mediaApp.controller('EditAudioCtrl', function($scope, $http, $attrs) {
+	$scope.audio = {'title': 'test'};
+	$http.get('/audio/details/' + $attrs.model).success(function(data) {
+		$scope.audio = data;
+	});
+	
+	$scope.back = function() {
+		window.history.back();
+	};
+	
+	$scope.changeRoute = function(url, forceReload) {
+		$scope = $scope || angular.element(document).scope();
+		if (forceReload || $scope.$$phase) { // that's right TWO dollar
+			// signs: $$phase
+			window.location = url;
+		} else {
+			$location.path(url);
+			$scope.$apply();
+		}
+	};
+	
+	$scope.save = function() {
+		console.log('editing ...')
+		var request = $http({
+			url : '/audio/edit',
+			method : "POST",
+			data : JSON.stringify($scope.audio),
+			transformRequest : false,
+			headers : {
+				'Content-Type' : 'application/json'
+			}
+		}).success(function(data, status, headers, config) {
+			$scope.audioResponse = data;
+			if (data.validation == true) {
+				$scope.changeRoute('/audio');
+			} else {
+				$scope.status = data;
+			}
+		}).error(function(data, status, headers, config) {
+			$scope.status = status + ' ' + headers;
+		});
+	}
+});
+
 mediaApp.controller('NewAudioCtrl', function($scope, $http) {
 	// Setting some defaults:
 	$scope.audio = {
@@ -117,8 +161,9 @@ mediaApp.controller('NewAudioCtrl', function($scope, $http) {
 			$scope.$apply();
 		}
 	};
-
-	$scope.audio.doClick = function(item, event) {
+	
+	$scope.save = function() {
+		console.log('saving ...');
 		var request = $http({
 			url : '/audio/add',
 			method : "POST",
@@ -164,18 +209,7 @@ mediaApp.controller('AudioCtrl', function($scope, $http, $attrs, audioService) {
 		}
 	};
 	$scope.edit = function() {
-		$scope.changeRoute('/audio/form/edit/' + $scope.currentAudio.title);
-	};
-});
-
-mediaApp.controller('EditAudioCtrl', function($scope, $http, $attrs) {
-	$scope.audio = {};
-	$http.get('/audio/details/' + $attrs.model).success(function(data) {
-		$scope.audio = data;
-	});
-	
-	$scope.back = function() {
-		window.history.back();
+		$scope.changeRoute('/audio/form/edit/' + $scope.currentAudio.id);
 	};
 });
 

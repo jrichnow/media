@@ -11,10 +11,11 @@ GET     /movies/list                controllers.Movies.list
 GET     /movies/:title              controllers.Movies.title(title:String)
 GET     /audio                      controllers.AudioBooks.index
 POST    /audio/add                  controllers.AudioBooks.add
-GET     /audio/detailsForm/:title   controllers.AudioBooks.detailsForm(title:String)
-GET     /audio/details/:title       controllers.AudioBooks.details(title:String)
+GET     /audio/detailsForm/:id      controllers.AudioBooks.detailsForm(id:String)
+GET     /audio/details/:id          controllers.AudioBooks.details(id:String)
+POST    /audio/edit                 controllers.AudioBooks.edit
 GET     /audio/list                 controllers.AudioBooks.list
-GET     /audio/form/edit/:title     controllers.AudioBooks.editForm(title:String)
+GET     /audio/form/edit/:id        controllers.AudioBooks.editForm(id:String)
 GET     /audio/form/new             controllers.AudioBooks.newForm
 GET     /audio/:title               controllers.AudioBooks.title(title:String)
 GET     /books                      controllers.Books.index
