@@ -23,7 +23,7 @@
 			<tr ng-repeat="audio in $data | filter:query | orderBy:audioProp">
             	<td width="30%" data-title="'Title'" sortable="'title'" filter="{'title': 'text'}"><a ng-href="/audio/detailsForm/{{audio.id}}">{{audio.title}}</a></td>
             	<td width="30%" data-title="'Author'" sortable="'author'" filter="{'author': 'text'}" ng-click="getCurrAudio()">{{audio.author}}</td>
-				<td data-title="'Genre'" sortable="'genre'" filter="{'genre': 'text'}">{{audio.genre}}</td>
+				<td data-title="'Genre'" sortable="'genre'" filter="{'genre': 'text'}">{{audio.genre.join(', ')}}</td>
 				<td width="100px" data-title="'Language'" sortable="'language'" filter="{'language': 'text'}">{{audio.language}}</td>
 				<td width="80px" align="center" data-title="'Year'" sortable="'year'" filter="{'year': 'text'}">{{audio.year}}</td>
 				<td width="60px" data-title="''">{{audio.folder}}/{{audio.dvd}}</td>
