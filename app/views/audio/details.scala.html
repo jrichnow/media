@@ -15,8 +15,8 @@
 		<table class='table table-striped table-hover table-condensed'>
 			<tbody>
 				<tr><td width="150px">Title:</td><td><strong>{{currentAudio.title}}</strong></td></tr>
-				<tr><td>Author:</td><td><strong>{{currentAudio.author}}</strong></td></tr>
-				<tr><td>Plot:</td><td><strong>{{currentAudio.plot}}</strong></td></tr>
+				<tr><td>Author:</td><td>{{currentAudio.author}}</td></tr>
+				<tr><td>Plot:</td><td>{{currentAudio.plot}}</td></tr>
 				<tr><td>Release Year:</td><td>{{currentAudio.year}}</td></tr>
 				<tr><td>Language:</td><td>{{currentAudio.language}}</td></tr>
 				<tr><td>Audio Format:</td><td>{{currentAudio.format}}</td></tr>
@@ -25,7 +25,10 @@
 			</tbody>
 		</table>
 	</div>
+	<!--  
 	<pre>debug = {{currentAudio | json}}</pre>
+	-->
+	<button ng-click="remove()" class="btn btn-default pull-right">Delete</button>
 	<button ng-click="edit()" class="btn btn-default pull-right">Edit</button>
 	<button ng-click="back()" class="btn btn-default pull-right">Back</button>
 </div>

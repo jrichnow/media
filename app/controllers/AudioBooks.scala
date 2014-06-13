@@ -45,6 +45,12 @@ object AudioBooks extends Controller {
     Ok(views.html.audio.form("EditAudioCtrl", id))
   }
 
+  def delete(id: String) = Action {
+    AudioBookDao.delete(id);
+    audioBooks = AudioBookDao.findAll
+    Ok("")
+  }
+
   def add = Action(parse.json) { request =>
     val audioJsonString = request.body
     println(s"received add audio request: $audioJsonString")

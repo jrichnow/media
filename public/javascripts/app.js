@@ -198,6 +198,12 @@ mediaApp.controller('AudioCtrl', function($scope, $http, $attrs, audioService) {
 		window.history.back();
 	};
 	
+	$scope.remove = function() {
+		$http.get('/audio/delete/' + $attrs.title).success(function(data) {
+			$scope.changeRoute('/audio');
+		});
+	};
+	
 	$scope.changeRoute = function(url, forceReload) {
 		$scope = $scope || angular.element(document).scope();
 		if (forceReload || $scope.$$phase) { // that's right TWO dollar

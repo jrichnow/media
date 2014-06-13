@@ -11,6 +11,7 @@ GET     /movies/list                controllers.Movies.list
 GET     /movies/:title              controllers.Movies.title(title:String)
 GET     /audio                      controllers.AudioBooks.index
 POST    /audio/add                  controllers.AudioBooks.add
+GET     /audio/delete/:id           controllers.AudioBooks.delete(id:String)
 GET     /audio/detailsForm/:id      controllers.AudioBooks.detailsForm(id:String)
 GET     /audio/details/:id          controllers.AudioBooks.details(id:String)
 POST    /audio/edit                 controllers.AudioBooks.edit
