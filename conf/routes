@@ -18,6 +18,8 @@ POST    /audio/edit                 controllers.AudioBooks.edit
 GET     /audio/list                 controllers.AudioBooks.list
 GET     /audio/form/edit/:id        controllers.AudioBooks.editForm(id:String)
 GET     /audio/form/new             controllers.AudioBooks.newForm
+GET     /audio/recent               controllers.AudioBooks.recent
+GET     /audio/recentList           controllers.AudioBooks.recentList
 GET     /audio/:title               controllers.AudioBooks.title(title:String)
 GET     /books                      controllers.Books.index
 

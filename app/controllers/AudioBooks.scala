@@ -29,7 +29,6 @@ object AudioBooks extends Controller {
   }
 
   def details(id: String) = Action {
-    println(audioBooks)
     Ok(Json.toJson(audioBooks.find(audio => audio.id.get == id).get))
   }
 
@@ -38,17 +37,25 @@ object AudioBooks extends Controller {
   }
 
   def newForm = Action {
-    Ok(views.html.audio.form("NewAudioCtrl", ""))
+    Ok(views.html.audio.form("NewAudioCtrl", "", "Adding New"))
   }
 
   def editForm(id: String) = Action {
-    Ok(views.html.audio.form("EditAudioCtrl", id))
+    Ok(views.html.audio.form("EditAudioCtrl", id, "Editing"))
   }
 
   def delete(id: String) = Action {
     AudioBookDao.delete(id);
     audioBooks = AudioBookDao.findAll
     Ok("")
+  }
+  
+  def recent = Action {
+    Ok(views.html.audio.recent())
+  }
+  
+  def recentList = Action {
+    Ok(Json.toJson(AudioBookDao.recent))
   }
 
   def add = Action(parse.json) { request =>

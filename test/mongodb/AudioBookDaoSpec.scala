@@ -74,5 +74,31 @@ class AudioBookDaoSpec extends Specification {
       
       AudioBookDao.findAll.size === 0
     }
+    
+    "return a limited list of recent audio books" in new WithApplication {
+      audioColl.drop();
+      AudioBookDao.add(AudioBook(title = "Dreamland", author = "Mr. Writer", year = 2000, folder = 1, dvd = 2))
+      AudioBookDao.add(AudioBook(title = "Dreamland", author = "Mr. Writer", year = 2001, folder = 1, dvd = 2))
+      AudioBookDao.add(AudioBook(title = "Dreamland", author = "Mr. Writer", year = 2002, folder = 1, dvd = 2))
+      AudioBookDao.add(AudioBook(title = "Dreamland", author = "Mr. Writer", year = 2003, folder = 1, dvd = 2))
+      AudioBookDao.add(AudioBook(title = "Dreamland", author = "Mr. Writer", year = 2004, folder = 1, dvd = 2))
+      AudioBookDao.add(AudioBook(title = "Dreamland", author = "Mr. Writer", year = 2005, folder = 1, dvd = 2))
+      AudioBookDao.add(AudioBook(title = "Dreamland", author = "Mr. Writer", year = 2006, folder = 1, dvd = 2))
+      AudioBookDao.add(AudioBook(title = "Dreamland", author = "Mr. Writer", year = 2007, folder = 1, dvd = 2))
+      AudioBookDao.add(AudioBook(title = "Dreamland", author = "Mr. Writer", year = 2008, folder = 1, dvd = 2))
+      AudioBookDao.add(AudioBook(title = "Dreamland", author = "Mr. Writer", year = 2009, folder = 1, dvd = 2))
+      AudioBookDao.add(AudioBook(title = "Dreamland", author = "Mr. Writer", year = 2010, folder = 1, dvd = 2))
+      AudioBookDao.add(AudioBook(title = "Dreamland", author = "Mr. Writer", year = 2011, folder = 1, dvd = 2))
+      AudioBookDao.add(AudioBook(title = "Dreamland", author = "Mr. Writer", year = 2012, folder = 1, dvd = 2))
+      
+      val recentBooks = AudioBookDao.recent
+      
+      recentBooks.size === 10
+      var year = 2012
+      for (i <- 0 to 9) {
+    	  recentBooks(i).year === year
+    	  year = year - 1
+      }
+    }
   }
 }

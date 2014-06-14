@@ -46,7 +46,12 @@ object AudioBookDao {
     val results = audioColl.find()
     val audioBooks = results.map(dbObjectToAudioBook(_).get)
     audioBooks.toSeq
-//    Seq.empty
+    //    Seq.empty
+  }
+
+  def recent(): Seq[AudioBook] = {
+    val results = audioColl.find().sort(MongoDBObject("id" -> -1)).limit(10)
+    results.map(dbObjectToAudioBook(_).get).toSeq
   }
 
   def findById(id: String): Option[AudioBook] = {
@@ -71,7 +76,7 @@ object AudioBookDao {
     }
   }
 
-  private def dbObjectToAudioBook(dbObject: DBObject):Option[AudioBook] = {
+  private def dbObjectToAudioBook(dbObject: DBObject): Option[AudioBook] = {
     Json.parse(dbObject.toString()).validate[AudioBook] match {
       case s: JsSuccess[AudioBook] => Option(s.get)
       case e: JsError => None
