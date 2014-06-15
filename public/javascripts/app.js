@@ -1,4 +1,4 @@
-var mediaApp = angular.module('mediaApp', [ 'ngTable' ]);
+var mediaApp = angular.module('mediaApp', [ 'ngTable', 'ui.bootstrap' ]);
 
 mediaApp.controller('MovieListCtrl', function($scope, $http, $filter,
 		ngTableParams) {
@@ -124,15 +124,17 @@ mediaApp.controller('RecentListCtrl', function($scope, $http, audioService,
 });
 
 mediaApp.controller('EditAudioCtrl', function($scope, $http, $attrs) {
-	$scope.audio = {'title': 'test'};
+	$scope.audio = {
+		'title' : 'test'
+	};
 	$http.get('/audio/details/' + $attrs.model).success(function(data) {
 		$scope.audio = data;
 	});
-	
+
 	$scope.back = function() {
 		window.history.back();
 	};
-	
+
 	$scope.changeRoute = function(url, forceReload) {
 		$scope = $scope || angular.element(document).scope();
 		if (forceReload || $scope.$$phase) { // that's right TWO dollar
@@ -143,7 +145,7 @@ mediaApp.controller('EditAudioCtrl', function($scope, $http, $attrs) {
 			$scope.$apply();
 		}
 	};
-	
+
 	$scope.save = function() {
 		console.log('editing ...')
 		var request = $http({
@@ -167,62 +169,67 @@ mediaApp.controller('EditAudioCtrl', function($scope, $http, $attrs) {
 	}
 });
 
-mediaApp.controller('NewAudioCtrl', function($scope, $http) {
-	// Setting some defaults:
-	$scope.audio = {
-		'title' : 'Dreamland',
-		'author' : 'Mr. moo',
-		'year' : 2000,
-		'language' : 'English',
-		'imageUrl' : 'http://i59.fastpic.ru/big/2013/0901/a7/01afd2d92e408eb701b3df62718c04a7.jpg',
-		'format' : 'mp3',
-		'folder' : 1,
-		'dvd' : 12,
-	};
+mediaApp
+		.controller(
+				'NewAudioCtrl',
+				function($scope, $http) {
+					// Setting some defaults:
+					$scope.audio = {
+						'title' : 'Dreamland',
+						'author' : 'Mr. moo',
+						'year' : 2000,
+						'language' : 'English',
+						'imageUrl' : 'http://i59.fastpic.ru/big/2013/0901/a7/01afd2d92e408eb701b3df62718c04a7.jpg',
+						'format' : 'mp3',
+						'folder' : 1,
+						'dvd' : 12,
+					};
 
-	$scope.back = function() {
-		window.history.back();
-	};
-	
-	$scope.changeRoute = function(url, forceReload) {
-		$scope = $scope || angular.element(document).scope();
-		if (forceReload || $scope.$$phase) { // that's right TWO dollar
-			// signs: $$phase
-			window.location = url;
-		} else {
-			$location.path(url);
-			$scope.$apply();
-		}
-	};
-	
-	$scope.save = function() {
-		console.log('saving ...');
-		var request = $http({
-			url : '/audio/add',
-			method : "POST",
-			data : JSON.stringify($scope.audio),
-			transformRequest : false,
-			headers : {
-				'Content-Type' : 'application/json'
-			}
-		}).success(function(data, status, headers, config) {
-			$scope.audioResponse = data;
-			if (data.validation == true) {
-				$scope.changeRoute('/audio');
-			} else {
-				$scope.status = data;
-			}
-		}).error(function(data, status, headers, config) {
-			$scope.status = status + ' ' + headers;
-		});
-	};
-});
+					$scope.back = function() {
+						window.history.back();
+					};
 
-mediaApp.controller('AudioCtrl', function($scope, $http, $attrs, audioService) {
+					$scope.changeRoute = function(url, forceReload) {
+						$scope = $scope || angular.element(document).scope();
+						if (forceReload || $scope.$$phase) { // that's right
+							// TWO dollar
+							// signs: $$phase
+							window.location = url;
+						} else {
+							$location.path(url);
+							$scope.$apply();
+						}
+					};
+
+					$scope.save = function() {
+						console.log('saving ...');
+						var request = $http({
+							url : '/audio/add',
+							method : "POST",
+							data : JSON.stringify($scope.audio),
+							transformRequest : false,
+							headers : {
+								'Content-Type' : 'application/json'
+							}
+						}).success(function(data, status, headers, config) {
+							$scope.audioResponse = data;
+							if (data.validation == true) {
+								$scope.changeRoute('/audio');
+							} else {
+								$scope.status = data;
+							}
+						}).error(function(data, status, headers, config) {
+							$scope.status = status + ' ' + headers;
+						});
+					};
+				});
+
+mediaApp.controller('AudioCtrl', function($scope, $http, $attrs, $modal,
+		audioService) {
 	$http.get('/audio/details/' + $attrs.title).success(function(data) {
 		$scope.currentAudio = data;
 	});
-	
+
 	$scope.syncData = function() {
 		$scope.currentAudio = audioService.getCurrentAudio();
 	};
@@ -230,13 +237,28 @@ mediaApp.controller('AudioCtrl', function($scope, $http, $attrs, audioService) {
 	$scope.back = function() {
 		window.history.back();
 	};
-	
-	$scope.remove = function() {
-		$http.get('/audio/delete/' + $attrs.title).success(function(data) {
-			$scope.changeRoute('/audio');
+
+	$scope.remove = function(size) {
+		var modalInstance = $modal.open({
+			templateUrl : 'deleteModalContent.html',
+			controller : ModalInstanceCtrl,
+			size : 'sm',
+			resolve : {
+			// Nothing to do here.
+			}
 		});
+
+		modalInstance.result.then(function() {
+			console.log("Deleting audio book " + $attrs.title);
+			$http.get('/audio/delete/' + $attrs.title).success(function(data) {
+				$scope.changeRoute('/audio');
+			});
+		}, function() {
+			console.log("Do nothing");
+		});
+
 	};
-	
+
 	$scope.changeRoute = function(url, forceReload) {
 		$scope = $scope || angular.element(document).scope();
 		if (forceReload || $scope.$$phase) { // that's right TWO dollar
@@ -252,6 +274,15 @@ mediaApp.controller('AudioCtrl', function($scope, $http, $attrs, audioService) {
 	};
 });
 
+var ModalInstanceCtrl = function($scope, $modalInstance) {
+	$scope.ok = function() {
+		$modalInstance.close();
+	};
+
+	$scope.cancel = function() {
+		$modalInstance.dismiss('cancel');
+	};
+};
 
 mediaApp.service('audioService', function() {
 	var currentAudio = {};

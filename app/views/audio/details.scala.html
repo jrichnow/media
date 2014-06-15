@@ -8,6 +8,18 @@
 	</div>
 </div>
 <div class="row" ng-controller="AudioCtrl" title="@id">
+	<script type="text/ng-template" id="deleteModalContent.html">
+        <div class="modal-header">
+            <h3 class="modal-title">Confirmation</h3>
+        </div>
+        <div class="modal-body">
+            <p>Do you want to delete this audio book?</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" ng-click="ok()">Yes</button>
+            <button class="btn btn-warning" ng-click="cancel()">No</button>
+        </div>
+    </script>
 	<div class="col-md-3 col-sm-4 sidebar" style="margin-top:0px">
 		<img width="250" ng-src="{{currentAudio.imageUrl}}"/>
 	</div>
