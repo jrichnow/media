@@ -9,12 +9,21 @@ import com.mongodb.casbah.commons.MongoDBObject
 import play.api.libs.json._
 import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
+import play.api.Play
 
 object AudioBookDao {
 
-  val client = MongoClient("localhost", 27017)
-  val db = client("mediaTest")
-  val audioColl = db("audio")
+  val mongoDbHost = Play.current.configuration.getString("mongodb.host").get
+  val mongoDbPort = Play.current.configuration.getInt("mongodb.port").get
+  val mongoDbDatabase = Play.current.configuration.getString("mongodb.media.db").get
+  val mongoDbAudioCollection = Play.current.configuration.getString("mongodb.media.audio.collection").get
+
+  val client = MongoClient(mongoDbHost, mongoDbPort)
+  val db = client(mongoDbDatabase)
+  val audioColl = db(mongoDbAudioCollection)
+//  val client = MongoClient("localhost", 27017)
+//  val db = client("mediaTest")
+//  val audioColl = db("audio")
 
   def add(audioBook: AudioBook): AudioBook = {
     println(s"Adding new audio book $audioBook")
