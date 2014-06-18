@@ -21,9 +21,6 @@ object AudioBookDao {
   val client = MongoClient(mongoDbHost, mongoDbPort)
   val db = client(mongoDbDatabase)
   val audioColl = db(mongoDbAudioCollection)
-//  val client = MongoClient("localhost", 27017)
-//  val db = client("mediaTest")
-//  val audioColl = db("audio")
 
   def add(audioBook: AudioBook): AudioBook = {
     println(s"Adding new audio book $audioBook")

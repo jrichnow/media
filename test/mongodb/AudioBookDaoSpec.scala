@@ -11,6 +11,7 @@ import org.specs2.specification.BeforeExample
 
 @RunWith(classOf[JUnitRunner])
 class AudioBookDaoSpec extends Specification {
+  
   val client = MongoClient("localhost", 27017)
   val db = client("mediaTest")
   val audioColl = db("audio")
