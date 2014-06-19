@@ -1,21 +1,22 @@
 package utils
 
-import org.junit.runner.RunWith
-import org.specs2.runner.JUnitRunner
-import org.specs2.mutable.Specification
-import play.api.test.WithApplication
-import play.api.test.WithApplication
+import org.scalatestplus.play.PlaySpec
+import org.scalatestplus.play.OneAppPerSuite
+import play.api.test.FakeApplication
 
-@RunWith(classOf[JUnitRunner])
-class FileHandlerSpec extends Specification {
+
+class FileHandlerSpec extends PlaySpec with OneAppPerSuite {
+  
+  implicit override lazy val app: FakeApplication =
+    FakeApplication(additionalConfiguration = Map("mongodb.media.db" -> "mediaTest"))
 
   "FileHandler" should {
 
-    "export all audio data to a file in JSON format" in new WithApplication {
+    "export all audio data to a file in JSON format" in {
       FileHandler.exportAudio
     }
 
-    "import a JSON file and insert all data into MongoDb" in new WithApplication {
+    "import a JSON file and insert all data into MongoDb" in {
       FileHandler.importAudio
     }
   }

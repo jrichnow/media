@@ -7,9 +7,10 @@ import play.api.libs.json.Json
 import play.api.Play
 import dao.AudioBookDao
 import scala.io.Source
+import play.api.libs.json.JsArray
 
 object FileHandler {
-  
+
   val backupFolder = Play.current.configuration.getString("backup.folder").get
 
   def exportAudio() {
@@ -17,11 +18,12 @@ object FileHandler {
     pw.print(Json.prettyPrint(Json.toJson(AudioBookDao.findAll)))
     pw.close()
   }
-  
+
   def importAudio() {
-	  val beforeLines = Source.fromFile(backupFolder + "audio-backup.json").getLines().toList
-	  for (line <- beforeLines) {
-	    println("-- " + line)
-	  }
+    val audioJsonString = Source.fromFile(backupFolder + "audio-backup.json").getLines().toList.mkString("")
+    val audioJson = Json.parse(audioJsonString)
+    
+    val bookList = audioJson.as[List[AudioBook]]
+    bookList.foreach(println(_))
   }
 }
