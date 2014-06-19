@@ -19,15 +19,15 @@ class AudioBookDaoSpec extends Specification {
   "AudioBookDao" should {
 
     "return no audio book when collection is empty" in new WithApplication {
-      audioColl.drop();
-      AudioBookDao.findAll.size === 0;
+      audioColl.drop()
+      AudioBookDao.findAll.size === 0
 
       val bookOption = AudioBookDao.findById("5393ed7dc0260baea0990019")
       bookOption must beNone
     }
 
     "add an audio book" in new WithApplication {
-      audioColl.drop();
+      audioColl.drop()
       val audioBook = AudioBook(title = "Dreamland", author = "Mr. Writer", year = 2012, folder = 1, dvd = 2)
       audioBook.id must beNone
 
@@ -47,7 +47,7 @@ class AudioBookDaoSpec extends Specification {
     }
 
     "update an audio book" in new WithApplication {
-      audioColl.drop();
+      audioColl.drop()
       val audioBook = AudioBook(title = "Dreamland", author = "Mr. Writer", year = 2012, folder = 1, dvd = 2)
       val updatedAudioBook = AudioBookDao.add(audioBook)
       updatedAudioBook.year must equalTo(2012)
@@ -65,7 +65,7 @@ class AudioBookDaoSpec extends Specification {
     }
 
     "delete an audio book" in new WithApplication {
-      audioColl.drop();
+      audioColl.drop()
       val audioBook = AudioBook(title = "Dreamland", author = "Mr. Writer", year = 2012, folder = 1, dvd = 2)
       val updatedAudioBook = AudioBookDao.add(audioBook)
       
@@ -77,7 +77,7 @@ class AudioBookDaoSpec extends Specification {
     }
     
     "return a limited list of recent audio books" in new WithApplication {
-      audioColl.drop();
+      audioColl.drop()
       AudioBookDao.add(AudioBook(title = "Dreamland", author = "Mr. Writer", year = 2000, folder = 1, dvd = 2))
       AudioBookDao.add(AudioBook(title = "Dreamland", author = "Mr. Writer", year = 2001, folder = 1, dvd = 2))
       AudioBookDao.add(AudioBook(title = "Dreamland", author = "Mr. Writer", year = 2002, folder = 1, dvd = 2))

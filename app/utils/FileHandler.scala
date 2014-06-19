@@ -8,22 +8,29 @@ import play.api.Play
 import dao.AudioBookDao
 import scala.io.Source
 import play.api.libs.json.JsArray
+import org.joda.time.format._
+import org.joda.time.DateTime
 
 object FileHandler {
 
   val backupFolder = Play.current.configuration.getString("backup.folder").get
+  val dateFormat = DateTimeFormat.forPattern("yyyy-MM-dd_hh-mm")
 
-  def exportAudio() {
-    val pw = new PrintWriter(new File(backupFolder + "audio-backup.json"))
+  def exportAudio(): String = {
+    val fileName = backupFolder + "audio_" + dateFormat.print(new DateTime) + ".json"
+    val pw = new PrintWriter(new File(fileName))
     pw.print(Json.prettyPrint(Json.toJson(AudioBookDao.findAll)))
     pw.close()
+    fileName
   }
 
-  def importAudio() {
-    val audioJsonString = Source.fromFile(backupFolder + "audio-backup.json").getLines().toList.mkString("")
+  def importAudio(fileName: String) {
+    val audioJsonString = Source.fromFile(fileName).getLines().toList.mkString("")
     val audioJson = Json.parse(audioJsonString)
-    
+
     val bookList = audioJson.as[List[AudioBook]]
-    bookList.foreach(println(_))
+    for (audioBook <- bookList) {
+      AudioBookDao.add(audioBook)
+    }
   }
 }
