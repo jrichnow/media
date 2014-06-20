@@ -9,6 +9,7 @@ import dao.AudioBookDao
 class FileHandlerSpec extends PlaySpec with OneAppPerSuite {
   
   val testDbName = "mediaTest"
+  
   val client = MongoClient("localhost", 27017)
   val db = client(testDbName)
   val audioColl = db("audio")
