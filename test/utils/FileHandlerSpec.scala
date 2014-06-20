@@ -6,6 +6,7 @@ import play.api.test.FakeApplication
 import com.mongodb.casbah.MongoClient
 import dao.AudioBookDao
 import model.AudioBook
+import java.io.File
 
 class FileHandlerSpec extends PlaySpec with OneAppPerSuite {
   
@@ -35,6 +36,8 @@ class FileHandlerSpec extends PlaySpec with OneAppPerSuite {
       
       FileHandler.importAudio(fileName)
       AudioBookDao.findAll.size === 1;
+      
+      new File(fileName).delete()
     }
   }
 }

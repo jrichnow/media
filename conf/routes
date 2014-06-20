@@ -22,6 +22,8 @@ GET     /audio/recent               controllers.AudioBooks.recent
 GET     /audio/recentList           controllers.AudioBooks.recentList
 GET     /audio/:title               controllers.AudioBooks.title(title:String)
 GET     /books                      controllers.Books.index
+GET     /admin                      controllers.Admin.index
+GET     /admin/export/:media        controllers.Admin.export(media:String)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
