@@ -38,4 +38,8 @@ object FileHandler {
   def getBackupFiles():Array[File] = {
     new File(backupFolder).listFiles()
   }
+  
+  def delete(fileName: String) {
+    new File(backupFolder + fileName).delete()
+  }
 }

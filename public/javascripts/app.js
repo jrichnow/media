@@ -290,7 +290,7 @@ mediaApp.service('audioService', function() {
 });
 
 mediaApp.controller('FileListCtrl', function($scope, $http, ngTableParams) {
-	$http.get('/admin/list').success(
+	$http.get('/admin/file/list').success(
 			function(data) {
 				$scope.fileList = data;
 

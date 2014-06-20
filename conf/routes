@@ -26,10 +26,11 @@ GET     /audio/:title               controllers.AudioBooks.title(title:String)
 GET     /books                      controllers.Books.index
 
 GET     /admin                      controllers.Admin.index
-GET     /admin/export/:media        controllers.Admin.export(media:String)
+GET     /admin/file/delete/:name    controllers.Admin.delete(name:String)
+GET     /admin/file/export/:media   controllers.Admin.export(media:String)
+GET     /admin/file/list        	controllers.Admin.list
+GET     /admin/file/upload          controllers.Admin.upload
 GET     /admin/file/:name           controllers.Admin.file(name:String)
-GET     /admin/upload               controllers.Admin.upload
-GET     /admin/list        		    controllers.Admin.list
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
