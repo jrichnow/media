@@ -288,3 +288,26 @@ mediaApp.service('audioService', function() {
 		}
 	}
 });
+
+mediaApp.controller('FileListCtrl', function($scope, $http, ngTableParams) {
+	$http.get('/admin/list').success(
+			function(data) {
+				$scope.fileList = data;
+
+				$scope.tableParams = new ngTableParams({
+					page : 1,
+					count : 10,
+				// count per page
+				}, {
+					total : data.length,
+					getData : function($defer, params) {
+						params.total(data.length); // set total for
+						// recalc pagination
+						$defer.resolve(data.slice((params.page() - 1)
+								* params.count(), params.page()
+								* params.count()));
+					}
+				});
+			});
+
+});

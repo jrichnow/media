@@ -34,4 +34,8 @@ object FileHandler {
       AudioBookDao.add(audioBook)
     }
   }
+  
+  def getBackupFiles():Array[File] = {
+    new File(backupFolder).listFiles()
+  }
 }
