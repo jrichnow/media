@@ -4,7 +4,6 @@ import play.api._
 import play.api.mvc._
 import play.api.libs.json._
 import model.Movie
-import scala.collection.immutable.Seq
 import dispatch._
 import dispatch.Defaults._
 import java.net.URLEncoder
@@ -29,6 +28,9 @@ object Movies extends Controller {
   }
 
   def list = Action {
+    if (movies.isEmpty) {
+      movies = MovieDao.findAll
+    }
     Ok(Json.toJson(movies))
   }
 
@@ -73,9 +75,9 @@ object Movies extends Controller {
     Ok(getOmdbJson(title))
   }
 
-  def init(moviesSeq: Seq[Movie]): Unit = {
-    movies = moviesSeq
-  }
+//  def init(moviesSeq: Seq[Movie]): Unit = {
+//    movies = moviesSeq
+//  }
 
   def findByTitle(title: String): Movie = {
     movies.find(movie => movie.title == title).get

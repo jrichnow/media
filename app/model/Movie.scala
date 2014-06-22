@@ -28,9 +28,9 @@ object Movie {
     (__ \ "subTitle").readNullable[String] and
     (__ \ "genre").readNullable[Array[String]] and
     (__ \ "url").readNullable[String] and
-    (__ \ "year").read[Int](min(1950) keepAnd max(2030)) and
+    (__ \ "year").read[Int](min(0) keepAnd max(2030)) and //TODO reset min year
     (__ \ "folder").read[Int](min(1) keepAnd max(10)) and
-    (__ \ "dvd").read[Int](min(1) keepAnd max(200)))(Movie.apply _)
+    (__ \ "dvd").read[Int](min(1) keepAnd max(300)))(Movie.apply _)
 
   implicit val movieJsonWrites = new Writes[Movie] {
     def writes(movie: Movie) = Json.obj(
