@@ -23,7 +23,7 @@ import play.api.test.FakeApplication
 import com.mongodb.casbah.MongoClient
 import model.AudioBook
 
-class AudioSpec extends PlaySpec with OneAppPerSuite {
+class AudioBookSpec extends PlaySpec with OneAppPerSuite {
 
   val testDbName = "mediaTest"
 
@@ -34,9 +34,9 @@ class AudioSpec extends PlaySpec with OneAppPerSuite {
   implicit override lazy val app: FakeApplication =
     FakeApplication(additionalConfiguration = Map("mongodb.media.db" -> testDbName))
 
-  "Audio" should {
+  "AudioBooks Controller" should {
 
-    "return the correct audio book path when adding a valid Audio book in the request" in {
+    "return the correct redirect path when adding a valid Audio book in the request" in {
       audioColl.drop()
       val result = controllers.AudioBooks.list()(FakeRequest())
 

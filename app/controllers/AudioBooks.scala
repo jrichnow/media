@@ -1,13 +1,15 @@
 package controllers
 
-import play.api._
-import play.api.mvc._
-import play.api.libs.json._
-import play.api.libs.json.Reads._
-import play.api.libs.functional.syntax._
-import model.AudioBook
-import org.bson.types.ObjectId
 import dao.AudioBookDao
+import model.AudioBook
+import play.api.libs.json.JsArray
+import play.api.libs.json.JsError
+import play.api.libs.json.JsSuccess
+import play.api.libs.json.JsValue
+import play.api.libs.json.Json
+import play.api.libs.json.Json.toJsFieldJsValueWrapper
+import play.api.mvc.Action
+import play.api.mvc.Controller
 
 object AudioBooks extends Controller {
 
@@ -64,7 +66,7 @@ object AudioBooks extends Controller {
     val audioJson = Json.toJson(audioJsonString)
     println(s"converted Json: $audioJson")
 
-    val (isValid, jsonResult, audioBookOption) = validateJson(audioJson)
+    val (isValid, jsonResult, audioBookOption) = validateAudioJson(audioJson)
     if (isValid) {
       audioBooks = audioBooks :+ AudioBookDao.add(audioBookOption.get)
     }
@@ -77,7 +79,7 @@ object AudioBooks extends Controller {
     val audioJson = Json.toJson(audioJsonString)
     println(s"converted Json: $audioJson")
 
-    val (isValid, jsonResult, audioBookOption) = validateJson(audioJson)
+    val (isValid, jsonResult, audioBookOption) = validateAudioJson(audioJson)
     if (isValid) {
       val validatedAudioBook = audioBookOption.get
       AudioBookDao.update(validatedAudioBook)
@@ -86,7 +88,7 @@ object AudioBooks extends Controller {
     Ok(jsonResult)
   }
 
-  def validateJson(audioJson: JsValue): (Boolean, JsValue, Option[AudioBook]) = {
+  private def validateAudioJson(audioJson: JsValue): (Boolean, JsValue, Option[AudioBook]) = {
     audioJson.validate[AudioBook] match {
       case s: JsSuccess[AudioBook] => {
         (true, Json.obj("validation" -> true, "redirectPath" -> "/audio"), Option(s.get))
