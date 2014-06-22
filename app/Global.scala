@@ -11,16 +11,17 @@ object Global extends GlobalSettings {
     try {
       val xmlMovies = XML.loadFile("/Users/jensr/Temp/20130421_movies.xml")
       val movies = (xmlMovies \ "movie").map(
-        movie => Movie((movie \ "@title").text,
-          (movie \ "@alternativeTitle").text,
-          (movie \ "@originalTitle").text,
-          (movie \ "@language").text,
-          (movie \ "@subTitle").text,
-          (movie \ "@genres").text,
-          (movie \ "@url").text,
-          (movie \ "@releaseYear").text.toInt,
-          (movie \ "locations" \ "location" \ "@folder").text.toInt,
-          (movie \ "locations" \ "location" \ "@dvdNumber").text.toInt))
+        movie => Movie(
+            title = (movie \ "@title").text,
+            alternativeTitle = Some((movie \ "@alternativeTitle").text),
+            originalTitle = Some((movie \ "@originalTitle").text),
+            language = Some((movie \ "@language").text),
+          subTitle = Some((movie \ "@subTitle").text),
+          genres = Some((movie \ "@genres").text.split(", ")),
+          url = Some((movie \ "@url").text),
+          year = (movie \ "@releaseYear").text.toInt,
+          folder = (movie \ "locations" \ "location" \ "@folder").text.toInt,
+          dvd = (movie \ "locations" \ "location" \ "@dvdNumber").text.toInt))
       Movies.init(movies)
       println(s"... finished reading of ${movies.size} movies")
     } catch {

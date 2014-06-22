@@ -4,7 +4,6 @@ import play.api.libs.json._
 import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
 
-
 case class AudioBook(
   val id: Option[String] = None,
   val title: String,
