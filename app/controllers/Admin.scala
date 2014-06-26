@@ -15,8 +15,16 @@ object Admin extends Controller {
   }
 
   def export(media:String) = Action {
-    println("exporting audio data ...")
-    FileHandler.exportAudio()
+    media match {
+      case "audio" => {
+    	  println("exporting audio data ...")
+    	  FileHandler.exportAudio()
+      }
+      case "movie" => {
+    	  println("exporting movie data ...")
+    	  FileHandler.exportMovies()
+      }
+    }
     Ok(views.html.admin.index())
   }
 

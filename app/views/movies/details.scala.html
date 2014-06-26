@@ -1,4 +1,4 @@
-@(movie: model.Movie)
+@(movie:model.Movie)
 
 @main() {
 <div class="row">
@@ -30,14 +30,14 @@
 				<tr><th colspan="2">IMDB Data</th></tr>
 			</thead>
 			<tbody>
-				<tr><td width="150px">Rated:</td><td>{{movie.Rated}}</td></tr>
-				<tr><td>Runtime:</td><td>{{movie.Runtime}}</td></tr>
-				<tr><td>Actors:</td><td>{{movie.Actors}}</td></tr>
-				<tr><td>Director(s):</td><td>{{movie.Director}}</td></tr>
-				<tr><td>Writer(s):</td><td>{{movie.Writer}}</td></tr>
-				<tr><td>Country:</td><td>{{movie.Country}}</td></tr>
-				<tr><td>Plot:</td><td>{{movie.Plot}}</td></tr>
-				<tr><td>IMDB Rating:</td><td>{{movie.imdbRating}} / {{movie.imdbVotes}} Users</td></tr>
+				<tr><td width="150px">Rated:</td><td>{{imdb.Rated}}</td></tr>
+				<tr><td>Runtime:</td><td>{{imdb.Runtime}}</td></tr>
+				<tr><td>Actors:</td><td>{{imdb.Actors}}</td></tr>
+				<tr><td>Director(s):</td><td>{{imdb.Director}}</td></tr>
+				<tr><td>Writer(s):</td><td>{{imdb.Writer}}</td></tr>
+				<tr><td>Country:</td><td>{{imdb.Country}}</td></tr>
+				<tr><td>Plot:</td><td>{{imdb.Plot}}</td></tr>
+				<tr><td>IMDB Rating:</td><td>{{imdb.imdbRating}} / {{imdb.imdbVotes}} Users</td></tr>
 			</tbody>
 		</table>
 	</div>
