@@ -126,6 +126,10 @@ object Movies extends Controller {
       }
     }
   }
+  
+  def newForm = Action {
+    Ok(views.html.movies.form("NewMovieCtrl", "", "Adding New"))
+  }
 
   def editForm(id: String) = Action {
     Ok(views.html.movies.form("EditMovieCtrl", id, "Editing"))
