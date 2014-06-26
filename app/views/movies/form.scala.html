@@ -1,0 +1,103 @@
+@(ctrl: String, id:String, action :String)
+
+@main() {
+<div class="row">
+	<div class="col-lg-12">
+     	<h1 class="page-header">Movies
+     		<small>Library / @action Movie</small>
+     	</h1>
+	</div>
+</div>
+<div class="row" ng-controller="@ctrl" model="@id" novalidate>
+	<form name="movieForm" class="form-horizontal" role="form" novalidate>
+		<div class="form-group" ng-class="{ 'has-error' : movieForm.title.$invalid && !movieForm.title.$pristine }">
+    		<label class="col-sm-2 control-label">Title</label>
+    		<div class="col-sm-9">
+      			<input type="text" name="title" class="form-control" placeholder="Movie Title" ng-model="movie.title" required>
+      			<p ng-show="movieForm.title.$invalid && !movieForm.title.$pristine" class="help-block">Movie title is required.</p>
+		    </div>
+		</div>
+		<div class="form-group">
+    		<label class="col-sm-2 control-label">Alternative Title</label>
+    		<div class="col-sm-9">
+      			<input type="text" class="form-control" placeholder="Alternative Title" ng-model="movie.alternativeTitle">
+		    </div>
+		</div>
+		<div class="form-group">
+    		<label class="col-sm-2 control-label">Original Title</label>
+    		<div class="col-sm-9">
+    			<textarea class="form-control" rows="3" placeholder="Original Title" ng-model="movie.originalTitle"></textarea>
+		    </div>
+		</div>
+		<div class="form-group">
+    		<label class="col-sm-2 control-label">Language</label>
+    		<div class="col-sm-2">
+    			<select class="form-control"  ng-model="movie.language">
+    				<option>English</option>
+    				<option>German</option>
+    			</select>
+		    </div>
+		</div>
+		<div class="form-group">
+    		<label class="col-sm-2 control-label">Subtitle</label>
+    		<div class="col-sm-9">
+    			<textarea class="form-control" rows="3" placeholder="Subtitle" ng-model="movie.subTitle"></textarea>
+		    </div>
+		</div>
+		<div class="form-group">
+    		<label class="col-sm-2 control-label">Genre</label>
+    		<div class="col-sm-2">
+    			<select multiple class="form-control" ng-model="movie.genre">
+    				<option>Non-Fiction</option>
+    				<option>Adventure</option>
+    				<option>Autobiography</option>
+    				<option>Comedy</option>
+    				<option>Crime</option>
+    				<option>Documentary</option>
+    				<option>Drama</option>
+    				<option>History</option>
+    				<option>Mystery</option>
+    				<option>Romance</option>
+    				<option>Sci-Fi</option>
+    				<option>Thriller</option>
+    			</select>
+		    </div>
+		</div>
+		<div class="form-group">
+    		<label class="col-sm-2 control-label">IMDB Link</label>
+    		<div class="col-sm-9" ng-class="{ 'has-error' : movieForm.url.$invalid && !movieForm.url.$pristine }">
+      			<input type="url" name="url" class="form-control" placeholder="http://..." ng-model="movie.url">
+      			<p ng-show="movieForm.url.$invalid && !movieForm.url.$pristine" class="help-block">Enter a valid URL.</p>
+		    </div>
+		</div>
+		<div class="form-group">
+    		<label class="col-sm-2 control-label">Year</label>
+    		<div class="col-sm-1">
+      			<input type="number" class="form-control" placeholder="yyyy" ng-model="movie.year" onkeydown="javascript:maskInput()" required>
+		    </div>
+		</div>
+		<div class="form-group">
+    		<label class="col-sm-2 control-label">Folder</label>
+    		<div class="col-sm-1" ng-class="{ 'has-error' : movieForm.folder.$invalid && !movieForm.folder.$pristine }">
+      			<input type="number" name="folder" maxlength="1" class="form-control" ng-model="movie.folder" onkeydown="javascript:maskInput()" required>
+      			<p ng-show="movieForm.folder.$invalid && !movieForm.folder.$pristine" class="help-block">Invalid</p>
+		    </div>
+		</div>
+		<div class="form-group">
+    		<label class="col-sm-2 control-label">DVD</label>
+    		<div class="col-sm-1" ng-class="{ 'has-error' : movieForm.dvd.$invalid && !movieForm.dvd.$pristine }">
+      			<input type="number" name="dvd" maxlength="3" min="1" max="300" class="form-control" ng-model="movie.dvd" onkeydown="javascript:maskInput()" required>
+      			<p ng-show="movieForm.dvd.$invalid && !movieForm.dvd.$pristine" class="help-block">Invalid</p>
+		    </div>
+		</div>
+		<div class="form-group">
+		    <div class="col-sm-offset-2 col-sm-10">
+		    	<button type="submit" class="btn btn-default" ng-click="back()" >Cancel</button>
+		    	<button type="submit" class="btn btn-default" ng-click="save()" ng-disabled="movieForm.$invalid">Save</button>
+		    </div>
+	  	</div>
+	<pre>debug = {{movie | json}}</pre>
+	<pre>Errors: {{status}}</pre>
+	</form>
+</div>
+}

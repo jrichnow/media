@@ -91,6 +91,10 @@ object Movies extends Controller {
       }
     }
   }
+  
+  def editForm(id: String) = Action {
+    Ok(views.html.movies.form("EditMovieCtrl", id, "Editing"))
+  }
 
   def getImdbId(movie: Movie): Option[String] = {
     movie.url match {
@@ -108,7 +112,20 @@ object Movies extends Controller {
 
   def imdb(id: String) = Action {
     val movie = findById(id)
-    Ok(getOmdbJsonByTitle(movie.title))
+    val imdbId = getImdbId(movie)
+//    var omdbJson: JsValue = null
+    imdbId match {
+      case Some(_) => {
+        println(s"got imdb id: $imdbId.get")
+        Ok(getOmdbJsonById(imdbId.get))
+      }
+      case None => {
+        println("did not find imdb ID")
+        Ok(getOmdbJsonByTitle(movie.title))
+      }
+    }
+    
+//    Ok(getOmdbJsonByTitle(movie.title))
   }
 
   def findById(id: String): Movie = {

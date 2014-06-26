@@ -40,7 +40,37 @@ mediaApp.controller('MovieCtrl', function($scope, $http, $attrs) {
 	$http.get('/movies/imdb/' + $attrs.movieid).success(function(data) {
 		$scope.imdb = data;
 	});
-	$http.get('/movies/movie/' + $attrs.movieid).success(function(data) {
+	$http.get('/movies/data/' + $attrs.movieid).success(function(data) {
+		$scope.movie = data;
+	});
+
+	$scope.back = function() {
+		window.history.back();
+	};
+	
+	$scope.changeRoute = function(url, forceReload) {
+		$scope = $scope || angular.element(document).scope();
+		if (forceReload || $scope.$$phase) { // that's right TWO dollar
+			// signs: $$phase
+			window.location = url;
+		} else {
+			$location.path(url);
+			$scope.$apply();
+		}
+	};
+	
+	$scope.edit = function() {
+		$scope.changeRoute('/movies/form/edit/' + $scope.movie.id);
+	};
+});
+
+mediaApp.controller('EditMovieCtrl', function($scope, $http, $attrs) {
+	$scope.movie = {
+		'title' : 'test'
+	};
+	
+	$http.get('/movies/data/' + $attrs.model).success(function(data) {
+		console.log("movie for editing: " + $attrs.model)
 		$scope.movie = data;
 	});
 

@@ -6,10 +6,11 @@
 GET     /                           controllers.Application.index
 GET     /movies                     controllers.Movies.index
 POST    /movies/add                 controllers.Movies.add
-GET     /movies/imdb/:title         controllers.Movies.imdb(title:String)
+GET     /movies/form/edit/:id       controllers.Movies.editForm(id:String)
+GET     /movies/imdb/:id            controllers.Movies.imdb(id:String)
 GET     /movies/img/:id             controllers.Movies.image(id:String)
 GET     /movies/list                controllers.Movies.list
-GET     /movies/movie/:id           controllers.Movies.movieById(id:String)
+GET     /movies/data/:id            controllers.Movies.movieById(id:String)
 GET     /movies/:id                 controllers.Movies.title(id:String)
 
 GET     /audio                      controllers.AudioBooks.index
