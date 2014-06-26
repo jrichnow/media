@@ -14,6 +14,10 @@ import play.api.mvc.Controller
 object AudioBooks extends Controller {
 
   var audioBooks: Seq[AudioBook] = Seq.empty
+  
+  def init() {
+    audioBooks = AudioBookDao.findAll
+  }
 
   def index = Action {
     Ok(views.html.audio.index())

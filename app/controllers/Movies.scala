@@ -22,6 +22,10 @@ import dao.MovieDao
 object Movies extends Controller {
 
   var movies: Seq[Movie] = Seq.empty
+  
+  def init() {
+    movies = MovieDao.findAll
+  }
 
   def index = Action {
     Ok(views.html.movies.index())
