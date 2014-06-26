@@ -36,7 +36,7 @@ mediaApp.controller('MovieListCtrl', function($scope, $http, $filter,
 	$scope.movieProp = 'title';
 });
 
-mediaApp.controller('MovieCtrl', function($scope, $http, $attrs) {
+mediaApp.controller('MovieCtrl', function($scope, $http, $attrs, $modal) {
 	$http.get('/movies/imdb/' + $attrs.movieid).success(function(data) {
 		$scope.imdb = data;
 	});
@@ -46,6 +46,27 @@ mediaApp.controller('MovieCtrl', function($scope, $http, $attrs) {
 
 	$scope.back = function() {
 		window.history.back();
+	};
+	
+	$scope.remove = function(size) {
+		var modalInstance = $modal.open({
+			templateUrl : 'deleteModalContent.html',
+			controller : ModalInstanceCtrl,
+			size : 'sm',
+			resolve : {
+			// Nothing to do here.
+			}
+		});
+
+		modalInstance.result.then(function() {
+			console.log("Deleting movie book " + $attrs.movieid);
+			$http.get('/movies/delete/' + $attrs.movieid).success(function(data) {
+				$scope.changeRoute('/movies');
+			});
+		}, function() {
+			console.log("Do nothing");
+		});
+
 	};
 
 	$scope.changeRoute = function(url, forceReload) {

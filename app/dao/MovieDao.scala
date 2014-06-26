@@ -51,7 +51,7 @@ object MovieDao {
   }
 
   def findAll(): Seq[Movie] = {
-    val results = movieColl.find()
+    val results = movieColl.find().sort(MongoDBObject("title" -> 1))
     val movies = results.map(dbObjectToMovie(_).get)
     movies.toSeq
   }

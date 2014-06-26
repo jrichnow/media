@@ -49,10 +49,9 @@ object AudioBookDao {
   }
 
   def findAll(): Seq[AudioBook] = {
-    val results = audioColl.find()
+    val results = audioColl.find().sort(MongoDBObject("title" -> 1))
     val audioBooks = results.map(dbObjectToAudioBook(_).get)
     audioBooks.toSeq
-    //    Seq.empty
   }
 
   def recent(): Seq[AudioBook] = {

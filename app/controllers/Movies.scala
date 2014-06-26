@@ -77,7 +77,7 @@ object Movies extends Controller {
     }
     Ok(jsonResult)
   }
-  
+
   private def validateMovieJson(movieJson: JsValue): (Boolean, JsValue, Option[Movie]) = {
     movieJson.validate[Movie] match {
       case s: JsSuccess[Movie] => {
@@ -126,13 +126,19 @@ object Movies extends Controller {
       }
     }
   }
-  
+
   def newForm = Action {
     Ok(views.html.movies.form("NewMovieCtrl", "", "Adding New"))
   }
 
   def editForm(id: String) = Action {
     Ok(views.html.movies.form("EditMovieCtrl", id, "Editing"))
+  }
+
+  def delete(id: String) = Action {
+    MovieDao.delete(id);
+    movies = MovieDao.findAll
+    Ok("")
   }
 
   def getImdbId(movie: Movie): Option[String] = {
