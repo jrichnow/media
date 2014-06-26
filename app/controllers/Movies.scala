@@ -73,7 +73,7 @@ object Movies extends Controller {
         omdbJson = getOmdbJsonByTitle(movie.title)
       }
     }
-    
+
     var posterUrl: String = ""
     val posterUrlOmdb = (omdbJson \ "Poster").validate[String]
     posterUrlOmdb match {
@@ -95,7 +95,12 @@ object Movies extends Controller {
   def getImdbId(movie: Movie): Option[String] = {
     movie.url match {
       case Some(_) => {
-        Some(movie.url.get.split("/")(4))
+        val url = movie.url.get
+        if (url.length() > 10) {
+          Some(movie.url.get.split("/")(4))
+        } else {
+          None
+        }
       }
       case None => None
     }
