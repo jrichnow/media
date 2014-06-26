@@ -37,8 +37,11 @@ mediaApp.controller('MovieListCtrl', function($scope, $http, $filter,
 });
 
 mediaApp.controller('MovieCtrl', function($scope, $http, $attrs) {
-	$http.get('/movies/imdb/' + $attrs.model).success(function(data) {
+	$http.get('/movies/imdb/' + $attrs.movieid).success(function(data) {
 		$scope.imdb = data;
+	});
+	$http.get('/movies/movie/' + $attrs.movieid).success(function(data) {
+		$scope.movie = data;
 	});
 
 	$scope.back = function() {

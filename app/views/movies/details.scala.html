@@ -1,4 +1,4 @@
-@(movie:model.Movie)
+@(id:String)
 
 @main() {
 <div class="row">
@@ -8,21 +8,21 @@
      	</h1>
 	</div>
 </div>
-<div class="row" ng-controller="MovieCtrl" model="@movie.title" >
+<div class="row" ng-controller="MovieCtrl" movieid="@id">
 	<div class="col-md-3 col-sm-4 sidebar" style="margin-top:0px">
-		<img width="250" src="/movies/img/@movie.title"/>
+		<img width="250" ng-src="/movies/img/{{movie.id}}"/>
 	</div>	
 	<div class="col-md-9 col-sm-8">
 		<table class='table table-striped table-hover table-condensed'>
 			<tbody>
-				<tr><td width="150px">Title:</td><td><strong>@movie.title</strong></td></tr>
-				<tr><td>Alternative Title:</td><td>@movie.alternativeTitle</td></tr>
-				<tr><td>Original Title:</td><td>@movie.originalTitle</td></tr>
-				<tr><td>Genres:</td><td>@movie.genres</td></tr>
-				<tr><td>Release Year:</td><td>@movie.year</td></tr>
-				<tr><td>Language:</td><td>@movie.language</td></tr>
-				<tr><td>Subtitles:</td><td>@movie.subTitle</td></tr>
-				<tr><td>IMDB Link:</td><td><a href="@movie.url" target="_">@movie.url</td></a></tr>
+				<tr><td width="150px">Title:</td><td><strong>{{movie.title}}</strong></td></tr>
+				<tr><td>Alternative Title:</td><td>{{movie.alternativeTitle}}</td></tr>
+				<tr><td>Original Title:</td><td>{{movie.originalTitle}}</td></tr>
+				<tr><td>Genres:</td><td>{{movie.genre.join(', ')}}</td></tr>
+				<tr><td>Release Year:</td><td>{{movie.year}}</td></tr>
+				<tr><td>Language:</td><td>{{movie.language}}</td></tr>
+				<tr><td>Subtitles:</td><td>{{movie.subTitle}}</td></tr>
+				<tr><td>IMDB Link:</td><td><a ng-href="{{movie.url}}" target="_">{{movie.url}}</td></a></tr>
 			</tbody>
 		</table>
 		<table class='table table-striped table-hover table-condensed' />

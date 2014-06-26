@@ -34,8 +34,16 @@ object Movies extends Controller {
     Ok(Json.toJson(movies))
   }
 
-  def title(title: String) = Action {
-    Ok(views.html.movies.details(findByTitle(title)))
+  def title(id: String) = Action {
+    Ok(views.html.movies.details(id))
+  }
+
+  def movieById(id: String) = Action {
+    println(s"request for movie by ID: $id")
+    val movie = findById(id)
+    println(s"Found movie: $movie")
+
+    Ok(Json.toJson(movie))
   }
 
   def add = Action(parse.json) { request =>
@@ -51,8 +59,21 @@ object Movies extends Controller {
     Ok(jsonResult)
   }
 
-  def image(title: String) = Action {
-    val omdbJson = getOmdbJson(title)
+  def image(id: String) = Action {
+    val movie = findById(id)
+    val imdbId = getImdbId(movie)
+    var omdbJson: JsValue = null
+    imdbId match {
+      case Some(_) => {
+        println(s"got imdb id: $imdbId.get")
+        omdbJson = getOmdbJsonById(imdbId.get)
+      }
+      case None => {
+        println("did not find imdb ID")
+        omdbJson = getOmdbJsonByTitle(movie.title)
+      }
+    }
+    
     var posterUrl: String = ""
     val posterUrlOmdb = (omdbJson \ "Poster").validate[String]
     posterUrlOmdb match {
@@ -71,19 +92,25 @@ object Movies extends Controller {
     }
   }
 
-  def imdb(title: String) = Action {
-    Ok(getOmdbJson(title))
+  def getImdbId(movie: Movie): Option[String] = {
+    movie.url match {
+      case Some(_) => {
+        Some(movie.url.get.split("/")(4))
+      }
+      case None => None
+    }
   }
 
-//  def init(moviesSeq: Seq[Movie]): Unit = {
-//    movies = moviesSeq
-//  }
-
-  def findByTitle(title: String): Movie = {
-    movies.find(movie => movie.title == title).get
+  def imdb(id: String) = Action {
+    val movie = findById(id)
+    Ok(getOmdbJsonByTitle(movie.title))
   }
 
-  private def getOmdbJson(title: String): JsValue = {
+  def findById(id: String): Movie = {
+    MovieDao.findById(id).get
+  }
+
+  private def getOmdbJsonByTitle(title: String): JsValue = {
     val request = url("http://www.omdbapi.com/?t=" + URLEncoder.encode(title, "UTF-8"))
     val response = Http(request OK as.String)
 
@@ -91,7 +118,16 @@ object Movies extends Controller {
     println(omdbJsonString)
     Json.parse(omdbJsonString)
   }
-  
+
+  private def getOmdbJsonById(id: String): JsValue = {
+    val request = url("http://www.omdbapi.com/?i=" + id)
+    val response = Http(request OK as.String)
+
+    val omdbJsonString = Await.result(response, Duration(10, "s"))
+    println(omdbJsonString)
+    Json.parse(omdbJsonString)
+  }
+
   private def validateJson(movieJson: JsValue): (Boolean, JsValue, Option[Movie]) = {
     movieJson.validate[Movie] match {
       case s: JsSuccess[Movie] => {
