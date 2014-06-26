@@ -22,7 +22,7 @@ import dao.MovieDao
 object Movies extends Controller {
 
   var movies: Seq[Movie] = Seq.empty
-  
+
   def init() {
     movies = MovieDao.findAll
   }
@@ -63,6 +63,37 @@ object Movies extends Controller {
     Ok(jsonResult)
   }
 
+  def edit = Action(parse.json) { request =>
+    val movieJsonString = request.body
+    println(s"received edit movie request: $movieJsonString")
+    val movieJson = Json.toJson(movieJsonString)
+    println(s"converted Json: $movieJson")
+
+    val (isValid, jsonResult, movieOption) = validateMovieJson(movieJson)
+    if (isValid) {
+      val validatedMovie = movieOption.get
+      MovieDao.update(validatedMovie)
+      movies = MovieDao.findAll
+    }
+    Ok(jsonResult)
+  }
+  
+  private def validateMovieJson(movieJson: JsValue): (Boolean, JsValue, Option[Movie]) = {
+    movieJson.validate[Movie] match {
+      case s: JsSuccess[Movie] => {
+        (true, Json.obj("validation" -> true, "redirectPath" -> "/movies"), Option(s.get))
+      }
+      case e: JsError => {
+        e.errors.foreach(println(_))
+        val p = for {
+          entry <- e.errors
+        } yield Json.obj(entry._1.toString.drop(1) -> entry._2.head.message)
+        println(JsArray(p))
+        (false, Json.obj("validation" -> false, "errorList" -> JsArray(p)), None)
+      }
+    }
+  }
+
   def image(id: String) = Action {
     val movie = findById(id)
     val imdbId = getImdbId(movie)
@@ -95,7 +126,7 @@ object Movies extends Controller {
       }
     }
   }
-  
+
   def editForm(id: String) = Action {
     Ok(views.html.movies.form("EditMovieCtrl", id, "Editing"))
   }
@@ -117,7 +148,7 @@ object Movies extends Controller {
   def imdb(id: String) = Action {
     val movie = findById(id)
     val imdbId = getImdbId(movie)
-//    var omdbJson: JsValue = null
+    //    var omdbJson: JsValue = null
     imdbId match {
       case Some(_) => {
         println(s"got imdb id: $imdbId.get")
@@ -128,8 +159,8 @@ object Movies extends Controller {
         Ok(getOmdbJsonByTitle(movie.title))
       }
     }
-    
-//    Ok(getOmdbJsonByTitle(movie.title))
+
+    //    Ok(getOmdbJsonByTitle(movie.title))
   }
 
   def findById(id: String): Movie = {

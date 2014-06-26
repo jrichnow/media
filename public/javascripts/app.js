@@ -77,6 +77,39 @@ mediaApp.controller('EditMovieCtrl', function($scope, $http, $attrs) {
 	$scope.back = function() {
 		window.history.back();
 	};
+	
+	$scope.changeRoute = function(url, forceReload) {
+		$scope = $scope || angular.element(document).scope();
+		if (forceReload || $scope.$$phase) { // that's right TWO dollar
+			// signs: $$phase
+			window.location = url;
+		} else {
+			$location.path(url);
+			$scope.$apply();
+		}
+	};
+	
+	$scope.save = function() {
+		console.log('editing ...')
+		var request = $http({
+			url : '/movies/edit',
+			method : "POST",
+			data : JSON.stringify($scope.movie),
+			transformRequest : false,
+			headers : {
+				'Content-Type' : 'application/json'
+			}
+		}).success(function(data, status, headers, config) {
+			$scope.movieResponse = data;
+			if (data.validation == true) {
+				$scope.changeRoute('/movies');
+			} else {
+				$scope.status = data;
+			}
+		}).error(function(data, status, headers, config) {
+			$scope.status = status + ' ' + headers;
+		});
+	}
 });
 
 mediaApp.controller('AudioListCtrl', function($scope, $http, audioService,

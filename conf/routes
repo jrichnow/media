@@ -6,6 +6,7 @@
 GET     /                           controllers.Application.index
 GET     /movies                     controllers.Movies.index
 POST    /movies/add                 controllers.Movies.add
+POST    /movies/edit                controllers.Movies.edit
 GET     /movies/form/edit/:id       controllers.Movies.editForm(id:String)
 GET     /movies/imdb/:id            controllers.Movies.imdb(id:String)
 GET     /movies/img/:id             controllers.Movies.image(id:String)
