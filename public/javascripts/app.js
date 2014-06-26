@@ -47,7 +47,7 @@ mediaApp.controller('MovieCtrl', function($scope, $http, $attrs) {
 	$scope.back = function() {
 		window.history.back();
 	};
-	
+
 	$scope.changeRoute = function(url, forceReload) {
 		$scope = $scope || angular.element(document).scope();
 		if (forceReload || $scope.$$phase) { // that's right TWO dollar
@@ -58,7 +58,7 @@ mediaApp.controller('MovieCtrl', function($scope, $http, $attrs) {
 			$scope.$apply();
 		}
 	};
-	
+
 	$scope.edit = function() {
 		$scope.changeRoute('/movies/form/edit/' + $scope.movie.id);
 	};
@@ -68,7 +68,7 @@ mediaApp.controller('EditMovieCtrl', function($scope, $http, $attrs) {
 	$scope.movie = {
 		'title' : 'test'
 	};
-	
+
 	$http.get('/movies/data/' + $attrs.model).success(function(data) {
 		console.log("movie for editing: " + $attrs.model)
 		$scope.movie = data;
