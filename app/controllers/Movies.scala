@@ -178,7 +178,7 @@ object Movies extends Controller {
   }
 
   private def getOmdbJsonByTitle(title: String): JsValue = {
-    val request = url("http://www.omdbapi.com/?t=" + URLEncoder.encode(title, "UTF-8"))
+    val request = url("http://www.omdbapi.com/?plot=full&t=" + URLEncoder.encode(title, "UTF-8"))
     val response = Http(request OK as.String)
 
     val omdbJsonString = Await.result(response, Duration(10, "s"))
@@ -187,7 +187,7 @@ object Movies extends Controller {
   }
 
   private def getOmdbJsonById(id: String): JsValue = {
-    val request = url("http://www.omdbapi.com/?i=" + id)
+    val request = url("http://www.omdbapi.com/?plot=full&i=" + id)
     val response = Http(request OK as.String)
 
     val omdbJsonString = Await.result(response, Duration(10, "s"))
