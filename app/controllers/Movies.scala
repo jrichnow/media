@@ -3,7 +3,6 @@ package controllers
 import play.api._
 import play.api.mvc._
 import play.api.libs.json._
-import model.Movie
 import dispatch._
 import dispatch.Defaults._
 import java.net.URLEncoder
@@ -17,14 +16,15 @@ import play.api.libs.json.JsSuccess
 import play.api.libs.json.JsValue
 import play.api.libs.json.Json
 import play.api.libs.json.Json.toJsFieldJsValueWrapper
-import dao.MovieDao
+import model.Movie2
+import dao.Movie2Dao
 
 object Movies extends Controller {
 
-  var movies: Seq[Movie] = Seq.empty
+  var movies: Seq[Movie2] = Seq.empty
 
   def init() {
-    movies = MovieDao.findAll
+    movies = Movie2Dao.findAll
   }
 
   def index = Action {
@@ -33,7 +33,7 @@ object Movies extends Controller {
 
   def list = Action {
     if (movies.isEmpty) {
-      movies = MovieDao.findAll
+      movies = Movie2Dao.findAll
     }
     Ok(Json.toJson(movies))
   }
@@ -58,7 +58,7 @@ object Movies extends Controller {
 
     val (isValid, jsonResult, movieOption) = validateJson(movieJson)
     if (isValid) {
-      movies = movies :+ MovieDao.add(movieOption.get)
+      movies = movies :+ Movie2Dao.add(movieOption.get)
     }
     Ok(jsonResult)
   }
@@ -72,15 +72,15 @@ object Movies extends Controller {
     val (isValid, jsonResult, movieOption) = validateMovieJson(movieJson)
     if (isValid) {
       val validatedMovie = movieOption.get
-      MovieDao.update(validatedMovie)
-      movies = MovieDao.findAll
+      Movie2Dao.update(validatedMovie)
+      movies = Movie2Dao.findAll
     }
     Ok(jsonResult)
   }
 
-  private def validateMovieJson(movieJson: JsValue): (Boolean, JsValue, Option[Movie]) = {
-    movieJson.validate[Movie] match {
-      case s: JsSuccess[Movie] => {
+  private def validateMovieJson(movieJson: JsValue): (Boolean, JsValue, Option[Movie2]) = {
+    movieJson.validate[Movie2] match {
+      case s: JsSuccess[Movie2] => {
         (true, Json.obj("validation" -> true, "redirectPath" -> "/movies"), Option(s.get))
       }
       case e: JsError => {
@@ -136,12 +136,12 @@ object Movies extends Controller {
   }
 
   def delete(id: String) = Action {
-    MovieDao.delete(id);
-    movies = MovieDao.findAll
+    Movie2Dao.delete(id);
+    movies = Movie2Dao.findAll
     Ok("")
   }
 
-  def getImdbId(movie: Movie): Option[String] = {
+  def getImdbId(movie: Movie2): Option[String] = {
     movie.url match {
       case Some(_) => {
         val url = movie.url.get
@@ -158,7 +158,6 @@ object Movies extends Controller {
   def imdb(id: String) = Action {
     val movie = findById(id)
     val imdbId = getImdbId(movie)
-    //    var omdbJson: JsValue = null
     imdbId match {
       case Some(_) => {
         println(s"got imdb id: $imdbId.get")
@@ -169,12 +168,10 @@ object Movies extends Controller {
         Ok(getOmdbJsonByTitle(movie.title))
       }
     }
-
-    //    Ok(getOmdbJsonByTitle(movie.title))
   }
 
-  def findById(id: String): Movie = {
-    MovieDao.findById(id).get
+  def findById(id: String): Movie2 = {
+    Movie2Dao.findById(id).get
   }
 
   private def getOmdbJsonByTitle(title: String): JsValue = {
@@ -195,9 +192,9 @@ object Movies extends Controller {
     Json.parse(omdbJsonString)
   }
 
-  private def validateJson(movieJson: JsValue): (Boolean, JsValue, Option[Movie]) = {
-    movieJson.validate[Movie] match {
-      case s: JsSuccess[Movie] => {
+  private def validateJson(movieJson: JsValue): (Boolean, JsValue, Option[Movie2]) = {
+    movieJson.validate[Movie2] match {
+      case s: JsSuccess[Movie2] => {
         (true, Json.obj("validation" -> true, "redirectPath" -> "/movie"), Option(s.get))
       }
       case e: JsError => {
