@@ -22,7 +22,7 @@
         </div>
     </script>
 	<div class="col-md-3 col-sm-4 sidebar" style="margin-top:0px">
-		<img width="250" ng-src="/movies/img/{{movie.id}}"/>
+		<img width="250" ng-src="{{movie.imageUrl}}"/>
 	</div>	
 	<div class="col-md-9 col-sm-8">
 		<table class='table table-striped table-hover table-condensed'>
@@ -35,21 +35,13 @@
 				<tr><td>Language:</td><td>{{movie.language}}</td></tr>
 				<tr><td>Subtitles:</td><td>{{movie.subTitle}}</td></tr>
 				<tr><td>IMDB Link:</td><td><a ng-href="{{movie.url}}" target="_">{{movie.url}}</td></a></tr>
-			</tbody>
-		</table>
-		<table class='table table-striped table-hover table-condensed' />
-			<thead>
-				<tr><th colspan="2">IMDB Data</th></tr>
-			</thead>
-			<tbody>
-				<tr><td width="150px">Rated:</td><td>{{imdb.Rated}}</td></tr>
-				<tr><td>Runtime:</td><td>{{imdb.Runtime}}</td></tr>
-				<tr><td>Actors:</td><td>{{imdb.Actors}}</td></tr>
-				<tr><td>Director(s):</td><td>{{imdb.Director}}</td></tr>
-				<tr><td>Writer(s):</td><td>{{imdb.Writer}}</td></tr>
-				<tr><td>Country:</td><td>{{imdb.Country}}</td></tr>
-				<tr><td>Plot:</td><td>{{imdb.Plot}}</td></tr>
-				<tr><td>IMDB Rating:</td><td>{{imdb.imdbRating}} / {{imdb.imdbVotes}} Users</td></tr>
+				<tr><td>Rated:</td><td>{{movie.rated}}</td></tr>
+				<tr><td>Runtime:</td><td>{{movie.runtime}}</td></tr>
+				<tr><td>Actors:</td><td>{{movie.actors}}</td></tr>
+				<tr><td>Director(s):</td><td>{{movie.director}}</td></tr>
+				<tr><td>Writer(s):</td><td>{{movie.writer}}</td></tr>
+				<tr><td>Plot:</td><td>{{movie.plot}}</td></tr>
+				<tr><td>IMDB Rating:</td><td>{{movie.rating}}</td></tr>
 			</tbody>
 		</table>
 	</div>
