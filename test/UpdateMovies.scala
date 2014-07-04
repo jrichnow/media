@@ -1,12 +1,12 @@
 
 
-import dao.MovieDao
+import dao.Movie2Dao
 import com.mongodb.casbah.MongoClient
 import com.mongodb.casbah.commons.MongoDBObject
 import com.mongodb.DBObject
 import play.api.libs.json.JsSuccess
 import play.api.libs.json.JsError
-import model.Movie
+import model.Movie2
 import play.api.libs.json.Json
 import play.api.libs.json.JsValue
 import dispatch._
@@ -17,6 +17,7 @@ import play.api.libs.json.JsSuccess
 import model.Movie2
 import com.mongodb.util.JSON
 import org.bson.types.ObjectId
+import model.Movie
 
 object UpdateMovies {
 

@@ -3,13 +3,15 @@ package mongodb
 import org.junit.runner.RunWith
 import org.specs2.mutable.Specification
 import com.mongodb.casbah.MongoClient
-import dao.MovieDao
+import dao.Movie2Dao
 import model.AudioBook
 import play.api.test.FakeApplication
 import play.api.test.WithApplication
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.OneAppPerSuite
+import model.Movie2
 import model.Movie
+import dao.MovieDao
 
 class MovieDaoSpec extends PlaySpec with OneAppPerSuite {
   
@@ -26,9 +28,9 @@ class MovieDaoSpec extends PlaySpec with OneAppPerSuite {
 
     "return no movie when collection is empty" in {
       movieColl.drop()
-      MovieDao.findAll.size === 0
+      Movie2Dao.findAll.size === 0
 
-      val movieOption = MovieDao.findById("5393ed7dc0260baea0990019")
+      val movieOption = Movie2Dao.findById("5393ed7dc0260baea0990019")
       movieOption mustBe None 
     }
 

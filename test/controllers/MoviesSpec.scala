@@ -22,7 +22,7 @@ import org.scalatestplus.play.OneAppPerSuite
 import play.api.test.FakeApplication
 import com.mongodb.casbah.MongoClient
 import model.AudioBook
-import model.Movie
+import model.Movie2
 
 class MoviesSpec extends PlaySpec with OneAppPerSuite {
 
@@ -55,10 +55,10 @@ class MoviesSpec extends PlaySpec with OneAppPerSuite {
       status(resultList) must equal(OK)
       contentType(resultList) mustBe Some("application/json")
       
-      val movieList = contentAsJson(resultList).as[List[Movie]]
+      val movieList = contentAsJson(resultList).as[List[Movie2]]
       
       val returnedMovie = movieList.head
-      val originalMovie = getValidMovieJson.as[Movie]
+      val originalMovie = getValidMovieJson.as[Movie2]
       
       returnedMovie.title must equal(originalMovie.title)
       returnedMovie.year must equal(originalMovie.year)
