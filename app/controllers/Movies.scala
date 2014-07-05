@@ -56,7 +56,7 @@ object Movies extends Controller {
     val movieJson = Json.toJson(movieJsonString)
     println(s"converted Json: $movieJson")
 
-    val (isValid, jsonResult, movieOption) = validateJson(movieJson)
+    val (isValid, jsonResult, movieOption) = validateMovieJson(movieJson)
     if (isValid) {
       movies = movies :+ Movie2Dao.add(movieOption.get)
     }
@@ -94,38 +94,54 @@ object Movies extends Controller {
     }
   }
 
-//  def image(id: String) = Action {
-//    val movie = findById(id)
-//    val imdbId = getImdbId(movie)
-//    var omdbJson: JsValue = null
-//    imdbId match {
-//      case Some(_) => {
-//        println(s"got imdb id: $imdbId.get")
-//        omdbJson = getOmdbJsonById(imdbId.get)
-//      }
-//      case None => {
-//        println("did not find imdb ID")
-//        omdbJson = getOmdbJsonByTitle(movie.title)
-//      }
-//    }
-//
-//    var posterUrl: String = ""
-//    val posterUrlOmdb = (omdbJson \ "Poster").validate[String]
-//    posterUrlOmdb match {
-//      case s: JsSuccess[String] => {
-//        val omdb = posterUrlOmdb.get
-//        omdb match {
-//          case "N/A" => posterUrl = "/assets/images/no-image.jpg"
-//          case _ => posterUrl = omdb
-//        }
-//        Redirect(posterUrl)
+//  private def validateJson(movieJson: JsValue): (Boolean, JsValue, Option[Movie2]) = {
+//    movieJson.validate[Movie2] match {
+//      case s: JsSuccess[Movie2] => {
+//        (true, Json.obj("validation" -> true, "redirectPath" -> "/movie"), Option(s.get))
 //      }
 //      case e: JsError => {
-//        println("Errors: " + JsError.toFlatJson(e).toString())
-//        Redirect("/assets/images/no-image.jpg")
+//        e.errors.foreach(println(_))
+//        val p = for {
+//          entry <- e.errors
+//        } yield Json.obj(entry._1.toString.drop(1) -> entry._2.head.message)
+//        println(JsArray(p))
+//        (false, Json.obj("validation" -> false, "errorList" -> JsArray(p)), None)
 //      }
 //    }
 //  }
+
+  //  def image(id: String) = Action {
+  //    val movie = findById(id)
+  //    val imdbId = getImdbId(movie)
+  //    var omdbJson: JsValue = null
+  //    imdbId match {
+  //      case Some(_) => {
+  //        println(s"got imdb id: $imdbId.get")
+  //        omdbJson = getOmdbJsonById(imdbId.get)
+  //      }
+  //      case None => {
+  //        println("did not find imdb ID")
+  //        omdbJson = getOmdbJsonByTitle(movie.title)
+  //      }
+  //    }
+  //
+  //    var posterUrl: String = ""
+  //    val posterUrlOmdb = (omdbJson \ "Poster").validate[String]
+  //    posterUrlOmdb match {
+  //      case s: JsSuccess[String] => {
+  //        val omdb = posterUrlOmdb.get
+  //        omdb match {
+  //          case "N/A" => posterUrl = "/assets/images/no-image.jpg"
+  //          case _ => posterUrl = omdb
+  //        }
+  //        Redirect(posterUrl)
+  //      }
+  //      case e: JsError => {
+  //        println("Errors: " + JsError.toFlatJson(e).toString())
+  //        Redirect("/assets/images/no-image.jpg")
+  //      }
+  //    }
+  //  }
 
   def newForm = Action {
     Ok(views.html.movies.form("NewMovieCtrl", "", "Adding New"))
@@ -155,20 +171,20 @@ object Movies extends Controller {
     }
   }
 
-//  def imdb(id: String) = Action {
-//    val movie = findById(id)
-//    val imdbId = getImdbId(movie)
-//    imdbId match {
-//      case Some(_) => {
-//        println(s"got imdb id: $imdbId.get")
-//        Ok(getOmdbJsonById(imdbId.get))
-//      }
-//      case None => {
-//        println("did not find imdb ID")
-//        Ok(getOmdbJsonByTitle(movie.title))
-//      }
-//    }
-//  }
+  //  def imdb(id: String) = Action {
+  //    val movie = findById(id)
+  //    val imdbId = getImdbId(movie)
+  //    imdbId match {
+  //      case Some(_) => {
+  //        println(s"got imdb id: $imdbId.get")
+  //        Ok(getOmdbJsonById(imdbId.get))
+  //      }
+  //      case None => {
+  //        println("did not find imdb ID")
+  //        Ok(getOmdbJsonByTitle(movie.title))
+  //      }
+  //    }
+  //  }
 
   def findById(id: String): Movie2 = {
     Movie2Dao.findById(id).get
@@ -192,19 +208,4 @@ object Movies extends Controller {
     Json.parse(omdbJsonString)
   }
 
-  private def validateJson(movieJson: JsValue): (Boolean, JsValue, Option[Movie2]) = {
-    movieJson.validate[Movie2] match {
-      case s: JsSuccess[Movie2] => {
-        (true, Json.obj("validation" -> true, "redirectPath" -> "/movie"), Option(s.get))
-      }
-      case e: JsError => {
-        e.errors.foreach(println(_))
-        val p = for {
-          entry <- e.errors
-        } yield Json.obj(entry._1.toString.drop(1) -> entry._2.head.message)
-        println(JsArray(p))
-        (false, Json.obj("validation" -> false, "errorList" -> JsArray(p)), None)
-      }
-    }
-  }
 }
