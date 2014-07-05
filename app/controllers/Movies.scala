@@ -18,6 +18,7 @@ import play.api.libs.json.Json
 import play.api.libs.json.Json.toJsFieldJsValueWrapper
 import model.Movie2
 import dao.Movie2Dao
+import model.MovieShort
 
 object Movies extends Controller {
 
@@ -63,6 +64,32 @@ object Movies extends Controller {
     Ok(jsonResult)
   }
 
+  def addImdb = Action(parse.json) { request =>
+    val movieJsonString = request.body
+    println(s"received add movie request for imdb: $movieJsonString")
+    val movieJson = Json.toJson(movieJsonString)
+    println(s"converted Json: $movieJson")
+
+    val (isValid, jsonResult, movieOption) = validateImdbMovieJson(movieJson)
+    if (isValid) {
+      val omdbJson = getOmdbJsonById(movieOption.get.imdbId)
+      val imdbId = getValue(omdbJson, "imdbID")
+      imdbId match {
+        case Some(_) => {
+          val movie = Movie2.fromOmdb(omdbJson, movieOption.get.folder, movieOption.get.dvd)
+          println(Json.prettyPrint(Json.toJson(movie)))
+          // TODO If found save to DB
+          Ok(Json.obj("validation" -> true, "redirectPath" -> s"/movies/"))
+        }
+        case None => {
+          Ok(Json.obj("validation" -> false, "error" -> getValue(omdbJson, "Error")))
+        }
+      }
+    } else {
+      Ok(jsonResult)
+    }
+  }
+
   def edit = Action(parse.json) { request =>
     val movieJsonString = request.body
     println(s"received edit movie request: $movieJsonString")
@@ -76,6 +103,29 @@ object Movies extends Controller {
       movies = Movie2Dao.findAll
     }
     Ok(jsonResult)
+  }
+  
+  private def getValue(omdbDataJsValue: JsValue, tag: String): Option[String] = {
+    (omdbDataJsValue \ tag).validate[String] match {
+      case s: JsSuccess[String] => Option(s.get)
+      case e: JsError => None
+    }
+  }
+
+  private def validateImdbMovieJson(movieJson: JsValue): (Boolean, JsValue, Option[MovieShort]) = {
+    movieJson.validate[MovieShort] match {
+      case s: JsSuccess[MovieShort] => {
+        (true, Json.obj("validation" -> true, "redirectPath" -> "/movies"), Option(s.get))
+      }
+      case e: JsError => {
+        e.errors.foreach(println(_))
+        val p = for {
+          entry <- e.errors
+        } yield Json.obj(entry._1.toString.drop(1) -> entry._2.head.message)
+        println(JsArray(p))
+        (false, Json.obj("validation" -> false, "errorList" -> JsArray(p)), None)
+      }
+    }
   }
 
   private def validateMovieJson(movieJson: JsValue): (Boolean, JsValue, Option[Movie2]) = {
@@ -94,21 +144,21 @@ object Movies extends Controller {
     }
   }
 
-//  private def validateJson(movieJson: JsValue): (Boolean, JsValue, Option[Movie2]) = {
-//    movieJson.validate[Movie2] match {
-//      case s: JsSuccess[Movie2] => {
-//        (true, Json.obj("validation" -> true, "redirectPath" -> "/movie"), Option(s.get))
-//      }
-//      case e: JsError => {
-//        e.errors.foreach(println(_))
-//        val p = for {
-//          entry <- e.errors
-//        } yield Json.obj(entry._1.toString.drop(1) -> entry._2.head.message)
-//        println(JsArray(p))
-//        (false, Json.obj("validation" -> false, "errorList" -> JsArray(p)), None)
-//      }
-//    }
-//  }
+  //  private def validateJson(movieJson: JsValue): (Boolean, JsValue, Option[Movie2]) = {
+  //    movieJson.validate[Movie2] match {
+  //      case s: JsSuccess[Movie2] => {
+  //        (true, Json.obj("validation" -> true, "redirectPath" -> "/movie"), Option(s.get))
+  //      }
+  //      case e: JsError => {
+  //        e.errors.foreach(println(_))
+  //        val p = for {
+  //          entry <- e.errors
+  //        } yield Json.obj(entry._1.toString.drop(1) -> entry._2.head.message)
+  //        println(JsArray(p))
+  //        (false, Json.obj("validation" -> false, "errorList" -> JsArray(p)), None)
+  //      }
+  //    }
+  //  }
 
   //  def image(id: String) = Action {
   //    val movie = findById(id)
@@ -145,6 +195,10 @@ object Movies extends Controller {
 
   def newForm = Action {
     Ok(views.html.movies.form("NewMovieCtrl", "", "Adding New"))
+  }
+
+  def newFormImdb = Action {
+    Ok(views.html.movies.imdbform())
   }
 
   def editForm(id: String) = Action {

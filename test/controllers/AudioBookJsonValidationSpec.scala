@@ -33,7 +33,6 @@ class AudioBookJsonValidationSpec extends PlaySpec with OneAppPerSuite {
   "Audio" should {
 
     "return a redirect URL when audio book with all fields is valid" in {
-      val audioJson = Json.obj("author" -> "David K. Randall")
       val Some(result) = route(FakeRequest(POST, "/audio/add").withJsonBody(getValidAudioJsonFull))
 
       status(result) must equal (OK)
@@ -42,7 +41,6 @@ class AudioBookJsonValidationSpec extends PlaySpec with OneAppPerSuite {
     }
 
     "return a redirect URL when audio book with all required fields is valid" in {
-      val audioJson = Json.obj("author" -> "David K. Randall")
       val Some(result) = route(FakeRequest(POST, "/audio/add").withJsonBody(getValidAudioJsonRequiredOnly))
 
       status(result) must equal (OK)
