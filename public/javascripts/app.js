@@ -207,7 +207,7 @@ mediaApp.controller('NewImdbMovieCtrl', function($scope, $http) {
 		}).success(function(data, status, headers, config) {
 			$scope.movieResponse = data;
 			if (data.validation == true) {
-				$scope.changeRoute('/movies');
+				$scope.changeRoute(data.redirectPath);
 			} else {
 				$scope.status = data;
 			}

@@ -77,7 +77,8 @@ object Movie2 {
   def fromOmdb(omdbDataJsValue: JsValue, folder: Int, dvd: Int): Movie2 = {
     val title = getValue(omdbDataJsValue, "Title")
     val year = getValue(omdbDataJsValue, "Year")
-    val genres = getValue(omdbDataJsValue, "Genre").get.split(",")
+    val genres = getValue(omdbDataJsValue, "Genre").get.split(", ")
+    genres.foreach(_.trim())
     val languageRaw = getValue(omdbDataJsValue, "Language")
     val language = languageRaw.get.split(",")(0).trim()
     val imdbId = getValue(omdbDataJsValue, "imdbID").get
@@ -102,7 +103,7 @@ object Movie2 {
     val posterUrlOmdb = getValue(omdbDataJsValue, "Poster")
     val imgUrl = posterUrlOmdb.getOrElse("")
 
-    new Movie2(None, title.get, None, None, Option(language), None, Option(genres), Option(s"http://www/imdb.com/$imdbId"),
+    new Movie2(None, title.get, None, None, Option(language), None, Option(genres), Option(s"http://www.imdb.com/title/$imdbId"),
       year.get.toInt, folder, dvd, Option(imdbId), plot, actors, writer, director, runtime, ratingResolved, rated, Option(imgUrl))
   }
 
