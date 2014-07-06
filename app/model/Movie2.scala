@@ -78,8 +78,9 @@ object Movie2 {
     val title = getValue(omdbDataJsValue, "Title")
     val year = getValue(omdbDataJsValue, "Year")
     val genres = getValue(omdbDataJsValue, "Genre").get.split(",")
-    val language = getValue(omdbDataJsValue, "Language") // TODO First one
-    val imdbId = getValue(omdbDataJsValue, "imdbID")
+    val languageRaw = getValue(omdbDataJsValue, "Language")
+    val language = languageRaw.get.split(",")(0).trim()
+    val imdbId = getValue(omdbDataJsValue, "imdbID").get
     val plot = getValue(omdbDataJsValue, "Plot")
     val actors = getValue(omdbDataJsValue, "Actors")
     val writer = getValue(omdbDataJsValue, "Writer")
@@ -101,8 +102,8 @@ object Movie2 {
     val posterUrlOmdb = getValue(omdbDataJsValue, "Poster")
     val imgUrl = posterUrlOmdb.getOrElse("")
 
-    new Movie2(None, title.get, None, None, language, None, Option(genres), Option(s"http://www/imdb.com/$imdbId"),
-      year.get.toInt, folder, dvd, imdbId, plot, actors, writer, director, runtime, ratingResolved, rated, Option(imgUrl))
+    new Movie2(None, title.get, None, None, Option(language), None, Option(genres), Option(s"http://www/imdb.com/$imdbId"),
+      year.get.toInt, folder, dvd, Option(imdbId), plot, actors, writer, director, runtime, ratingResolved, rated, Option(imgUrl))
   }
 
   def getValue(omdbDataJsValue: JsValue, tag: String): Option[String] = {

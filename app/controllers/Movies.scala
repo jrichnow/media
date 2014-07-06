@@ -78,8 +78,9 @@ object Movies extends Controller {
         case Some(_) => {
           val movie = Movie2.fromOmdb(omdbJson, movieOption.get.folder, movieOption.get.dvd)
           println(Json.prettyPrint(Json.toJson(movie)))
-          // TODO If found save to DB
-          Ok(Json.obj("validation" -> true, "redirectPath" -> s"/movies/"))
+          val dbMovie = Movie2Dao.add(movie)
+          movies = movies :+ dbMovie
+          Ok(Json.obj("validation" -> true, "redirectPath" -> s"/movies/${dbMovie.id.get}"))
         }
         case None => {
           Ok(Json.obj("validation" -> false, "error" -> getValue(omdbJson, "Error")))

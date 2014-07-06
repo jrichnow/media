@@ -87,6 +87,21 @@ object Movie2Dao {
     }
   }
 
+  def findByImdbId(imdbId: String): Option[Movie2] = {
+    val dbMovieOption: Option[movieColl.T] = movieColl.findOne(MongoDBObject("imdbId" -> "tt0499603"))
+    dbMovieOption match {
+      case None => None
+      case Some(_) => {
+        val movie = dbMovieOption.get
+
+        Json.parse(movie.toString()).validate[Movie2] match {
+          case s: JsSuccess[Movie2] => Option(s.get)
+          case e: JsError => None
+        }
+      }
+    }
+  }
+
   private def dbObjectToMovie(dbObject: DBObject): Option[Movie2] = {
     Json.parse(dbObject.toString()).validate[Movie2] match {
       case s: JsSuccess[Movie2] => Option(s.get)
