@@ -71,9 +71,17 @@ object Movie2 {
       "runtime" -> movie.runtime,
       "rating" -> movie.rating,
       "rated" -> movie.rated,
-      "imageUrl" -> movie.imageUrl)
+      "imageUrl" -> validateImageUrl(movie.imageUrl.getOrElse("")))
   }
-
+  
+  def validateImageUrl(imageUrl: String): String = {
+    imageUrl match {
+      case "N/A" => "/assets/images/no-image.jpg"
+      case "" => "/assets/images/no-image.jpg"
+      case _ => imageUrl
+    }
+  }
+  
   def fromOmdb(omdbDataJsValue: JsValue, folder: Int, dvd: Int): Movie2 = {
     val title = getValue(omdbDataJsValue, "Title")
     val year = getValue(omdbDataJsValue, "Year")
