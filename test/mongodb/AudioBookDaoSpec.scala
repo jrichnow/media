@@ -31,7 +31,7 @@ class AudioBookDaoSpec extends PlaySpec with OneAppPerSuite {
       bookOption mustBe None 
     }
 
-    "add an audio book" in  {
+    "add an audio book" in {
       audioColl.drop()
       val audioBook = AudioBook(title = "Dreamland", author = "Mr. Writer", year = 2012, folder = 1, dvd = 2)
       audioBook.id mustBe None

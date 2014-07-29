@@ -73,7 +73,7 @@ object Movie2 {
       "rated" -> movie.rated,
       "imageUrl" -> validateImageUrl(movie.imageUrl.getOrElse("")))
   }
-  
+
   def validateImageUrl(imageUrl: String): String = {
     imageUrl match {
       case "N/A" => "/assets/images/no-image.jpg"
@@ -81,7 +81,19 @@ object Movie2 {
       case _ => imageUrl
     }
   }
-  
+
+  def wrapActorsUrl(actors: Option[String]): String = {
+    actors match {
+      case Some(_) => {
+        val actorList = actors.get.split(", ").toList
+        val actorUrlList = for (actor <- actorList) yield s"<a href='/movies/actor/$actor'>$actor</a>"
+        actorUrlList.mkString(", ")
+      }
+      case None => ""
+    }
+
+  }
+
   def fromOmdb(omdbDataJsValue: JsValue, folder: Int, dvd: Int): Movie2 = {
     val title = getValue(omdbDataJsValue, "Title")
     val year = getValue(omdbDataJsValue, "Year")
