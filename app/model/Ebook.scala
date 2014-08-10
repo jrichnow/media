@@ -42,13 +42,6 @@ object Ebook {
     SQL("""select id, title, author_sort, strftime('%d/%m/%Y', date(pubdate)) as pub_date from books where id={id}""").on('id -> id).as(simple.singleOpt)
   }
 
-  def getOpenLibraryData(isbn: String) {
-    val request = url(s"http://openlibrary.org/api/books?bibkeys=ISBN:$isbn&jscmd=data&format=json")
-    val response = Http(request OK as.String)
-    val omdbJsonString = Await.result(response, Duration(10, "s"))
-    println(omdbJsonString)
-  }
-
   implicit val ebookJsonWrites = new Writes[Ebook] {
     def writes(ebook: Ebook) = Json.obj(
       "id" -> ebook.id,

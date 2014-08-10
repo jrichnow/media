@@ -15,7 +15,7 @@
 		<p><strong>Ebooks Found:</strong> {{ebooksDataSize}}</p>
 		<table ng-table="tableParams" show-filter="true" class='table table-striped table-hover table-condensed'>
 			<tr ng-repeat="ebook in $data | filter:query | orderBy:ebookProp">
-            	<td width="50%" data-title="'Title'" sortable="'title'" filter="{'title': 'text'}"><a ng-href="">{{ebook.title}}</a></td>
+            	<td width="50%" data-title="'Title'" sortable="'title'" filter="{'title': 'text'}"><a ng-href="/ebooks/detailsForm/{{ebook.id}}">{{ebook.title}}</a></td>
             	<td width="40%" data-title="'Author'" sortable="'author'" filter="{'author': 'text'}" ng-click="getCurrAudio()">{{ebook.author}}</td>
 				<td width="80px" align="center" data-title="'Published'">{{ebook.publicationDate}}</td>
         	</tr>

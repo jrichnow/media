@@ -495,6 +495,17 @@ mediaApp.controller('EbookListCtrl', function($scope, $http, $filter, ngTablePar
 	$scope.ebookProp = 'title';
 });
 
+mediaApp.controller('EbookCtrl', function($scope, $http, $attrs) {
+	$http.get('/ebooks/details/' + $attrs.title).success(function(data) {
+		$scope.ebook = data;
+	});
+
+	$scope.back = function() {
+		window.history.back();
+	};
+});
+
+
 mediaApp.controller('FileListCtrl', function($scope, $http, ngTableParams) {
 	$http.get('/admin/file/list').success(
 			function(data) {

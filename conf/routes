@@ -32,6 +32,8 @@ GET     /audio/recentList           controllers.AudioBooks.recentList
 GET     /audio/:title               controllers.AudioBooks.title(title:String)
 
 GET     /ebooks                     controllers.Ebooks.index
+GET     /ebooks/detailsForm/:id     controllers.Ebooks.detailsForm(id:Int)
+GET     /ebooks/details/:id         controllers.Ebooks.details(id: Int)
 GET     /ebooks/list                controllers.Ebooks.list
 
 GET     /admin                      controllers.Admin.index
