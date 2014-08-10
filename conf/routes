@@ -31,7 +31,8 @@ GET     /audio/recent               controllers.AudioBooks.recent
 GET     /audio/recentList           controllers.AudioBooks.recentList
 GET     /audio/:title               controllers.AudioBooks.title(title:String)
 
-GET     /books                      controllers.Ebooks.index
+GET     /ebooks                     controllers.Ebooks.index
+GET     /ebooks/list                controllers.Ebooks.list
 
 GET     /admin                      controllers.Admin.index
 GET     /admin/file/delete/:name    controllers.Admin.delete(name:String)

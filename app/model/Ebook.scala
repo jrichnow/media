@@ -34,8 +34,8 @@ object Ebook {
   }
   
   def findAll():Seq[Ebook] = DB.withConnection { implicit connection =>
-    val ebooks = SQL("""select id, title, author_sort, strftime('%d/%m/%Y', date(pubdate)) as pub_date from books""")
-    ebooks().map(row => Ebook(row[Long]("id"), row[String]("title"), row[String]("author_sort"), row[String]("pub_date")))
+    val ebooks = SQL("""select id, title, author_sort, strftime('%d/%m/%Y', date(pubdate)) as pub_date from books order by title""")
+    ebooks().map(row => Ebook(row[Long]("id"), row[String]("title"), row[String]("author_sort"), row[String]("pub_date"))).toList
   }
 
   def findById(id: Long): Option[Ebook] = DB.withConnection { implicit connection =>
@@ -54,9 +54,16 @@ object Ebook {
       "id" -> ebook.id,
       "title" -> ebook.title,
       "author" -> ebook.author,
-      "publicationDate" -> ebook.publicationDate)
+      "publicationDate" -> checkPublicationDate(ebook.publicationDate))
   }
-
+  
+  private def checkPublicationDate(pubDate: String): String = {
+    pubDate match {
+      case "01/01/0101" => ""
+      case _ => pubDate
+    }
+  }
+  
   def toJson(ebook: Ebook): JsValue = {
     Json.toJson(ebook)
   }
