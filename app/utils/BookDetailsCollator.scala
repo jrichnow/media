@@ -13,7 +13,7 @@ object BookDetailsCollator {
 
   def getBookDetails(id: Int): JsValue = {
     val details = EbookDetails.findById(id)
-    val imageUrl = getLookupData(details.get.id)
+    val imageUrl = getImageUrl(details.get.id)
 
     toJson(details.get, imageUrl.getOrElse("/assets/images/no-image.jpg"))
   }
@@ -35,21 +35,27 @@ object BookDetailsCollator {
     }
   }
 
-  private def getLookupData(sqliteBookId: Long): Option[String] = {
+  private def getImageUrl(sqliteBookId: Long): Option[String] = {
     val identifiers = EbookIdentifiers.findAll(sqliteBookId)
     val isbnOption = identifiers.find(_.name == "isbn")
     isbnOption match {
-      case Some(_) => { getOpenLibraryData(isbnOption.get.value) }
+      case Some(_) => { 
+        val json = getOpenLibraryData(isbnOption.get.value)
+        getImageUrlFromOpenLibraryData(json)
+      }
       case None => None
     }
   }
 
-  private def getOpenLibraryData(isbn: String): Option[String] = {
+  private def getOpenLibraryData(isbn: String): JsValue = {
     val request = url(s"http://openlibrary.org/api/books?bibkeys=ISBN:$isbn&jscmd=data&format=json")
     val response = Http(request OK as.String)
     val jsonString = Await.result(response, Duration(10, "s"))
     println(jsonString)
-    val json = Json.parse(jsonString)
+    Json.parse(jsonString)
+  }
+  
+  private def getImageUrlFromOpenLibraryData(json: JsValue): Option[String] = {
     val urlList = (json \\ "large")
     if (urlList.isEmpty)
       None
