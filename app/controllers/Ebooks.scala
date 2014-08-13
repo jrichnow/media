@@ -6,6 +6,7 @@ import model.Ebook
 import play.api.libs.json.Json
 import model.EbookDetails
 import play.api.libs.json.JsValue
+import utils.BookDetailsCollator
 
 object Ebooks extends Controller {
   
@@ -31,8 +32,7 @@ object Ebooks extends Controller {
   }
   
   def details(id: Int) = Action {
-    val details = EbookDetails.findById(id)
-    Ok(Json.toJson(details))
+    Ok(BookDetailsCollator.getBookDetails(id))
   }
   
   private def detailsJson(details: EbookDetails): JsValue = {

@@ -8,12 +8,12 @@ import java.util.Date
 import java.text.SimpleDateFormat
 
 class EbookSpecs extends PlaySpec with OneAppPerSuite {
-  
+
   val dateFormat = new SimpleDateFormat("dd/MM/yyyy")
 
   "Ebook" should {
 
-    "should express itself as valid Json" in {
+    "express itself as valid Json" in {
       val ebook = new Ebook(341, "Envy", "Sandra Brown", "15/04/2001")
       getEbookJson(ebook) must equal(Ebook.toJson(ebook))
     }
