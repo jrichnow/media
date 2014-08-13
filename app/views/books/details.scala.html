@@ -17,7 +17,7 @@
 				<tr><td width="150px">Title:</td><td><strong>{{ebook.title}}</strong></td></tr>
 				<tr><td>Author:</td><td>{{ebook.author}}</td></tr>
 				<tr><td>Release Date:</td><td>{{ebook.publicationDate}}</td></tr>
-				<tr><td>Plot:</td><td>{{ebook.plot}}</td></tr>
+				<tr><td>Plot:</td><td><p ng-bind-html="ebook.plot"></p></td></tr>
 			</tbody>
 		</table>
 	</div>

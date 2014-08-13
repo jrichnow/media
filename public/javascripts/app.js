@@ -1,4 +1,4 @@
-var mediaApp = angular.module('mediaApp', [ 'ngTable', 'ui.bootstrap']);
+var mediaApp = angular.module('mediaApp', [ 'ngTable', 'ui.bootstrap', 'ngSanitize']);
 
 mediaApp.controller('MovieListCtrl', function($scope, $http, $filter,
 		ngTableParams) {
