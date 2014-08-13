@@ -19,7 +19,7 @@ case class EbookDetails(
   title: String,
   author: String,
   publicationDate: String,
-  plot: String)
+  plot: Option[String])
 
 object EbookDetails {
 
@@ -28,14 +28,14 @@ object EbookDetails {
       get[String]("title") ~
       get[String]("author_sort") ~
       get[String]("pub_date") ~
-      get[String]("text") map {
+      get[Option[String]]("text") map {
         case id ~ title ~ author ~ publicationDate ~ plot => EbookDetails(id, title, author, publicationDate, plot)
       }
   }
 
   def findById(id: Long): Option[EbookDetails] = DB.withConnection { implicit connection =>
     SQL("""select b.id, title, author_sort, strftime('%d/%m/%Y', date(pubdate)) as pub_date, text from books b 
-        join comments c on b.id = c.book where b.id={id}""").on('id -> id).as(simple.singleOpt)
+        left outer join comments c on b.id = c.book where b.id={id}""").on('id -> id).as(simple.singleOpt)
   }
 
   private def getOpenLibraryData(isbn: String) {
