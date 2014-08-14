@@ -41,6 +41,7 @@ GET     /admin/file/delete/:name    controllers.Admin.delete(name:String)
 GET     /admin/file/export/:media   controllers.Admin.export(media:String)
 GET     /admin/file/list        	controllers.Admin.list
 GET     /admin/file/upload          controllers.Admin.upload
+POST    /admin/file/upload          controllers.Admin.fileUpload
 GET     /admin/file/:name           controllers.Admin.file(name:String)
 
 # Map static resources from the /public folder to the /assets URL path

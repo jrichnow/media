@@ -12,11 +12,14 @@
 	<div class="col-md-2 col-sm-4 sidebar">
 		<ul class="nav nav-stacked nav-pills">
         	<li><a href="/admin/file/export/audio">Export Audio</a>
+        	<li><a href="/admin/file/export/movie">Export Movies</a>
         	<li><a href="/admin/file/upload">Import Data</a>
         </li>
 	</div>	
 	<div class="col-md-10 col-sm-8">
-		<p>File Upload coming ...</p>
+		<div ng-controller="FileUploadCtrl">
+  			<input type="file" name="file" ng-file-select="onFileSelect($files)" multiple><span>{{data.data}}</span>
+		</div>
 	</div>
 </div>
 }

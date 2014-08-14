@@ -1,4 +1,5 @@
-var mediaApp = angular.module('mediaApp', [ 'ngTable', 'ui.bootstrap', 'ngSanitize']);
+var mediaApp = angular.module('mediaApp', [ 'ngTable', 'ui.bootstrap',
+		'ngSanitize', 'angularFileUpload' ]);
 
 mediaApp.controller('MovieListCtrl', function($scope, $http, $filter,
 		ngTableParams) {
@@ -44,7 +45,7 @@ mediaApp.controller('MovieCtrl', function($scope, $http, $attrs, $modal) {
 	$scope.back = function() {
 		window.history.back();
 	};
-	
+
 	$scope.remove = function(size) {
 		var modalInstance = $modal.open({
 			templateUrl : 'deleteModalContent.html',
@@ -57,9 +58,10 @@ mediaApp.controller('MovieCtrl', function($scope, $http, $attrs, $modal) {
 
 		modalInstance.result.then(function() {
 			console.log("Deleting movie book " + $attrs.movieid);
-			$http.get('/movies/delete/' + $attrs.movieid).success(function(data) {
-				$scope.changeRoute('/movies');
-			});
+			$http.get('/movies/delete/' + $attrs.movieid).success(
+					function(data) {
+						$scope.changeRoute('/movies');
+					});
 		}, function() {
 			console.log("Do nothing");
 		});
@@ -95,7 +97,7 @@ mediaApp.controller('EditMovieCtrl', function($scope, $http, $attrs) {
 	$scope.back = function() {
 		window.history.back();
 	};
-	
+
 	$scope.changeRoute = function(url, forceReload) {
 		$scope = $scope || angular.element(document).scope();
 		if (forceReload || $scope.$$phase) { // that's right TWO dollar
@@ -106,7 +108,7 @@ mediaApp.controller('EditMovieCtrl', function($scope, $http, $attrs) {
 			$scope.$apply();
 		}
 	};
-	
+
 	$scope.save = function() {
 		console.log('editing ...')
 		var request = $http({
@@ -460,7 +462,8 @@ mediaApp.service('audioService', function() {
 	}
 });
 
-mediaApp.controller('EbookListCtrl', function($scope, $http, $filter, ngTableParams) {
+mediaApp.controller('EbookListCtrl', function($scope, $http, $filter,
+		ngTableParams) {
 	$http.get('/ebooks/list').success(
 			function(data) {
 				$scope.audioList = data;
@@ -505,7 +508,6 @@ mediaApp.controller('EbookCtrl', function($scope, $http, $attrs) {
 	};
 });
 
-
 mediaApp.controller('FileListCtrl', function($scope, $http, ngTableParams) {
 	$http.get('/admin/file/list').success(
 			function(data) {
@@ -527,4 +529,25 @@ mediaApp.controller('FileListCtrl', function($scope, $http, ngTableParams) {
 				});
 			});
 
+});
+
+mediaApp.controller('FileUploadCtrl', function($scope, $upload) {
+	$scope.data = ''
+	$scope.onFileSelect = function($files) {
+		// $files: an array of files selected, each file has name, size, and
+		// type.
+		for (var i = 0; i < $files.length; i++) {
+			var $file = $files[i];
+			$upload.upload({
+				url : '/admin/file/upload',
+				file : $file,
+				progress : function(e) {
+				}
+			}).then(function(data, status, headers, config) {
+				// file is uploaded successfully
+				console.log(data);
+				$scope.data = data
+			});
+		}
+	}
 });
