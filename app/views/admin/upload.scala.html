@@ -8,7 +8,7 @@
      	</h1>
 	</div>
 </div>
-<div class="row">
+<div class="row" ng-controller="FileUploadCtrl">
 	<div class="col-md-2 col-sm-4 sidebar">
 		<ul class="nav nav-stacked nav-pills">
         	<li><a href="/admin/file/export/audio">Export Audio</a>
@@ -17,9 +17,10 @@
         </li>
 	</div>	
 	<div class="col-md-10 col-sm-8">
-		<div ng-controller="FileUploadCtrl">
-  			<input type="file" name="file" ng-file-select="onFileSelect($files)" multiple><span>{{data.data}}</span>
-		</div>
+		<table class='table'>
+  			<tr><td width="100px">Movies:</td><td><input type="file" name="file" ng-file-select="onMovieFileSelect($files)" multiple><span>{{movie.data}}</span></td></tr>
+  			<tr><td width="100px">Audio Books:</td><td><input type="file" name="file" ng-file-select="onAudioFileSelect($files)" multiple><span>{{audio.data}}</span></td></tr>
+  		</table>
 	</div>
 </div>
 }

@@ -532,21 +532,39 @@ mediaApp.controller('FileListCtrl', function($scope, $http, ngTableParams) {
 });
 
 mediaApp.controller('FileUploadCtrl', function($scope, $upload) {
-	$scope.data = ''
-	$scope.onFileSelect = function($files) {
+	$scope.movie = ''
+	$scope.onMovieFileSelect = function($files) {
 		// $files: an array of files selected, each file has name, size, and
 		// type.
 		for (var i = 0; i < $files.length; i++) {
 			var $file = $files[i];
 			$upload.upload({
-				url : '/admin/file/upload',
+				url : '/admin/file/upload/movie',
 				file : $file,
 				progress : function(e) {
 				}
 			}).then(function(data, status, headers, config) {
 				// file is uploaded successfully
 				console.log(data);
-				$scope.data = data
+				$scope.movie = data
+			});
+		}
+	}
+	$scope.audio = ''
+	$scope.onAudioFileSelect = function($files) {
+		// $files: an array of files selected, each file has name, size, and
+		// type.
+		for (var i = 0; i < $files.length; i++) {
+			var $file = $files[i];
+			$upload.upload({
+				url : '/admin/file/upload/audio',
+				file : $file,
+				progress : function(e) {
+				}
+			}).then(function(data, status, headers, config) {
+				// file is uploaded successfully
+				console.log(data);
+				$scope.audio = data
 			});
 		}
 	}

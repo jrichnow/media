@@ -8,6 +8,7 @@ import play.api.libs.json.Json
 import java.io.{ File => JavaFile }
 import scala.io.Source
 import model.Movie2
+import model.AudioBook
 
 object Admin extends Controller {
 
@@ -39,9 +40,8 @@ object Admin extends Controller {
   //    request.body.moveTo(new java.io.File("/tmp/whatever.json"))
   //    Ok("File uploaded")
   //  }
-  
-  
-  def fileUpload = Action(parse.multipartFormData) { request =>
+
+  def fileUploadMovie = Action(parse.multipartFormData) { request =>
     request.body.file("file").map { file =>
       val fileName = file.filename
       println(s"received $fileName")
@@ -52,8 +52,30 @@ object Admin extends Controller {
           newFile.delete()
         file.ref.moveTo(newFile)
         val json = Json.parse(Source.fromFile(newFile).getLines.mkString(""))
-        val movies = json.validate[Seq[Movie2]]
-        
+        val movieJsResult = json.validate[Seq[Movie2]]
+
+        Ok("File has been uploaded.")
+      } else {
+        Ok("Only .json files can be processed.")
+      }
+    }.getOrElse {
+      Ok("Error Uploading file.")
+    }
+  }
+
+  def fileUploadAudio = Action(parse.multipartFormData) { request =>
+    request.body.file("file").map { file =>
+      val fileName = file.filename
+      println(s"received $fileName")
+      if (fileName.endsWith(".json")) {
+        println("can process...");
+        val newFile = new JavaFile("/tmp/" + file.filename)
+        if (newFile.exists())
+          newFile.delete()
+        file.ref.moveTo(newFile)
+        val json = Json.parse(Source.fromFile(newFile).getLines.mkString(""))
+        val audioJsResult = json.validate[Seq[AudioBook]]
+
         Ok("File has been uploaded.")
       } else {
         Ok("Only .json files can be processed.")
