@@ -1,0 +1,18 @@
+@(entity:String, name:String)
+
+@main() {
+<div class="row">
+	<div class="col-lg-12">
+     	<h1 class="page-header">Movie
+     		<small>Library - @entity: @name</small>
+     	</h1>
+	</div>
+</div>
+<div class="row" ng-controller="MovieFindCtrl" entity="@entity" name="@name">
+	<div class="col-md-12 col-sm-4 sidebar" ng-repeat="movie in movies">
+		<img width="70" ng-src="{{movie.imageUrl}}"/>
+		{{movie.year}} - {{movie.title}}
+	</div>
+	<pre>debug = {{movies | json}}</pre>
+</div>
+}

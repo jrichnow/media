@@ -105,19 +105,25 @@ object Movies extends Controller {
     }
     Ok(jsonResult)
   }
+  
+  def findUi = Action { request =>
+    val entity = request.getQueryString("entity").getOrElse("unknown")
+    val name = request.getQueryString("name").getOrElse("unknown")
+    Ok(views.html.movies.find(entity, name))
+  }
 
   def find = Action { request =>
     println(request.queryString)
-    val requestType = request.getQueryString("type").getOrElse("invalid")
-    println(requestType)
-    requestType match {
-      case "actor" => findByActor(request)
+    val entity = request.getQueryString("entity").getOrElse("invalid")
+    println(entity)
+    entity match {
+      case "Actor" => findByActor(request)
       case _ => BadRequest("Search action not allowed!")
     }
   }
 
   private def findByActor(implicit request: RequestHeader) = {
-    val actor = request.queryString.get("actor").flatMap(_.headOption).getOrElse("")
+    val actor = request.queryString.get("name").flatMap(_.headOption).getOrElse("")
     val moviesByActor = Movie2Dao.findByActor(actor)
     println("movies by actor: " + moviesByActor)
     Ok(Json.toJson(moviesByActor))

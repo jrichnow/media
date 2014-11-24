@@ -84,6 +84,13 @@ mediaApp.controller('MovieCtrl', function($scope, $http, $attrs, $modal) {
 	};
 });
 
+mediaApp.controller('MovieFindCtrl', function($scope, $http, $attrs) {
+	$http.get('/movies/find?entity=' + $attrs.entity + "&name=" + $attrs.name).success(function(data) {
+		$scope.movies = data;
+	});
+});
+
+
 mediaApp.controller('EditMovieCtrl', function($scope, $http, $attrs) {
 	$scope.movie = {
 		'title' : 'test'

@@ -13,6 +13,7 @@ POST    /movies/addImdb             controllers.Movies.addImdb
 GET     /movies/delete/:id          controllers.Movies.delete(id:String)
 POST    /movies/edit                controllers.Movies.edit
 GET     /movies/find                controllers.Movies.find
+GET     /movies/findUi              controllers.Movies.findUi
 GET     /movies/form/edit/:id       controllers.Movies.editForm(id:String)
 GET     /movies/form/imdb           controllers.Movies.newFormImdb
 GET     /movies/form/new            controllers.Movies.newForm

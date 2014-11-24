@@ -86,7 +86,7 @@ object Movie2 {
     actors match {
       case Some(_) => {
         val actorList = actors.get.split(", ").toList
-        val actorUrlList = for (actor <- actorList) yield s"<a href='/movies/find?type=actor&actor=$actor'>$actor</a>"
+        val actorUrlList = for (actor <- actorList) yield s"<a href='/movies/findUi?entity=Actor&name=$actor'>$actor</a>"
         actorUrlList.mkString(", ")
       }
       case None => ""
