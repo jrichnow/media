@@ -37,7 +37,7 @@
 				<tr><td>IMDB Link:</td><td><a ng-href="{{movie.url}}" target="_">{{movie.url}}</td></a></tr>
 				<tr><td>Rated:</td><td>{{movie.rated}}</td></tr>
 				<tr><td>Runtime:</td><td>{{movie.runtime}}</td></tr>
-				<tr><td>Actors:</td><td>{{movie.actors}}</td></tr>
+				<tr><td>Actors:</td><td ng-bind-html="movie.actors"></td></tr>
 				<tr><td>Director(s):</td><td>{{movie.director}}</td></tr>
 				<tr><td>Writer(s):</td><td>{{movie.writer}}</td></tr>
 				<tr><td>Plot:</td><td>{{movie.plot}}</td></tr>

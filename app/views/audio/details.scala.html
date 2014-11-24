@@ -28,7 +28,7 @@
 			<tbody>
 				<tr><td width="150px">Title:</td><td><strong>{{currentAudio.title}}</strong></td></tr>
 				<tr><td>Author:</td><td>{{currentAudio.author}}</td></tr>
-				<tr><td>Plot:</td><td>{{currentAudio.plot}}</td></tr>
+				<tr><td>Plot:</td><td><p ng-bind-html="currentAudio.plot"></p></td></tr>
 				<tr><td>Release Year:</td><td>{{currentAudio.year}}</td></tr>
 				<tr><td>Language:</td><td>{{currentAudio.language}}</td></tr>
 				<tr><td>Audio Format:</td><td>{{currentAudio.format}}</td></tr>

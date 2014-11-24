@@ -8,9 +8,12 @@ import play.api.libs.json.JsValue
 import play.api.libs.json.Json
 import play.api.libs.json.Json.toJsFieldJsValueWrapper
 import play.api.test.FakeRequest
+import play.api.test.Helpers.BAD_REQUEST
+import play.api.test.Helpers.GET
 import play.api.test.Helpers.OK
 import play.api.test.Helpers.POST
 import play.api.test.Helpers.contentAsJson
+import play.api.test.Helpers.contentAsString
 import play.api.test.Helpers.contentType
 import play.api.test.Helpers.defaultAwaitTimeout
 import play.api.test.Helpers.route
@@ -54,12 +57,12 @@ class MoviesSpec extends PlaySpec with OneAppPerSuite {
 
       status(resultList) must equal(OK)
       contentType(resultList) mustBe Some("application/json")
-      
+
       val movieList = contentAsJson(resultList).as[List[Movie2]]
-      
+
       val returnedMovie = movieList.head
       val originalMovie = getValidMovieJson.as[Movie2]
-      
+
       returnedMovie.title must equal(originalMovie.title)
       returnedMovie.year must equal(originalMovie.year)
       returnedMovie.url must equal(originalMovie.url)
@@ -68,9 +71,33 @@ class MoviesSpec extends PlaySpec with OneAppPerSuite {
       returnedMovie.language must equal(originalMovie.language)
     }
   }
+  
+  "Movies Controller" should {
+
+    "searching for a known actor should return the name" in {
+      movieColl.drop()
+      val Some(resultAdd) = route(FakeRequest(POST, "/movies/add").withJsonBody(getValidMovieJson))
+      status(resultAdd) must equal(OK)
+      
+      val result = controllers.Movies.find(FakeRequest(GET, "/movies/find?type=actor&actor=Tom+Cruise"))
+      status(result) must equal(OK)
+      contentType(result) mustBe Some("application/json")
+      val movieList = contentAsJson(result).as[List[Movie2]]
+
+      val returnedMovie = movieList.head
+      val originalMovie = getValidMovieJson.as[Movie2]
+      originalMovie.actors.get must equal("Tom Cruise")
+    }
+
+    "searching with unknown type should result in a BadRequest" in {
+      val result = controllers.Movies.find(FakeRequest(GET, "/movies/find?type=year"))
+      status(result) must equal(BAD_REQUEST)
+      contentAsString(result) mustBe "Search type not allowed!"
+    }
+  }
 
   private def successValidationResponse(): JsValue = {
-    Json.obj("validation" -> true, "redirectPath" -> "/movie")
+    Json.obj("validation" -> true, "redirectPath" -> "/movies")
   }
 
   private def getValidMovieJson(): JsValue = {
@@ -82,6 +109,7 @@ class MoviesSpec extends PlaySpec with OneAppPerSuite {
       "language" -> JsNull,
       "subTitle" -> JsNull,
       "genre" -> Json.arr("Action", "Drama"),
+      "actors" -> "Tom Cruise",
       "url" -> "http://imdb.com/path?foo=bar",
       "year" -> 2000,
       "folder" -> 1,

@@ -105,7 +105,24 @@ object Movies extends Controller {
     }
     Ok(jsonResult)
   }
-  
+
+  def find = Action { request =>
+    println(request.queryString)
+    val requestType = request.getQueryString("type").getOrElse("invalid")
+    println(requestType)
+    requestType match {
+      case "actor" => findByActor(request)
+      case _ => BadRequest("Search action not allowed!")
+    }
+  }
+
+  private def findByActor(implicit request: RequestHeader) = {
+    val actor = request.queryString.get("actor").flatMap(_.headOption).getOrElse("")
+    val moviesByActor = Movie2Dao.findByActor(actor)
+    println("movies by actor: " + moviesByActor)
+    Ok(Json.toJson(moviesByActor))
+  }
+
   private def getValue(omdbDataJsValue: JsValue, tag: String): Option[String] = {
     (omdbDataJsValue \ tag).validate[String] match {
       case s: JsSuccess[String] => Option(s.get)

@@ -16,15 +16,15 @@ case class Movie2(
   val year: Int,
   val folder: Int,
   val dvd: Int,
-  val imdbId: Option[String],
-  val plot: Option[String],
-  val actors: Option[String],
-  val writer: Option[String],
-  val director: Option[String],
-  val runtime: Option[String],
-  val rating: Option[Double],
-  val rated: Option[String],
-  val imageUrl: Option[String])
+  val imdbId: Option[String] = None,
+  val plot: Option[String] = None,
+  val actors: Option[String] = None,
+  val writer: Option[String] = None,
+  val director: Option[String] = None,
+  val runtime: Option[String] = None,
+  val rating: Option[Double] = None,
+  val rated: Option[String] = None,
+  val imageUrl: Option[String] = None)
 
 object Movie2 {
 
@@ -65,7 +65,7 @@ object Movie2 {
       "dvd" -> movie.dvd,
       "imdbId" -> movie.imdbId,
       "plot" -> movie.plot,
-      "actors" -> movie.actors,
+      "actors" -> wrapActorsUrl(movie.actors),
       "writer" -> movie.writer,
       "director" -> movie.director,
       "runtime" -> movie.runtime,
@@ -86,7 +86,7 @@ object Movie2 {
     actors match {
       case Some(_) => {
         val actorList = actors.get.split(", ").toList
-        val actorUrlList = for (actor <- actorList) yield s"<a href='/movies/actor/$actor'>$actor</a>"
+        val actorUrlList = for (actor <- actorList) yield s"<a href='/movies/find?type=actor&actor=$actor'>$actor</a>"
         actorUrlList.mkString(", ")
       }
       case None => ""

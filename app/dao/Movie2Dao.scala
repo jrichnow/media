@@ -101,6 +101,11 @@ object Movie2Dao {
       }
     }
   }
+  
+  def findByActor(actor: String): Seq[Movie2] = {
+    val results = movieColl.find(MongoDBObject("actors" -> s"$actor".r))
+    results.map(dbObjectToMovie(_).get).toSeq
+  }
 
   private def dbObjectToMovie(dbObject: DBObject): Option[Movie2] = {
     Json.parse(dbObject.toString()).validate[Movie2] match {
