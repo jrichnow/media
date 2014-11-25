@@ -103,7 +103,7 @@ object Movie2Dao {
   }
   
   def findByActor(actor: String): Seq[Movie2] = {
-    val results = movieColl.find(MongoDBObject("actors" -> s"$actor".r))
+    val results = movieColl.find(MongoDBObject("actors" -> s"$actor".r)).sort(MongoDBObject("year" -> -1))
     results.map(dbObjectToMovie(_).get).toSeq
   }
 

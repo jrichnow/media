@@ -88,6 +88,10 @@ mediaApp.controller('MovieFindCtrl', function($scope, $http, $attrs) {
 	$http.get('/movies/find?entity=' + $attrs.entity + "&name=" + $attrs.name).success(function(data) {
 		$scope.movies = data;
 	});
+	
+	$scope.back = function() {
+		window.history.back();
+	};
 });
 
 
