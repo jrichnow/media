@@ -71,15 +71,15 @@ class MoviesSpec extends PlaySpec with OneAppPerSuite {
       returnedMovie.language must equal(originalMovie.language)
     }
   }
-  
-  "Movies Controller" should {
+
+  "Movies Controller (Actor)" should {
 
     "searching for a known actor should return the name" in {
       movieColl.drop()
       val Some(resultAdd) = route(FakeRequest(POST, "/movies/add").withJsonBody(getValidMovieJson))
       status(resultAdd) must equal(OK)
-      
-      val result = controllers.Movies.find(FakeRequest(GET, "/movies/find?type=actor&actor=Tom+Cruise"))
+
+      val result = controllers.Movies.find(FakeRequest(GET, "/movies/find?entity=Actor&actor=Tom+Cruise"))
       status(result) must equal(OK)
       contentType(result) mustBe Some("application/json")
       val movieList = contentAsJson(result).as[List[Movie2]]
@@ -90,9 +90,27 @@ class MoviesSpec extends PlaySpec with OneAppPerSuite {
     }
 
     "searching with unknown type should result in a BadRequest" in {
-      val result = controllers.Movies.find(FakeRequest(GET, "/movies/find?type=year"))
+      val result = controllers.Movies.find(FakeRequest(GET, "/movies/find?entity=year"))
       status(result) must equal(BAD_REQUEST)
-      contentAsString(result) mustBe "Search type not allowed!"
+      contentAsString(result) mustBe "Search action not allowed!"
+    }
+  }
+
+  "Movies Controller (Director)" should {
+
+    "searching for a known director should return the name" in {
+      movieColl.drop()
+      val Some(resultAdd) = route(FakeRequest(POST, "/movies/add").withJsonBody(getValidMovieJson))
+      status(resultAdd) must equal(OK)
+
+      val result = controllers.Movies.find(FakeRequest(GET, "/movies/find?entity=Director&director=Frank+Darabont"))
+      status(result) must equal(OK)
+      contentType(result) mustBe Some("application/json")
+      val movieList = contentAsJson(result).as[List[Movie2]]
+
+      val returnedMovie = movieList.head
+      val originalMovie = getValidMovieJson.as[Movie2]
+      originalMovie.director.get must equal("Frank Darabont")
     }
   }
 
@@ -110,6 +128,7 @@ class MoviesSpec extends PlaySpec with OneAppPerSuite {
       "subTitle" -> JsNull,
       "genre" -> Json.arr("Action", "Drama"),
       "actors" -> "Tom Cruise",
+      "director" -> "Frank Darabont",
       "url" -> "http://imdb.com/path?foo=bar",
       "year" -> 2000,
       "folder" -> 1,
