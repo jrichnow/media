@@ -40,11 +40,21 @@ mediaApp.controller('MovieListCtrl', function($scope, $http, $filter,
 mediaApp.controller('MovieCtrl', function($scope, $http, $attrs, $modal) {
 	$http.get('/movies/data/' + $attrs.movieid).success(function(data) {
 		$scope.movie = data;
+		$scope.movie.actorsWithUrl = $scope.createActorUrl($scope.movie.actors)
 	});
 
 	$scope.back = function() {
 		window.history.back();
 	};
+	
+	$scope.createActorUrl = function(actors) {
+		var actorArray = actors.split(", ")
+		var actorWithUrlArray = [] 
+		for (index = 0; index < actorArray.length; ++index) {
+			actorWithUrlArray.push("<a href=\"/movies/findUi?entity=Actor&name=" + actorArray[index] + "\">" + actorArray[index] + "</a>");
+		}
+		return actorWithUrlArray.join(", ")
+	}
 
 	$scope.remove = function(size) {
 		var modalInstance = $modal.open({
