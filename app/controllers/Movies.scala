@@ -119,6 +119,7 @@ object Movies extends Controller {
     entity match {
       case "Actor" => findByActor(request)
       case "Director" => findByDirector(request)
+      case "Writer" => findByWriter(request)
       case _ => BadRequest("Search action not allowed!")
     }
   }
@@ -135,6 +136,13 @@ object Movies extends Controller {
     val moviesByDirector = Movie2Dao.findByDirector(director)
     println("movies by director: " + moviesByDirector)
     Ok(Json.toJson(moviesByDirector))
+  }
+
+  private def findByWriter(implicit request: RequestHeader) = {
+    val writer = request.queryString.get("name").flatMap(_.headOption).getOrElse("")
+    val moviesByWriter = Movie2Dao.findByWriter(writer)
+    println("movies by writer: " + moviesByWriter)
+    Ok(Json.toJson(moviesByWriter))
   }
 
   private def getValue(omdbDataJsValue: JsValue, tag: String): Option[String] = {

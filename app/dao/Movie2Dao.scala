@@ -112,6 +112,11 @@ object Movie2Dao {
     results.map(dbObjectToMovie(_).get).toSeq
   }
 
+  def findByWriter(writer: String): Seq[Movie2] = {
+    val results = movieColl.find(MongoDBObject("writer" -> s"$writer".r)).sort(MongoDBObject("year" -> -1))
+    results.map(dbObjectToMovie(_).get).toSeq
+  }
+
   private def dbObjectToMovie(dbObject: DBObject): Option[Movie2] = {
     Json.parse(dbObject.toString()).validate[Movie2] match {
       case s: JsSuccess[Movie2] => Option(s.get)

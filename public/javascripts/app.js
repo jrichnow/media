@@ -42,6 +42,7 @@ mediaApp.controller('MovieCtrl', function($scope, $http, $attrs, $modal) {
 		$scope.movie = data;
 		$scope.movie.actorsWithUrl = $scope.createEntityUrl("Actor", $scope.movie.actors)
 		$scope.movie.directorWithUrl = $scope.createEntityUrl("Director", $scope.movie.director)
+		$scope.movie.writerWithUrl = $scope.createEntityUrl("Writer", $scope.movie.writer)
 	});
 
 	$scope.back = function() {
