@@ -120,6 +120,7 @@ object Movies extends Controller {
       case "Actor" => findByActor(request)
       case "Director" => findByDirector(request)
       case "Writer" => findByWriter(request)
+      case "Sort" => sortBy(request)
       case _ => BadRequest("Search action not allowed!")
     }
   }
@@ -143,6 +144,14 @@ object Movies extends Controller {
     val moviesByWriter = Movie2Dao.findByWriter(writer)
     println("movies by writer: " + moviesByWriter)
     Ok(Json.toJson(moviesByWriter))
+  }
+
+  private def sortBy(implicit request: RequestHeader) = {
+    val sortBy = request.queryString.get("name").flatMap(_.headOption).getOrElse("")
+    sortBy match {
+      case "time" => Ok(Json.toJson(Movie2Dao.sortByTime))
+      case "rating" => Ok(Json.toJson(Movie2Dao.sortByRating))
+    }
   }
 
   private def getValue(omdbDataJsValue: JsValue, tag: String): Option[String] = {

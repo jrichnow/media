@@ -117,6 +117,16 @@ object Movie2Dao {
     results.map(dbObjectToMovie(_).get).toSeq
   }
 
+  def sortByTime(): Seq[Movie2] = {
+    val results = movieColl.find().sort(MongoDBObject("_id" -> -1)).limit(20)
+    results.map(dbObjectToMovie(_).get).toSeq
+  }
+
+  def sortByRating(): Seq[Movie2] = {
+    val results = movieColl.find().sort(MongoDBObject("rating" -> -1)).limit(20)
+    results.map(dbObjectToMovie(_).get).toSeq
+  }
+
   private def dbObjectToMovie(dbObject: DBObject): Option[Movie2] = {
     Json.parse(dbObject.toString()).validate[Movie2] match {
       case s: JsSuccess[Movie2] => Option(s.get)
