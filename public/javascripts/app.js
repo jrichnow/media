@@ -53,7 +53,15 @@ mediaApp.controller('MovieCtrl', function($scope, $http, $attrs, $modal) {
 		var actorArray = actors.split(", ")
 		var actorWithUrlArray = [] 
 		for (index = 0; index < actorArray.length; ++index) {
-			var actorUrl = "<a href=\"/movies/findUi?entity=" + entity + "&name=" + actorArray[index] + "\">" + actorArray[index] + "</a>";
+			var name = actorArray[index];
+			var actorUrl = "";
+			if (name.indexOf(' (') > 0) {
+				var nameArray = name.split(' (');
+				actorUrl = "<a href=\"/movies/findUi?entity=" + entity + "&name=" + nameArray[0] + "\">" + nameArray[0] + "</a> (" + nameArray[1];
+			}
+			else {
+				actorUrl = "<a href=\"/movies/findUi?entity=" + entity + "&name=" + name + "\">" + name + "</a>";
+			}
 			actorWithUrlArray.push(actorUrl);
 		}
 		return actorWithUrlArray.join(", ")
