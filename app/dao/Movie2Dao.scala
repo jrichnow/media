@@ -118,7 +118,8 @@ object Movie2Dao {
   }
 
   def sortByTime(): Seq[Movie2] = {
-    val results = movieColl.find().sort(MongoDBObject("_id" -> -1)).limit(100)
+    //    val results = movieColl.find().sort(MongoDBObject("_id" -> -1)).limit(100)
+    val results = movieColl.find(MongoDBObject("folder" -> 3)).sort(MongoDBObject("dvd" -> -1)).limit(100)
     results.map(dbObjectToMovie(_).get).toSeq
   }
 
