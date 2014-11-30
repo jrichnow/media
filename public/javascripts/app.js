@@ -105,10 +105,21 @@ mediaApp.controller('MovieCtrl', function($scope, $http, $attrs, $modal) {
 	};
 });
 
-mediaApp.controller('MovieFindCtrl', function($scope, $http, $attrs) {
+mediaApp.controller('MovieFindCtrl', function($scope, $http, $attrs, ngTableParams) {
 	$http.get('/movies/find?entity=' + $attrs.entity + "&name=" + $attrs.name).success(function(data) {
 		$scope.movies = data;
+		
+		$scope.tableParams = new ngTableParams({
+			page: 1,
+			count: 10
+		}, {
+			total: data.length,
+			getData: function($defer, params) {
+				$defer.resolve(data.slice((params.page() - 1) * params.count(), params.page() * params.count()));
+			}
+		});
 	});
+	
 	
 	$scope.back = function() {
 		window.history.back();

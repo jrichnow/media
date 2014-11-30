@@ -11,9 +11,9 @@
 <div class="row" ng-controller="MovieFindCtrl" entity="@entity" name="@name">
 	<div class="col-md-12 col-sm-4">
 		{{movies.length}} movies found.
-		<table class='table table-striped table-hover table-condensed'>
+		<table class='table table-striped table-hover table-condensed' ng-table="tableParams">
 			<tbody>
-				<tr ng-repeat="movie in movies">
+				<tr ng-repeat="movie in $data">
 					<td><img width="70" ng-src="{{movie.imageUrl}}"/></td>
 					<td>{{movie.year}}</td>
 					<td>{{movie.rating}}</td>
