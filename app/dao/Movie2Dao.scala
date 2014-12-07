@@ -124,7 +124,7 @@ object Movie2Dao {
   }
 
   def sortByRating(): Seq[Movie2] = {
-    val results = movieColl.find().sort(MongoDBObject("rating" -> -1)).limit(100)
+    val results = movieColl.find().sort(MongoDBObject("rating" -> -1, "year" -> -1)).limit(100)
     results.map(dbObjectToMovie(_).get).toSeq
   }
 
