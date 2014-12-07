@@ -18,7 +18,8 @@ GET     /movies/form/edit/:id       controllers.Movies.editForm(id:String)
 GET     /movies/form/imdb           controllers.Movies.newFormImdb
 GET     /movies/form/new            controllers.Movies.newForm
 #GET     /movies/imdb/:id            controllers.Movies.imdb(id:String)
-#GET     /movies/img/:id             controllers.Movies.image(id:String)
+GET     /movies/img/full/:id        controllers.Movies.image(id:String)
+GET     /movies/img/small/:id       controllers.Movies.imageSmall(id:String)
 GET     /movies/list                controllers.Movies.list
 GET     /movies/data/:id            controllers.Movies.movieById(id:String)
 GET     /movies/:id                 controllers.Movies.title(id:String)

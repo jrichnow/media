@@ -88,7 +88,7 @@ object Movie2Dao {
   }
 
   def findByImdbId(imdbId: String): Option[Movie2] = {
-    val dbMovieOption: Option[movieColl.T] = movieColl.findOne(MongoDBObject("imdbId" -> "tt0499603"))
+    val dbMovieOption: Option[movieColl.T] = movieColl.findOne(MongoDBObject("imdbId" -> imdbId))
     dbMovieOption match {
       case None => None
       case Some(_) => {

@@ -3,6 +3,7 @@ package model
 import play.api.libs.json._
 import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
+import utils.TheMovieDbWrapper
 
 case class Movie2(
   val id: Option[String] = None,
@@ -73,8 +74,13 @@ object Movie2 {
       "rating" -> movie.rating,
       "rated" -> movie.rated,
       "imageUrl" -> validateImageUrl(movie.imageUrl.getOrElse("")))
+//      "imageUrl" -> validateImageUrl(getTheMovieDbImageUrl(movie.imdbId.get).getOrElse("")))
   }
 
+  def getTheMovieDbImageUrl(imdbId: String): Option[String] = {
+    TheMovieDbWrapper.getPosterUrl(imdbId)
+  }
+  
   def validateImageUrl(imageUrl: String): String = {
     imageUrl match {
       case "N/A" => "/assets/images/no-image.jpg"

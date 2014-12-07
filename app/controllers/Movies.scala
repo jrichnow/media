@@ -19,6 +19,7 @@ import play.api.libs.json.Json.toJsFieldJsValueWrapper
 import model.Movie2
 import dao.Movie2Dao
 import model.MovieShort
+import utils.TheMovieDbWrapper
 
 object Movies extends Controller {
 
@@ -209,7 +210,24 @@ object Movies extends Controller {
   //    }
   //  }
 
-  //  def image(id: String) = Action {
+  def image(imdbId: String) = Action { implicit request =>
+    val referrer = request.headers.get("referer")
+    referrer match {
+      case None => Redirect(Movie2.getTheMovieDbImageUrl(imdbId).get)
+      case s => {
+        if (s.get.contains("localhost")) {
+          val movie = Movie2Dao.findByImdbId(imdbId)
+          movie match {
+            case s: Some[Movie2] => Redirect(movie.get.imageUrl.get)
+            case None => Redirect(Movie2.getTheMovieDbImageUrl(imdbId).get)
+          }
+
+        } else {
+          Redirect(Movie2.getTheMovieDbImageUrl(imdbId).get)
+        }
+      }
+    }
+  }
   //    val movie = findById(id)
   //    val imdbId = getImdbId(movie)
   //    var omdbJson: JsValue = null
@@ -241,6 +259,25 @@ object Movies extends Controller {
   //      }
   //    }
   //  }
+
+  def imageSmall(imdbId: String) = Action { implicit request =>
+    val referrer = request.headers.get("referer")
+    referrer match {
+      case None => Redirect(TheMovieDbWrapper.getThumbnailPosterUrl(imdbId).get)
+      case s => {
+        if (s.get.contains("localhost")) {
+          val movie = Movie2Dao.findByImdbId(imdbId)
+          movie match {
+            case s: Some[Movie2] => Redirect(movie.get.imageUrl.get)
+            case None => Redirect(TheMovieDbWrapper.getThumbnailPosterUrl(imdbId).get)
+          }
+
+        } else {
+          Redirect(TheMovieDbWrapper.getThumbnailPosterUrl(imdbId).get)
+        }
+      }
+    }
+  }
 
   def newForm = Action {
     Ok(views.html.movies.form("NewMovieCtrl", "", "Adding New"))

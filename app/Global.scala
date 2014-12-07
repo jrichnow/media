@@ -4,6 +4,7 @@ import model.Movie
 import controllers.Movies
 import controllers.AudioBooks
 import controllers.Ebooks
+import utils.TheMovieDbWrapper
 
 object Global extends GlobalSettings {
 
@@ -11,5 +12,6 @@ object Global extends GlobalSettings {
     Movies.init
     AudioBooks.init
     Ebooks.init
+    TheMovieDbWrapper.init
   }
 }

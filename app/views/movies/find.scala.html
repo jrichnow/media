@@ -14,7 +14,7 @@
 		<table class='table table-striped table-hover table-condensed' ng-table="tableParams">
 			<tbody>
 				<tr ng-repeat="movie in $data">
-					<td><img width="70" ng-src="{{movie.imageUrl}}"/></td>
+					<td><img width="70" ng-src="/movies/img/small/{{movie.imdbId}}"/></td>
 					<td>{{movie.year}}</td>
 					<td>{{movie.rating}}</td>
 					<td><strong><a ng-href="/movies/{{movie.id}}">{{movie.title}}</a></strong><br>
