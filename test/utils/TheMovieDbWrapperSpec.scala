@@ -8,7 +8,7 @@ class TheMovieDbWrapperSpec extends PlaySpec with OneAppPerSuite {
   "TheMovieDbWrapper" should {
     
     "provide the image URL based on IMDB movie ID" in {
-      val configJson = TheMovieDbWrapper.getThumbnailPosterUrl("")
+      val configJson = TheMovieDbWrapper.getThumbnailMoviePosterUrl("")
       
       
     }

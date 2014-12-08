@@ -78,7 +78,7 @@ object Movie2 {
   }
 
   def getTheMovieDbImageUrl(imdbId: String): Option[String] = {
-    TheMovieDbWrapper.getPosterUrl(imdbId)
+    TheMovieDbWrapper.getBigMoviePosterUrl(imdbId)
   }
   
   def validateImageUrl(imageUrl: String): String = {

@@ -263,17 +263,17 @@ object Movies extends Controller {
   def imageSmall(imdbId: String) = Action { implicit request =>
     val referrer = request.headers.get("referer")
     referrer match {
-      case None => Redirect(TheMovieDbWrapper.getThumbnailPosterUrl(imdbId).get)
+      case None => Redirect(TheMovieDbWrapper.getThumbnailMoviePosterUrl(imdbId).get)
       case s => {
         if (s.get.contains("localhost")) {
           val movie = Movie2Dao.findByImdbId(imdbId)
           movie match {
             case s: Some[Movie2] => Redirect(movie.get.imageUrl.get)
-            case None => Redirect(TheMovieDbWrapper.getThumbnailPosterUrl(imdbId).get)
+            case None => Redirect(TheMovieDbWrapper.getThumbnailMoviePosterUrl(imdbId).get)
           }
 
         } else {
-          Redirect(TheMovieDbWrapper.getThumbnailPosterUrl(imdbId).get)
+          Redirect(TheMovieDbWrapper.getThumbnailMoviePosterUrl(imdbId).get)
         }
       }
     }

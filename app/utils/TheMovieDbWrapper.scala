@@ -14,17 +14,17 @@ import play.api.libs.json.JsSuccess
 
 object TheMovieDbWrapper {
 
-  private val apiKey = "aa4ffe4729c78863475a1c3b082308fe"
-  private val configurationUrl = "https://api.themoviedb.org/3/configuration?api_key="
-  private val imageUrl = "https://api.themoviedb.org/3/movie/imdbId/images?api_key="
+  private val apiKeyParam = "api_key=aa4ffe4729c78863475a1c3b082308fe"
+  private val configurationUrl = "https://api.themoviedb.org/3/configuration?"
+  private val imageUrl = "https://api.themoviedb.org/3/movie/imdbId/images?"
 
-  var baseUrl = ""
+  var imageBaseUrl = ""
 
   def main(args: Array[String]) {
-    val configJson = getBaseConfiguration
-    val baseUrl = getBaseUrl(configJson, "base_url")
+    val configJson = getBaseConfigurationJson()
+    val baseUrl = getImageBaseUrl(configJson, "base_url")
     println(baseUrl)
-    val posterFileName = getPosterFileName("tt1790864")
+    val posterFileName = getMoviePosterFileName("tt1790864")
     val imageUrl: Option[String] = posterFileName match {
       case None => None
       case a => Option(baseUrl.get + "w92" + a.get)
@@ -33,44 +33,44 @@ object TheMovieDbWrapper {
   }
 
   def init() {
-    val configJson = getBaseConfiguration
-    baseUrl = getBaseUrl(configJson, "base_url").getOrElse("")
-    println(s"Base URL for TheMovieDb is '$baseUrl'")
+    val configJson = getBaseConfigurationJson()
+    imageBaseUrl = getImageBaseUrl(configJson, "base_url").getOrElse("")
+    println(s"Base URL for TheMovieDb is '$imageBaseUrl'")
   }
 
-  def getThumbnailPosterUrl(imdbId: String): Option[String] = {
-    getPosterUrlByWidth(imdbId, "w92")
+  def getThumbnailMoviePosterUrl(imdbId: String): Option[String] = {
+    getMoviePosterUrlByWidth(imdbId, "w92")
   }
 
-  def getPosterUrl(imdbId: String): Option[String] = {
-    getPosterUrlByWidth(imdbId, "w342")
+  def getBigMoviePosterUrl(imdbId: String): Option[String] = {
+    getMoviePosterUrlByWidth(imdbId, "w342")
   }
 
-  private def getPosterUrlByWidth(imdbId: String, width: String): Option[String] = {
-    val posterFileName = getPosterFileName(imdbId)
+  private def getMoviePosterUrlByWidth(imdbId: String, width: String): Option[String] = {
+    val posterFileName = getMoviePosterFileName(imdbId)
     val imageUrl: Option[String] = posterFileName match {
       case None => None
-      case a => Option(baseUrl + width + a.get)
+      case a => Option(imageBaseUrl + width + a.get)
     }
     imageUrl
   }
 
-  private def getBaseConfiguration(): JsValue = {
-    val request = url(configurationUrl + apiKey)
-    val response = Http(request OK as.String)
-
-    val configJsonString = Await.result(response, Duration(10, "s"))
-    Json.parse(configJsonString)
+  private def getBaseConfigurationJson(): JsValue = {
+    getJsonFromReqest(configurationUrl + apiKeyParam)
   }
 
-  private def getPosterFileName(imdbId: String): Option[String] = {
-    val request = url(imageUrl.replace("imdbId", imdbId) + apiKey + "&external_source=imdb_id")
-    val response = Http(request OK as.String)
-
-    val imageJsonString = Await.result(response, Duration(10, "s"))
-    val imageJsJson = Json.parse(imageJsonString)
+  private def getMoviePosterFileName(imdbId: String): Option[String] = {
+    val imageJsJson = getJsonFromReqest(imageUrl.replace("imdbId", imdbId) + apiKeyParam + "&external_source=imdb_id")
     println(imageJsJson)
     getImage(imageJsJson)
+  }
+  
+  private def getJsonFromReqest(urlString: String):JsValue = {
+    val request = url(urlString)
+    val response = Http(request OK as.String)
+
+    val jsonString = Await.result(response, Duration(10, "s"))
+    Json.parse(jsonString)
   }
 
   private def getImage(imageJsValue: JsValue): Option[String] = {
@@ -98,7 +98,7 @@ object TheMovieDbWrapper {
     }
   }
 
-  private def getBaseUrl(jsValue: JsValue, tag: String): Option[String] = {
+  private def getImageBaseUrl(jsValue: JsValue, tag: String): Option[String] = {
     (jsValue \ "images" \ tag).validate[String] match {
       case s: JsSuccess[String] => Option(s.get)
       case e: JsError => None
