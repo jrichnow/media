@@ -14,9 +14,12 @@ import play.api.libs.json.JsSuccess
 
 object TheMovieDbWrapper {
 
-  private val apiKeyParam = "api_key=aa4ffe4729c78863475a1c3b082308fe"
+  private val apiKeyParam = "&api_key=aa4ffe4729c78863475a1c3b082308fe"
   private val configurationUrl = "https://api.themoviedb.org/3/configuration?"
   private val imageUrl = "https://api.themoviedb.org/3/movie/imdbId/images?"
+
+  private val largeSize = "w342"
+  private val thumbnailSize = "w92"
 
   var imageBaseUrl = ""
 
@@ -27,7 +30,7 @@ object TheMovieDbWrapper {
     val posterFileName = getMoviePosterFileName("tt1790864")
     val imageUrl: Option[String] = posterFileName match {
       case None => None
-      case a => Option(baseUrl.get + "w92" + a.get)
+      case a => Option(baseUrl.get + thumbnailSize + a.get)
     }
     println(imageUrl)
   }
@@ -39,11 +42,50 @@ object TheMovieDbWrapper {
   }
 
   def getThumbnailMoviePosterUrl(imdbId: String): Option[String] = {
-    getMoviePosterUrlByWidth(imdbId, "w92")
+    getMoviePosterUrlByWidth(imdbId, thumbnailSize)
   }
 
   def getBigMoviePosterUrl(imdbId: String): Option[String] = {
-    getMoviePosterUrlByWidth(imdbId, "w342")
+    getMoviePosterUrlByWidth(imdbId, largeSize)
+  }
+
+  def getActorData(name: String): JsValue = {
+    val actorJson = getJsonFromRequest(s"https://api.themoviedb.org/3/search/person?query=${name.replace(" ", "+")}$apiKeyParam")
+    val resultsArray = getJsArray(actorJson, "results")
+    resultsArray match {
+      case None => Json.obj()
+      case a: Some[JsArray] => {
+        val result = a.get(0)
+        println(result)
+        val movieDbId = getIntValue(result, "id").get
+        val movieDbPosterName = getStringValue(result, "profile_path").get
+        
+        Json.obj("name" -> name,
+          "id" -> movieDbId,
+          "poster" -> (imageBaseUrl + largeSize + movieDbPosterName))
+      }
+    }
+  }
+
+  private def getJsArray(json: JsValue, arrayName: String): Option[JsArray] = {
+    (json \ arrayName).validate[JsArray] match {
+      case s: JsSuccess[JsArray] => Option(s.get)
+      case e: JsError => None
+    }
+  }
+
+  private def getStringValue(json: JsValue, tagName: String): Option[String] = {
+    (json \ tagName).validate[String] match {
+      case s: JsSuccess[String] => Option(s.get)
+      case e: JsError => None
+    }
+  }
+
+  private def getIntValue(json: JsValue, tagName: String): Option[Int] = {
+    (json \ tagName).validate[Int] match {
+      case s: JsSuccess[Int] => Option(s.get)
+      case e: JsError => None
+    }
   }
 
   private def getMoviePosterUrlByWidth(imdbId: String, width: String): Option[String] = {
@@ -56,16 +98,17 @@ object TheMovieDbWrapper {
   }
 
   private def getBaseConfigurationJson(): JsValue = {
-    getJsonFromReqest(configurationUrl + apiKeyParam)
+    getJsonFromRequest(configurationUrl + apiKeyParam)
   }
 
   private def getMoviePosterFileName(imdbId: String): Option[String] = {
-    val imageJsJson = getJsonFromReqest(imageUrl.replace("imdbId", imdbId) + apiKeyParam + "&external_source=imdb_id")
+    val imageJsJson = getJsonFromRequest(imageUrl.replace("imdbId", imdbId) + apiKeyParam + "&external_source=imdb_id")
     println(imageJsJson)
     getImage(imageJsJson)
   }
-  
-  private def getJsonFromReqest(urlString: String):JsValue = {
+
+  private def getJsonFromRequest(urlString: String): JsValue = {
+    println(urlString)
     val request = url(urlString)
     val response = Http(request OK as.String)
 
