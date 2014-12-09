@@ -8,9 +8,9 @@ class TheMovieDbWrapperSpec extends PlaySpec with OneAppPerSuite {
   "TheMovieDbWrapper" should {
     
     "provide an actor JSON if found" in {
-      val configJson = TheMovieDbWrapper.getActorData("Brad Pitt")
+      val actorJson = TheMovieDbWrapper.getActorData("Brad Pitt")
       
-      println(configJson)
+      println(actorJson)
     }
   }
 }

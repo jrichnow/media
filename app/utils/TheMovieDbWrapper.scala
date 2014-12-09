@@ -14,9 +14,12 @@ import play.api.libs.json.JsSuccess
 
 object TheMovieDbWrapper {
 
-  private val apiKeyParam = "&api_key=aa4ffe4729c78863475a1c3b082308fe"
-  private val configurationUrl = "https://api.themoviedb.org/3/configuration?"
-  private val imageUrl = "https://api.themoviedb.org/3/movie/imdbId/images?"
+  private val baseUrl = "https://api.themoviedb.org/3/"
+  private val configurationPath = "configuration?"
+  private val moviePosterPath = "movie/imdbId/images?"
+  private val personPath = "person/"
+
+  private val apiKeyParam = "api_key=aa4ffe4729c78863475a1c3b082308fe"
 
   private val largeSize = "w342"
   private val thumbnailSize = "w92"
@@ -50,42 +53,44 @@ object TheMovieDbWrapper {
   }
 
   def getActorData(name: String): JsValue = {
-    val actorJson = getJsonFromRequest(s"https://api.themoviedb.org/3/search/person?query=${name.replace(" ", "+")}$apiKeyParam")
-    val resultsArray = getJsArray(actorJson, "results")
+    val (movieDbId, movieDbPosterName) = getActorIdAndPoster(name)
+    val (biography, birthday, birthplace, deathday, imdbId) = getActorInfo(movieDbId.get)
+    
+    Json.obj("name" -> name,
+      "id" -> movieDbId,
+      "birthday" -> birthday,
+      "birthplacce" -> birthplace,
+      "deathday" -> deathday,
+      "biography" -> biography,
+      "imdbUrl" -> s"http://www.imdb.com/name/${imdbId.get}",
+      "poster" -> (s"$imageBaseUrl$largeSize${movieDbPosterName.get}"))
+  }
+
+  private def getActorIdAndPoster(name: String): (Option[Int], Option[String]) = {
+    val actorJson = getJsonFromRequest(s"${baseUrl}search/person?query=${name.replace(" ", "+")}&$apiKeyParam")
+    val resultsArray = JsonUtil.getJsArray(actorJson, "results")
     resultsArray match {
-      case None => Json.obj()
+      case None => (None, None)
       case a: Some[JsArray] => {
         val result = a.get(0)
         println(result)
-        val movieDbId = getIntValue(result, "id").get
-        val movieDbPosterName = getStringValue(result, "profile_path").get
-        
-        Json.obj("name" -> name,
-          "id" -> movieDbId,
-          "poster" -> (imageBaseUrl + largeSize + movieDbPosterName))
+        val movieDbId = JsonUtil.getIntValue(result, "id")
+        val movieDbPosterName = JsonUtil.getStringValue(result, "profile_path")
+        (movieDbId, movieDbPosterName)
       }
     }
   }
 
-  private def getJsArray(json: JsValue, arrayName: String): Option[JsArray] = {
-    (json \ arrayName).validate[JsArray] match {
-      case s: JsSuccess[JsArray] => Option(s.get)
-      case e: JsError => None
-    }
-  }
-
-  private def getStringValue(json: JsValue, tagName: String): Option[String] = {
-    (json \ tagName).validate[String] match {
-      case s: JsSuccess[String] => Option(s.get)
-      case e: JsError => None
-    }
-  }
-
-  private def getIntValue(json: JsValue, tagName: String): Option[Int] = {
-    (json \ tagName).validate[Int] match {
-      case s: JsSuccess[Int] => Option(s.get)
-      case e: JsError => None
-    }
+  private def getActorInfo(movieDbId: Int): (Option[String], Option[String], Option[String], Option[String], Option[String]) = {
+    val actorJson = getJsonFromRequest(s"${baseUrl}person/${movieDbId}?$apiKeyParam")
+    
+    val biography = JsonUtil.getStringValue(actorJson, "biography")
+    val birthday = JsonUtil.getStringValue(actorJson, "birthday")
+    val birthplace = JsonUtil.getStringValue(actorJson, "place_of_birth")
+    val deathday = JsonUtil.getStringValue(actorJson, "deathday")
+    val imdbId = JsonUtil.getStringValue(actorJson, "imdb_id")
+    
+    (biography, birthday, birthplace, deathday, imdbId)
   }
 
   private def getMoviePosterUrlByWidth(imdbId: String, width: String): Option[String] = {
@@ -98,11 +103,11 @@ object TheMovieDbWrapper {
   }
 
   private def getBaseConfigurationJson(): JsValue = {
-    getJsonFromRequest(configurationUrl + apiKeyParam)
+    getJsonFromRequest(s"${baseUrl}${configurationPath}${apiKeyParam}")
   }
 
   private def getMoviePosterFileName(imdbId: String): Option[String] = {
-    val imageJsJson = getJsonFromRequest(imageUrl.replace("imdbId", imdbId) + apiKeyParam + "&external_source=imdb_id")
+    val imageJsJson = getJsonFromRequest(s"${baseUrl}${moviePosterPath.replace("imdbId", imdbId)}${apiKeyParam}&external_source=imdb_id")
     println(imageJsJson)
     getImage(imageJsJson)
   }

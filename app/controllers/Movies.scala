@@ -278,6 +278,10 @@ object Movies extends Controller {
       }
     }
   }
+  
+  def actor(name: String) = Action {
+    Ok(TheMovieDbWrapper.getActorData(name))
+  }
 
   def newForm = Action {
     Ok(views.html.movies.form("NewMovieCtrl", "", "Adding New"))
