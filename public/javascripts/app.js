@@ -126,6 +126,12 @@ mediaApp.controller('MovieFindCtrl', function($scope, $http, $attrs, ngTablePara
 	};
 });
 
+mediaApp.controller('MovieActorCtrl', function($scope, $http, $attrs) {
+	$http.get('/movies/actor/' + $attrs.name).success(function(data) {
+		$scope.actor = data;
+	});
+});
+
 
 mediaApp.controller('EditMovieCtrl', function($scope, $http, $attrs) {
 	$scope.movie = {

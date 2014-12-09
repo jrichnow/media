@@ -59,7 +59,7 @@ object TheMovieDbWrapper {
     Json.obj("name" -> name,
       "id" -> movieDbId,
       "birthday" -> birthday,
-      "birthplacce" -> birthplace,
+      "birthplace" -> birthplace,
       "deathday" -> deathday,
       "biography" -> biography,
       "imdbUrl" -> s"http://www.imdb.com/name/${imdbId.get}",

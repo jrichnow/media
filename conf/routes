@@ -8,6 +8,7 @@ POST 	/adscale					controllers.Application.adscale
 GET     /                           controllers.Application.index
 
 GET     /movies                     controllers.Movies.index
+GET		/movies/actor/:name			controllers.Movies.actor(name:String)
 POST    /movies/add                 controllers.Movies.add
 POST    /movies/addImdb             controllers.Movies.addImdb
 GET     /movies/delete/:id          controllers.Movies.delete(id:String)
