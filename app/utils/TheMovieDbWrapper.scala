@@ -57,11 +57,17 @@ object TheMovieDbWrapper {
     movieDbId match {
       case id: Some[Int] => {
         val (biography, birthday, birthplace, deathday, imdbId) = getActorInfo(movieDbId.get)
+        println((biography, birthday, birthplace, deathday, imdbId))
         
         val posterUrl = movieDbPosterName match {
-          case poster: Some[String] => s"$imageBaseUrl$largeSize${movieDbPosterName}"
+          case poster: Some[String] => s"$imageBaseUrl$largeSize${movieDbPosterName.get}"
           case None => "/assets/images/no-image.jpg"
         }
+        
+        if (birthday.isEmpty && birthplace.isEmpty && deathday.isEmpty && biography.isEmpty && (imdbId.isEmpty || imdbId.get.isEmpty())) {
+          Json.obj("error" -> "No information available")
+        }
+        else {
 
         Json.obj("name" -> name,
           "id" -> movieDbId,
@@ -71,10 +77,14 @@ object TheMovieDbWrapper {
           "biography" -> biography,
           "imdbUrl" -> s"http://www.imdb.com/name/${imdbId.getOrElse("")}",
           "poster" -> posterUrl)
-
+        }
       }
       case None => Json.obj("error" -> "No information available")
     }
+  }
+  
+  private def evaluateFinalActorResult() {
+    
   }
 
   private def getActorIdAndPoster(name: String): (Option[Int], Option[String]) = {
@@ -158,14 +168,6 @@ object TheMovieDbWrapper {
           case s: JsSuccess[String] => Option(s.get)
           case e: JsError => None
         }
-        // Just take the first one for the time being
-        //        if (imageArray.size == 1) {
-        //          
-        //        }
-        //        else {
-        // Find the english version
-        //        	imageArray.foreach(f)
-        //        }
       }
     }
   }
