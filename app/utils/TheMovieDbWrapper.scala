@@ -54,42 +54,58 @@ object TheMovieDbWrapper {
 
   def getActorData(name: String): JsValue = {
     val (movieDbId, movieDbPosterName) = getActorIdAndPoster(name)
-    val (biography, birthday, birthplace, deathday, imdbId) = getActorInfo(movieDbId.get)
-    
-    Json.obj("name" -> name,
-      "id" -> movieDbId,
-      "birthday" -> birthday,
-      "birthplace" -> birthplace,
-      "deathday" -> deathday,
-      "biography" -> biography,
-      "imdbUrl" -> s"http://www.imdb.com/name/${imdbId.get}",
-      "poster" -> (s"$imageBaseUrl$largeSize${movieDbPosterName.get}"))
+    movieDbId match {
+      case id: Some[Int] => {
+        val (biography, birthday, birthplace, deathday, imdbId) = getActorInfo(movieDbId.get)
+
+        Json.obj("name" -> name,
+          "id" -> movieDbId,
+          "birthday" -> birthday,
+          "birthplace" -> birthplace,
+          "deathday" -> deathday,
+          "biography" -> biography,
+          "imdbUrl" -> s"http://www.imdb.com/name/${imdbId.getOrElse("")}",
+          "poster" -> (s"$imageBaseUrl$largeSize${movieDbPosterName.getOrElse("")}"))
+
+      }
+      case None => Json.obj()
+    }
   }
 
   private def getActorIdAndPoster(name: String): (Option[Int], Option[String]) = {
     val actorJson = getJsonFromRequest(s"${baseUrl}search/person?query=${name.replace(" ", "+")}&$apiKeyParam")
-    val resultsArray = JsonUtil.getJsArray(actorJson, "results")
-    resultsArray match {
-      case None => (None, None)
-      case a: Some[JsArray] => {
-        val result = a.get(0)
-        println(result)
-        val movieDbId = JsonUtil.getIntValue(result, "id")
-        val movieDbPosterName = JsonUtil.getStringValue(result, "profile_path")
-        (movieDbId, movieDbPosterName)
+    // TODO Check for the number of results
+    val totalResults = JsonUtil.getIntValue(actorJson, "total_results")
+    totalResults match {
+      case i: Some[Int] => {
+        if (i.get == 1) {
+          val resultsArray = JsonUtil.getJsArray(actorJson, "results")
+          resultsArray match {
+            case None => (None, None)
+            case a: Some[JsArray] => {
+              val result = a.get(0)
+              println(result)
+              val movieDbId = JsonUtil.getIntValue(result, "id")
+              val movieDbPosterName = JsonUtil.getStringValue(result, "profile_path")
+              (movieDbId, movieDbPosterName)
+            }
+          }
+        }
+        else { (None, None) }
       }
+      case None => (None, None)
     }
   }
 
   private def getActorInfo(movieDbId: Int): (Option[String], Option[String], Option[String], Option[String], Option[String]) = {
     val actorJson = getJsonFromRequest(s"${baseUrl}person/${movieDbId}?$apiKeyParam")
-    
+
     val biography = JsonUtil.getStringValue(actorJson, "biography")
     val birthday = JsonUtil.getStringValue(actorJson, "birthday")
     val birthplace = JsonUtil.getStringValue(actorJson, "place_of_birth")
     val deathday = JsonUtil.getStringValue(actorJson, "deathday")
     val imdbId = JsonUtil.getStringValue(actorJson, "imdb_id")
-    
+
     (biography, birthday, birthplace, deathday, imdbId)
   }
 
