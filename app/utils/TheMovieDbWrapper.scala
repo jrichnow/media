@@ -57,6 +57,11 @@ object TheMovieDbWrapper {
     movieDbId match {
       case id: Some[Int] => {
         val (biography, birthday, birthplace, deathday, imdbId) = getActorInfo(movieDbId.get)
+        
+        val posterUrl = movieDbPosterName match {
+          case poster: Some[String] => s"$imageBaseUrl$largeSize${movieDbPosterName}"
+          case None => "/assets/images/no-image.jpg"
+        }
 
         Json.obj("name" -> name,
           "id" -> movieDbId,
@@ -65,7 +70,7 @@ object TheMovieDbWrapper {
           "deathday" -> deathday,
           "biography" -> biography,
           "imdbUrl" -> s"http://www.imdb.com/name/${imdbId.getOrElse("")}",
-          "poster" -> (s"$imageBaseUrl$largeSize${movieDbPosterName.getOrElse("")}"))
+          "poster" -> posterUrl)
 
       }
       case None => Json.obj("error" -> "No information available")
@@ -76,7 +81,7 @@ object TheMovieDbWrapper {
     val actorJson = getJsonFromRequest(s"${baseUrl}search/person?query=${name.replace(" ", "+")}&$apiKeyParam")
     JsonUtil.getIntValue(actorJson, "total_results") match {
       case i: Some[Int] => {
-        if (i.get == 1) {
+        if (i.get >= 1) { 
           val resultsArray = JsonUtil.getJsArray(actorJson, "results")
           resultsArray match {
             case None => (None, None)
