@@ -27,7 +27,7 @@ class TheMovieDbWrapperSpec extends PlaySpec {
       TheMovieDbWrapper.init
       val actorJson = TheMovieDbWrapper.getActorData("Not Possible")
       
-      actorJson mustBe (Json.obj())
+      actorJson mustBe (Json.obj("error" -> "No information available"))
     }
   }
 }

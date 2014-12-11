@@ -68,15 +68,13 @@ object TheMovieDbWrapper {
           "poster" -> (s"$imageBaseUrl$largeSize${movieDbPosterName.getOrElse("")}"))
 
       }
-      case None => Json.obj()
+      case None => Json.obj("error" -> "No information available")
     }
   }
 
   private def getActorIdAndPoster(name: String): (Option[Int], Option[String]) = {
     val actorJson = getJsonFromRequest(s"${baseUrl}search/person?query=${name.replace(" ", "+")}&$apiKeyParam")
-    // TODO Check for the number of results
-    val totalResults = JsonUtil.getIntValue(actorJson, "total_results")
-    totalResults match {
+    JsonUtil.getIntValue(actorJson, "total_results") match {
       case i: Some[Int] => {
         if (i.get == 1) {
           val resultsArray = JsonUtil.getJsArray(actorJson, "results")
@@ -90,10 +88,15 @@ object TheMovieDbWrapper {
               (movieDbId, movieDbPosterName)
             }
           }
+        } else {
+          println(s"No information found for actor: $name")
+          (None, None)
         }
-        else { (None, None) }
       }
-      case None => (None, None)
+      case None => {
+        println(s"Invalid JSON returned for actor search: $name")
+        (None, None)
+      }
     }
   }
 
