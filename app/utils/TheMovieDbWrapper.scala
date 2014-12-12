@@ -71,12 +71,12 @@ object TheMovieDbWrapper {
 
         Json.obj("name" -> name,
           "id" -> movieDbId,
-          "birthday" -> birthday,
-          "birthplace" -> birthplace,
-          "deathday" -> deathday,
+          "birthDay" -> birthday,
+          "birthPlace" -> birthplace,
+          "deathDay" -> deathday,
           "biography" -> biography,
           "imdbUrl" -> s"http://www.imdb.com/name/${imdbId.getOrElse("")}",
-          "poster" -> posterUrl)
+          "posterUrl" -> posterUrl)
         }
       }
       case None => Json.obj("error" -> "No information available")

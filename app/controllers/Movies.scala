@@ -211,21 +211,43 @@ object Movies extends Controller {
   //  }
 
   def image(imdbId: String) = Action { implicit request =>
+    println(s"imdbId: $imdbId")
     val referrer = request.headers.get("referer")
     referrer match {
-      case None => Redirect(Movie2.getTheMovieDbImageUrl(imdbId).get)
+      case None => {
+        println("No referrer given")
+        Redirect(checkImdbForImageUrl(imdbId))
+      }
       case s => {
         if (s.get.contains("localhost")) {
+          println("referrer is localhost")
           val movie = Movie2Dao.findByImdbId(imdbId)
+          println(movie)
           movie match {
-            case s: Some[Movie2] => Redirect(movie.get.imageUrl.get)
-            case None => Redirect(Movie2.getTheMovieDbImageUrl(imdbId).get)
+            case s: Some[Movie2] => Redirect(validateImageUrl(movie.get.imageUrl.get))
+            case None => Redirect(checkImdbForImageUrl(imdbId))
           }
 
         } else {
-          Redirect(Movie2.getTheMovieDbImageUrl(imdbId).get)
+          println("referrer is NOT localhost")
+          Redirect(checkImdbForImageUrl(imdbId))
         }
       }
+    }
+  }
+  
+  private def validateImageUrl(imageUrl: String): String = {
+    imageUrl match {
+      case "N/A" => "/assets/images/no-image.jpg"
+      case "" => "/assets/images/no-image.jpg"
+      case _ => imageUrl
+    }
+  }
+
+  private def checkImdbForImageUrl(imdbId: String): String = {
+    imdbId match {
+      case a if (a.startsWith("tt")) => Movie2.getTheMovieDbImageUrl(imdbId).get
+      case _ => "/assets/images/no-image.jpg"
     }
   }
   //    val movie = findById(id)
@@ -263,22 +285,29 @@ object Movies extends Controller {
   def imageSmall(imdbId: String) = Action { implicit request =>
     val referrer = request.headers.get("referer")
     referrer match {
-      case None => Redirect(TheMovieDbWrapper.getThumbnailMoviePosterUrl(imdbId).get)
+      case None => Redirect(checkImdbForThumbnailImageUrl(imdbId))
       case s => {
         if (s.get.contains("localhost")) {
           val movie = Movie2Dao.findByImdbId(imdbId)
           movie match {
-            case s: Some[Movie2] => Redirect(movie.get.imageUrl.get)
-            case None => Redirect(TheMovieDbWrapper.getThumbnailMoviePosterUrl(imdbId).get)
+            case s: Some[Movie2] => Redirect(validateImageUrl(movie.get.imageUrl.get))
+            case None => Redirect(checkImdbForThumbnailImageUrl(imdbId))
           }
 
         } else {
-          Redirect(TheMovieDbWrapper.getThumbnailMoviePosterUrl(imdbId).get)
+          Redirect(checkImdbForThumbnailImageUrl(imdbId))
         }
       }
     }
   }
   
+  private def checkImdbForThumbnailImageUrl(imdbId: String): String = {
+    imdbId match {
+      case a if (a.startsWith("tt")) => TheMovieDbWrapper.getThumbnailMoviePosterUrl(imdbId).get
+      case _ => "/assets/images/no-image.jpg"
+    }
+  }
+
   def actor(name: String) = Action {
     Ok(TheMovieDbWrapper.getActorData(name))
   }

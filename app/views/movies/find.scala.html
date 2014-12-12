@@ -16,13 +16,14 @@
 		<div class="col-md-12 col-sm-4" id="actorPanel" class="accordion-body collapse" data-toggle="false">
 			<p ng-if="actor.error.length > 0">{{actor.error}}</p>
 			<div class="col-md-3 col-sm-4 sidebar" style="margin-top:0px">
-				<img width="250" ng-src="{{actor.poster}}""/>
+				<img width="250" ng-src="{{actor.posterUrl}}""/>
 			</div>	
 			<div class="col-md-9 col-sm-8">
 				<table class='table table-striped table-hover table-condensed' ng-if="actor.error == null">
 					<tbody>
-						<tr><td width="150px">Birthday:</td><td><strong>{{actor.birthday}}</strong></td></tr>
-						<tr><td>Birth Place:</td><td>{{actor.birthplace}}</td></tr>
+						<tr><td width="150px">Birthday:</td><td>{{actor.birthDay}}</td></tr>
+						<tr><td>Birth Place:</td><td>{{actor.birthPlace}}</td></tr>
+						<tr><td>Deathday:</td><td>{{actor.deathDay}}</td></tr>
 						<tr><td>Biography:</td><td>{{actor.biography}}</td></tr>
 						<tr><td>IMDB Link:</td><td><a ng-href="{{actor.imdbUrl}}" target="_">{{actor.imdbUrl}}</td></a></tr>
 					</tbody>
