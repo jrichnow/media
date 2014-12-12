@@ -10,6 +10,10 @@ import play.api.libs.json.JsError
 import play.api.libs.json.JsSuccess
 import play.api.libs.json.Json
 import model.Movie2
+import com.mongodb.casbah.commons.MongoDBList
+import com.mongodb.BasicDBList
+import com.mongodb.casbah.MongoDB
+import utils.JsonUtil
 
 object Movie2Dao {
 
@@ -127,12 +131,31 @@ object Movie2Dao {
     val results = movieColl.find().sort(MongoDBObject("rating" -> -1, "year" -> -1)).limit(100)
     results.map(dbObjectToMovie(_).get).toSeq
   }
+  
+  def groupByYear():Seq[(Int, Int)] = {
+    val sort = MongoDBObject("$sort" -> MongoDBObject("year" -> -1))
+	val group = MongoDBObject("$group" -> MongoDBObject(
+	    "_id" -> MongoDBObject("year" -> "$year"),
+	    "num" -> MongoDBObject("$sum" -> 1)))
+	    
+	val pipeline = MongoDBList(sort, group)
+	val result: BasicDBList = db.command(MongoDBObject("aggregate" -> "movie", "pipeline" -> pipeline)).get("result").asInstanceOf[BasicDBList]
+	println(s"groupby: $result")
+	result.toArray().map(entry => dbObjectToTuple(entry.asInstanceOf[DBObject]))
+  }
 
   private def dbObjectToMovie(dbObject: DBObject): Option[Movie2] = {
     Json.parse(dbObject.toString()).validate[Movie2] match {
       case s: JsSuccess[Movie2] => Option(s.get)
       case e: JsError => None
     }
+  }
+  
+  private def dbObjectToTuple(dbObject: DBObject):(Int, Int) = {
+    val dbObjectAsJson = Json.parse(dbObject.toString())
+    val year = dbObjectAsJson \ "_id" \ "year"
+    val count = dbObjectAsJson \ "num"
+    (year.toString().toInt, count.toString().toInt)
   }
 
   def delete(id: String) {

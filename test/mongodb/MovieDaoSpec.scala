@@ -28,7 +28,7 @@ class MovieDaoSpec extends PlaySpec with OneAppPerSuite {
 
     "return no movie when collection is empty" in {
       movieColl.drop()
-      Movie2Dao.findAll.size mustEqual(0)
+      Movie2Dao.findAll.size mustEqual (0)
 
       val movieOption = Movie2Dao.findById("5393ed7dc0260baea0990019")
       movieOption mustBe None
@@ -49,9 +49,9 @@ class MovieDaoSpec extends PlaySpec with OneAppPerSuite {
       val dbMovie = dbMovieOption.get
       dbMovie.year must equal(2012)
 
-      dbMovie.id.get mustEqual(updatedMovie.id.get)
+      dbMovie.id.get mustEqual (updatedMovie.id.get)
 
-      Movie2Dao.findAll.size mustEqual(1)
+      Movie2Dao.findAll.size mustEqual (1)
     }
 
     "update a movie" in {
@@ -69,7 +69,7 @@ class MovieDaoSpec extends PlaySpec with OneAppPerSuite {
       modifiedMovie.year must equal(2000)
       modifiedMovie.id === updatedMovie.id
 
-      Movie2Dao.findAll.size mustEqual(1)
+      Movie2Dao.findAll.size mustEqual (1)
     }
 
     "delete a movie" in {
@@ -77,11 +77,11 @@ class MovieDaoSpec extends PlaySpec with OneAppPerSuite {
       val movie = Movie2(title = "Dreamland", year = 2012, folder = 1, dvd = 2)
       val updatedMovie = Movie2Dao.add(movie)
 
-      Movie2Dao.findAll.size mustEqual(1)
+      Movie2Dao.findAll.size mustEqual (1)
 
       Movie2Dao.delete(updatedMovie.id.get)
 
-      Movie2Dao.findAll.size mustEqual(0)
+      Movie2Dao.findAll.size mustEqual (0)
     }
 
     "return a limited list of recent movies" in {
@@ -102,10 +102,10 @@ class MovieDaoSpec extends PlaySpec with OneAppPerSuite {
 
       val recentMovies = Movie2Dao.recent
 
-      recentMovies.size mustEqual(10)
+      recentMovies.size mustEqual (10)
       var year = 2012
       for (i <- 0 to 9) {
-        recentMovies(i).year mustEqual(year)
+        recentMovies(i).year mustEqual (year)
         year = year - 1
       }
     }
@@ -118,14 +118,35 @@ class MovieDaoSpec extends PlaySpec with OneAppPerSuite {
       Movie2Dao.add(Movie2(title = "Dreamland", year = 2001, folder = 1, dvd = 2, actors = Option("Tom Cruise")))
 
       val resultsTomCruise = Movie2Dao.findByActor("Tom Cruise")
-      resultsTomCruise.length mustEqual(2)
-      
+      resultsTomCruise.length mustEqual (2)
+
       val resultsMorganFreeman = Movie2Dao.findByActor("Morgan Freeman")
-      resultsMorganFreeman.length mustBe(1)
-      resultsMorganFreeman.head.actors.get mustBe("Morgan Freeman")
-      
+      resultsMorganFreeman.length mustBe (1)
+      resultsMorganFreeman.head.actors.get mustBe ("Morgan Freeman")
+
       val resultsBudSpencer = Movie2Dao.findByActor("Bud Spencer")
       resultsBudSpencer.isEmpty == true
+    }
+  }
+
+  "group by year" in {
+    movieColl.drop()
+    Movie2Dao.add(Movie2(title = "Dreamland", year = 2000, folder = 1, dvd = 2, actors = Option("Tom Cruise")))
+    Movie2Dao.add(Movie2(title = "Dreamland", year = 2010, folder = 1, dvd = 2, actors = Option("Nicole Kitman")))
+    Movie2Dao.add(Movie2(title = "Dreamland", year = 2010, folder = 1, dvd = 2, actors = Option("Nicole Kitman11")))
+    Movie2Dao.add(Movie2(title = "Dreamland", year = 2010, folder = 1, dvd = 2, actors = Option("Nicole Kitman12")))
+    Movie2Dao.add(Movie2(title = "Dreamland", year = 2000, folder = 1, dvd = 2, actors = Option("Morgan Freeman")))
+    Movie2Dao.add(Movie2(title = "Dreamland", year = 2001, folder = 1, dvd = 2, actors = Option("Tom Cruise")))
+    
+    val groupBy = Movie2Dao.groupByYear
+    
+    groupBy.length must be (3)
+    for ((year, count) <- groupBy) {
+      year match {
+        case a if a == 2000 => count must be (2)
+        case b if b == 2001 => count must be (1) 
+        case c if c == 2010 => count must be (3)
+      }
     }
   }
 }
