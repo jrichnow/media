@@ -20,6 +20,8 @@ import model.Movie2
 import dao.Movie2Dao
 import model.MovieShort
 import utils.TheMovieDbWrapper
+import dao.ActorDao
+import model.Actor
 
 object Movies extends Controller {
 
@@ -219,7 +221,7 @@ object Movies extends Controller {
       }
     }
   }
-  
+
   private def validateImageUrl(imageUrl: String): String = {
     imageUrl match {
       case "N/A" => "/assets/images/no-image.jpg"
@@ -284,7 +286,7 @@ object Movies extends Controller {
       }
     }
   }
-  
+
   private def checkImdbForThumbnailImageUrl(imdbId: String): String = {
     imdbId match {
       case a if (a.startsWith("tt")) => TheMovieDbWrapper.getThumbnailMoviePosterUrl(imdbId).get
@@ -293,7 +295,26 @@ object Movies extends Controller {
   }
 
   def actor(name: String) = Action {
-    Ok(TheMovieDbWrapper.getActorData(name))
+    val dbActor = ActorDao.getByFullName(name)
+    dbActor match {
+      case Some(_) => Ok(Actor.toJson(dbActor.get))
+      case None => {
+        val movieDbActor = TheMovieDbWrapper.getActorData(name)
+        movieDbActor match {
+          case Some(_) => {
+            val actor = Actor.fromJson(movieDbActor.get)
+            actor match {
+              case Some(_) => {
+                ActorDao.add(actor.get)
+                Ok(Actor.toJson(actor.get))
+              }
+              case None => Ok(Json.obj("error" -> "Error converting MovieDbActor Json to actor model"))
+            }
+          }
+          case None => Ok(Json.obj("error" -> "No information available"))
+        }
+      }
+    }
   }
 
   def newForm = Action {

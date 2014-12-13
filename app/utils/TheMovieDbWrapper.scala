@@ -11,6 +11,7 @@ import play.api.libs.json.JsError
 import play.api.libs.json.JsObject
 import play.api.libs.json.JsArray
 import play.api.libs.json.JsSuccess
+import dao.ActorDao
 
 object TheMovieDbWrapper {
 
@@ -52,46 +53,41 @@ object TheMovieDbWrapper {
     getMoviePosterUrlByWidth(imdbId, largeSize)
   }
 
-  def getActorData(name: String): JsValue = {
+  def getActorData(name: String): Option[JsValue] = {
+    println(s"Trying to locate actor data for $name from Movie DB")
     val (movieDbId, movieDbPosterName) = getActorIdAndPoster(name)
     movieDbId match {
       case id: Some[Int] => {
         val (biography, birthday, birthplace, deathday, imdbId) = getActorInfo(movieDbId.get)
         println((biography, birthday, birthplace, deathday, imdbId))
-        
+
         val posterUrl = movieDbPosterName match {
           case poster: Some[String] => s"$imageBaseUrl$largeSize${movieDbPosterName.get}"
           case None => "/assets/images/no-image.jpg"
         }
-        
-        if (birthday.isEmpty && birthplace.isEmpty && deathday.isEmpty && biography.isEmpty && (imdbId.isEmpty || imdbId.get.isEmpty())) {
-          Json.obj("error" -> "No information available")
-        }
-        else {
 
-        Json.obj("name" -> name,
-          "id" -> movieDbId,
-          "birthDay" -> birthday,
-          "birthPlace" -> birthplace,
-          "deathDay" -> deathday,
-          "biography" -> biography,
-          "imdbUrl" -> s"http://www.imdb.com/name/${imdbId.getOrElse("")}",
-          "posterUrl" -> posterUrl)
+        if (birthday.isEmpty && birthplace.isEmpty && deathday.isEmpty && biography.isEmpty && (imdbId.isEmpty || imdbId.get.isEmpty())) {
+          None
+        } else {
+          Option(Json.obj("name" -> name,
+            "movieDbId" -> movieDbId,
+            "birthDay" -> birthday,
+            "birthPlace" -> birthplace,
+            "deathDay" -> deathday,
+            "biography" -> biography,
+            "imdbUrl" -> s"http://www.imdb.com/name/${imdbId.getOrElse("")}",
+            "posterUrl" -> posterUrl))
         }
       }
-      case None => Json.obj("error" -> "No information available")
+      case None => None
     }
-  }
-  
-  private def evaluateFinalActorResult() {
-    
   }
 
   private def getActorIdAndPoster(name: String): (Option[Int], Option[String]) = {
     val actorJson = getJsonFromRequest(s"${baseUrl}search/person?query=${name.replace(" ", "+")}&$apiKeyParam")
     JsonUtil.getIntValue(actorJson, "total_results") match {
       case i: Some[Int] => {
-        if (i.get >= 1) { 
+        if (i.get >= 1) {
           val resultsArray = JsonUtil.getJsArray(actorJson, "results")
           resultsArray match {
             case None => (None, None)

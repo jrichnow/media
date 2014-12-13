@@ -33,6 +33,7 @@ class ActorDaoSpec extends PlaySpec with OneAppPerSuite {
       val actor = ActorDao.getByFullName("Brad Pitt").get
 
       actor.id.get.length() must be > 6
+      actor.movieDbId must be (None)
       actor.name must be("Brad Pitt")
       actor.birthDay.get must be ("1999-99-99")
       actor.birthPlace.get must be ("Christchurch")
@@ -45,6 +46,6 @@ class ActorDaoSpec extends PlaySpec with OneAppPerSuite {
   }
 
   private def getActor(): Actor = {
-    Actor(Option(""), "Brad Pitt", Option("1999-99-99"), Option("Christchurch"), None, Option("biography"), Option("imdbUrl"), Option("posterUrl"))
+    Actor(Option(""), None, "Brad Pitt", Option("1999-99-99"), Option("Christchurch"), None, Option("biography"), Option("imdbUrl"), Option("posterUrl"))
   }
 }

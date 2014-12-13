@@ -49,6 +49,7 @@ object ActorDao {
   
   def getByFullName(fullName: String): Option[Actor] = {
     val dbActorOption = actorColl.findOne(MongoDBObject("name" -> fullName))
+    println(s"ActorDao search by $fullName resulted in $dbActorOption")
     dbActorOption match {
       case None => None
       case Some(_) => {

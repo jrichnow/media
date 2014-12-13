@@ -4,8 +4,9 @@ import play.api.libs.json._
 import play.api.libs.json.Reads
 import play.api.libs.functional.syntax._
 
-case class Actor (
+case class Actor(
   val id: Option[String] = None,
+  val movieDbId: Option[Int] = None,
   val name: String,
   val birthDay: Option[String] = None,
   val birthPlace: Option[String] = None,
@@ -18,6 +19,7 @@ object Actor {
 
   implicit val actorReads: Reads[Actor] = (
     (__ \ "id").readNullable[String] and
+    (__ \ "movieDbId").readNullable[Int] and
     (__ \ "name").read[String] and
     (__ \ "birthDay").readNullable[String] and
     (__ \ "birthPlace").readNullable[String] and
@@ -29,6 +31,7 @@ object Actor {
   implicit val actorJsonWrites = new Writes[Actor] {
     def writes(actor: Actor) = Json.obj(
       "id" -> actor.id,
+      "movieDbId" -> actor.movieDbId,
       "name" -> actor.name,
       "birthDay" -> actor.birthDay,
       "birthPlace" -> actor.birthPlace,
@@ -37,8 +40,19 @@ object Actor {
       "imdbUrl" -> actor.imdbUrl,
       "posterUrl" -> actor.posterUrl)
   }
-  
+
   def toJson(actor: Actor): JsValue = {
     Json.toJson(actor)
+  }
+
+  def fromJson(actorJson: JsValue): Option[Actor] = {
+    println(s"Converting actor json: $actorJson")
+    Json.parse(actorJson.toString()).validate[Actor] match {
+      case s: JsSuccess[Actor] => Option(s.get)
+      case e: JsError => {
+        println(e.toString)
+        None
+      }
+    }
   }
 }
