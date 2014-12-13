@@ -10,7 +10,7 @@ import scala.io.Source
 import play.api.libs.json.JsArray
 import org.joda.time.format._
 import org.joda.time.DateTime
-import dao.Movie2Dao
+import dao.MovieDao
 
 object FileHandler {
 
@@ -29,7 +29,7 @@ object FileHandler {
   def exportMovies(): String = {
     val fileName = backupFolder + "movie_" + dateFormat.print(new DateTime) + ".json"
     val pw = new PrintWriter(new File(fileName))
-    pw.print(Json.prettyPrint(Json.toJson(Movie2Dao.findAll)))
+    pw.print(Json.prettyPrint(Json.toJson(MovieDao.findAll)))
     pw.close()
 
     fileName

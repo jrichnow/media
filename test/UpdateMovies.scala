@@ -90,14 +90,14 @@ object UpdateMovies {
     }
   }
 
-  private def dbObjectToMovie(dbObject: DBObject): Option[Movie] = {
-    Json.parse(dbObject.toString()).validate[Movie] match {
-      case s: JsSuccess[Movie] => Option(s.get)
+  private def dbObjectToMovie(dbObject: DBObject): Option[Movie2] = {
+    Json.parse(dbObject.toString()).validate[Movie2] match {
+      case s: JsSuccess[Movie2] => Option(s.get)
       case e: JsError => None
     }
   }
 
-  private def getImdbId(movie: Movie): Option[String] = {
+  private def getImdbId(movie: Movie2): Option[String] = {
     movie.url match {
       case Some(_) => {
         val url = movie.url.get

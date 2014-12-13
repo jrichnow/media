@@ -7,7 +7,7 @@ import model.File
 import play.api.libs.json.Json
 import java.io.{ File => JavaFile }
 import scala.io.Source
-import model.Movie2
+import model.Movie
 import model.AudioBook
 
 object Admin extends Controller {
@@ -52,7 +52,7 @@ object Admin extends Controller {
           newFile.delete()
         file.ref.moveTo(newFile)
         val json = Json.parse(Source.fromFile(newFile).getLines.mkString(""))
-        val movieJsResult = json.validate[Seq[Movie2]]
+        val movieJsResult = json.validate[Seq[Movie]]
 
         Ok("File has been uploaded.")
       } else {

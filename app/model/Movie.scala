@@ -6,7 +6,7 @@ import play.api.libs.functional.syntax._
 import utils.TheMovieDbWrapper
 import utils.JsonUtil
 
-case class Movie2(
+case class Movie(
   val id: Option[String] = None,
   val title: String,
   val alternativeTitle: Option[String] = None,
@@ -28,9 +28,9 @@ case class Movie2(
   val rated: Option[String] = None,
   val imageUrl: Option[String] = None)
 
-object Movie2 {
+object Movie {
 
-  implicit val movieReads: Reads[Movie2] = (
+  implicit val movieReads: Reads[Movie] = (
     (__ \ "id").readNullable[String] and
     (__ \ "title").read[String] and
     (__ \ "alternativeTitle").readNullable[String] and
@@ -50,10 +50,10 @@ object Movie2 {
     (__ \ "runtime").readNullable[String] and
     (__ \ "rating").readNullable[Double] and
     (__ \ "rated").readNullable[String] and
-    (__ \ "imageUrl").readNullable[String])(Movie2.apply _)
+    (__ \ "imageUrl").readNullable[String])(Movie.apply _)
 
-  implicit val movieJsonWrites = new Writes[Movie2] {
-    def writes(movie: Movie2) = Json.obj(
+  implicit val movieJsonWrites = new Writes[Movie] {
+    def writes(movie: Movie) = Json.obj(
       "id" -> movie.id,
       "title" -> movie.title,
       "originalTitle" -> movie.originalTitle,
@@ -102,7 +102,7 @@ object Movie2 {
 
   }
 
-  def toJson(movie: Movie2): JsValue = {
+  def toJson(movie: Movie): JsValue = {
     Json.toJson(movie)
   }
 }

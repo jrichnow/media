@@ -1,6 +1,6 @@
 package utils
 
-import model.Movie2
+import model.Movie
 import play.api.libs.json.JsValue
 import dispatch._
 import dispatch.Defaults._
@@ -11,7 +11,7 @@ import scala.concurrent.duration.Duration
 
 object OmdbWrapper {
   
-  def fromOmdb(omdbDataJsValue: JsValue, folder: Int, dvd: Int): Movie2 = {
+  def fromOmdb(omdbDataJsValue: JsValue, folder: Int, dvd: Int): Movie = {
     val title = JsonUtil.getStringValue(omdbDataJsValue, "Title")
     val year = JsonUtil.getStringValue(omdbDataJsValue, "Year")
     val genres = JsonUtil.getStringValue(omdbDataJsValue, "Genre").get.split(", ")
@@ -40,7 +40,7 @@ object OmdbWrapper {
     val posterUrlOmdb = JsonUtil.getStringValue(omdbDataJsValue, "Poster")
     val imgUrl = posterUrlOmdb.getOrElse("")
 
-    new Movie2(None, title.get, None, None, Option(language), None, Option(genres), Option(s"http://www.imdb.com/title/$imdbId"),
+    new Movie(None, title.get, None, None, Option(language), None, Option(genres), Option(s"http://www.imdb.com/title/$imdbId"),
       year.get.toInt, folder, dvd, Option(imdbId), plot, actors, writer, director, runtime, ratingResolved, rated, Option(imgUrl))
   }
   
