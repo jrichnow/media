@@ -4,9 +4,9 @@ import play.api.libs.json._
 import play.api.libs.json.Reads
 import play.api.libs.functional.syntax._
 
-case class Actor(
+case class Actor (
   val id: Option[String] = None,
-  val name: Option[String] = None,
+  val name: String,
   val birthDay: Option[String] = None,
   val birthPlace: Option[String] = None,
   val deathDay: Option[String] = None,
@@ -18,11 +18,11 @@ object Actor {
 
   implicit val actorReads: Reads[Actor] = (
     (__ \ "id").readNullable[String] and
-    (__ \ "name").readNullable[String] and
+    (__ \ "name").read[String] and
     (__ \ "birthDay").readNullable[String] and
     (__ \ "birthPlace").readNullable[String] and
-    (__ \ "biography").readNullable[String] and
     (__ \ "deathDate").readNullable[String] and
+    (__ \ "biography").readNullable[String] and
     (__ \ "imdbUrl").readNullable[String] and
     (__ \ "posterUrl").readNullable[String])(Actor.apply _)
 

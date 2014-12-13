@@ -29,7 +29,7 @@ object Movie2Dao {
   def add(movie: Movie2): Movie2 = {
     println(s"Adding new movie $movie")
     val movieJson = Movie2.toJson(movie)
-    val dbObject: DBObject = JSON.parse(movieJson.toString).asInstanceOf[DBObject]
+    val dbObject = JSON.parse(movieJson.toString).asInstanceOf[DBObject]
 
     movieColl.insert(dbObject)
 
@@ -96,9 +96,9 @@ object Movie2Dao {
     dbMovieOption match {
       case None => None
       case Some(_) => {
-        val movie = dbMovieOption.get
+        val movieJson = dbMovieOption.get
 
-        Json.parse(movie.toString()).validate[Movie2] match {
+        Json.parse(movieJson.toString()).validate[Movie2] match {
           case s: JsSuccess[Movie2] => Option(s.get)
           case e: JsError => None
         }

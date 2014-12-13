@@ -36,10 +36,10 @@ class MovieDaoSpec extends PlaySpec with OneAppPerSuite {
 
     "add a movie" in {
       movieColl.drop()
-      val movie = Movie(title = "Dreamland", year = 2012, folder = 1, dvd = 2)
+      val movie = Movie2(title = "Dreamland", year = 2012, folder = 1, dvd = 2)
       movie.id mustBe None
 
-      val updatedMovie = MovieDao.add(movie)
+      val updatedMovie = Movie2Dao.add(movie)
 
       // Check that we have a new MongoDb id.
       updatedMovie.id.get.length() >= 6
