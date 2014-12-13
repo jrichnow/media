@@ -7,8 +7,8 @@ import org.scalatestplus.play.PlaySpec
 
 import com.mongodb.casbah.MongoClient
 
-import dao.Movie2Dao
-import model.Movie2
+import dao.MovieDao
+import model.Movie
 import play.api.test.FakeApplication
 
 /**
@@ -30,7 +30,7 @@ class ImportMovies extends PlaySpec with OneAppPerSuite {
       try {
         val xmlMovies = XML.loadFile("/Users/jensr/Temp/20130421_movies.xml")
         val movies = (xmlMovies \ "movie").map(
-          movie => Movie2(
+          movie => Movie(
             title = (movie \ "@title").text,
             alternativeTitle = Some((movie \ "@alternativeTitle").text),
             originalTitle = Some((movie \ "@originalTitle").text),
@@ -42,7 +42,7 @@ class ImportMovies extends PlaySpec with OneAppPerSuite {
             folder = (movie \ "locations" \ "location" \ "@folder").text.toInt,
             dvd = (movie \ "locations" \ "location" \ "@dvdNumber").text.toInt))
         for (movie <- movies) {
-          Movie2Dao.add(movie)
+          MovieDao.add(movie)
         }
       } catch {
         case e: Throwable => println(e.getMessage(), e)

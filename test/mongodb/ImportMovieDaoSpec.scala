@@ -9,8 +9,8 @@ import org.scalatestplus.play.PlaySpec
 
 import com.mongodb.casbah.MongoClient
 
-import dao.Movie2Dao
-import model.Movie2
+import dao.MovieDao
+import model.Movie
 import play.api.libs.json.JsError
 import play.api.libs.json.JsSuccess
 import play.api.libs.json.Json
@@ -35,17 +35,17 @@ class ImportMovieDaoSpec extends PlaySpec with OneAppPerSuite {
 
     "should import all movies" in {
       movieColl.drop()
-      Movie2Dao.findAll.size === 0
+      MovieDao.findAll.size === 0
 
       val json = Json.parse(Source.fromFile(new JavaFile("/tmp/movie_2014-08-03_08-46.json")).getLines.mkString(""))
-      val moviesJsonResult = json.validate[Seq[Movie2]]
-      val movieList: Option[Seq[Movie2]] = moviesJsonResult match {
-        case s: JsSuccess[Seq[Movie2]] => Some(s.get)
+      val moviesJsonResult = json.validate[Seq[Movie]]
+      val movieList: Option[Seq[Movie]] = moviesJsonResult match {
+        case s: JsSuccess[Seq[Movie]] => Some(s.get)
         case e: JsError => None
       }
 
       if (!movieList.isEmpty) {
-        movieList.get.foreach(Movie2Dao.add(_))
+        movieList.get.foreach(MovieDao.add(_))
       }
     }
   }

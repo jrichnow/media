@@ -25,7 +25,7 @@ import org.scalatestplus.play.OneAppPerSuite
 import play.api.test.FakeApplication
 import com.mongodb.casbah.MongoClient
 import model.AudioBook
-import model.Movie2
+import model.Movie
 
 class MoviesSpec extends PlaySpec with OneAppPerSuite {
 
@@ -58,10 +58,10 @@ class MoviesSpec extends PlaySpec with OneAppPerSuite {
       status(resultList) must equal(OK)
       contentType(resultList) mustBe Some("application/json")
 
-      val movieList = contentAsJson(resultList).as[List[Movie2]]
+      val movieList = contentAsJson(resultList).as[List[Movie]]
 
       val returnedMovie = movieList.head
-      val originalMovie = getValidMovieJson.as[Movie2]
+      val originalMovie = getValidMovieJson.as[Movie]
 
       returnedMovie.title must equal(originalMovie.title)
       returnedMovie.year must equal(originalMovie.year)
@@ -82,10 +82,10 @@ class MoviesSpec extends PlaySpec with OneAppPerSuite {
       val result = controllers.Movies.find(FakeRequest(GET, "/movies/find?entity=Actor&name=Tom+Cruise"))
       status(result) must equal(OK)
       contentType(result) mustBe Some("application/json")
-      val movieList = contentAsJson(result).as[List[Movie2]]
+      val movieList = contentAsJson(result).as[List[Movie]]
 
       val returnedMovie = movieList.head
-      val originalMovie = getValidMovieJson.as[Movie2]
+      val originalMovie = getValidMovieJson.as[Movie]
       originalMovie.actors.get must equal("Tom Cruise")
     }
 
@@ -106,10 +106,10 @@ class MoviesSpec extends PlaySpec with OneAppPerSuite {
       val result = controllers.Movies.find(FakeRequest(GET, "/movies/find?entity=Director&name=Frank+Darabont"))
       status(result) must equal(OK)
       contentType(result) mustBe Some("application/json")
-      val movieList = contentAsJson(result).as[List[Movie2]]
+      val movieList = contentAsJson(result).as[List[Movie]]
 
       val returnedMovie = movieList.head
-      val originalMovie = getValidMovieJson.as[Movie2]
+      val originalMovie = getValidMovieJson.as[Movie]
       originalMovie.director.get must equal("Frank Darabont")
     }
   }
@@ -124,10 +124,10 @@ class MoviesSpec extends PlaySpec with OneAppPerSuite {
       val result = controllers.Movies.find(FakeRequest(GET, "/movies/find?entity=Writer&name=Dean+Koontz"))
       status(result) must equal(OK)
       contentType(result) mustBe Some("application/json")
-      val movieList = contentAsJson(result).as[List[Movie2]]
+      val movieList = contentAsJson(result).as[List[Movie]]
 
       val returnedMovie = movieList.head
-      val originalMovie = getValidMovieJson.as[Movie2]
+      val originalMovie = getValidMovieJson.as[Movie]
       originalMovie.writer.get must equal("Dean Koontz")
     }
   }

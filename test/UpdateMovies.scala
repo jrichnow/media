@@ -1,12 +1,12 @@
 
 
-import dao.Movie2Dao
+import dao.MovieDao
 import com.mongodb.casbah.MongoClient
 import com.mongodb.casbah.commons.MongoDBObject
 import com.mongodb.DBObject
 import play.api.libs.json.JsSuccess
 import play.api.libs.json.JsError
-import model.Movie2
+import model.Movie
 import play.api.libs.json.Json
 import play.api.libs.json.JsValue
 import dispatch._
@@ -14,7 +14,7 @@ import dispatch.Defaults._
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 import play.api.libs.json.JsSuccess
-import model.Movie2
+import model.Movie
 import com.mongodb.util.JSON
 import org.bson.types.ObjectId
 import model.Movie
@@ -70,7 +70,7 @@ object UpdateMovies {
           //          println(s"rated: $rated")
           //          println(s"imgUrl: $imgUrl")
 
-          val newMovie = new Movie2(movie.id, movie.title, movie.alternativeTitle, movie.originalTitle, movie.language, movie.subTitle,
+          val newMovie = new Movie(movie.id, movie.title, movie.alternativeTitle, movie.originalTitle, movie.language, movie.subTitle,
             movie.genres, movie.url, movie.year, movie.folder, movie.dvd, imdbId, plot, actors, writer, director, runtime,
             ratingResolved, rated, Option(imgUrl))
           println(Json.prettyPrint(Json.toJson(newMovie)))
@@ -90,14 +90,14 @@ object UpdateMovies {
     }
   }
 
-  private def dbObjectToMovie(dbObject: DBObject): Option[Movie2] = {
-    Json.parse(dbObject.toString()).validate[Movie2] match {
-      case s: JsSuccess[Movie2] => Option(s.get)
+  private def dbObjectToMovie(dbObject: DBObject): Option[Movie] = {
+    Json.parse(dbObject.toString()).validate[Movie] match {
+      case s: JsSuccess[Movie] => Option(s.get)
       case e: JsError => None
     }
   }
 
-  private def getImdbId(movie: Movie2): Option[String] = {
+  private def getImdbId(movie: Movie): Option[String] = {
     movie.url match {
       case Some(_) => {
         val url = movie.url.get
@@ -124,9 +124,9 @@ object UpdateMovies {
     Json.parse(omdbJsonString)
   }
 
-  def update(movie: Movie2) {
+  def update(movie: Movie) {
     println(s"Updating movie $movie")
-    val movieJson = Movie2.toJson(movie)
+    val movieJson = Movie.toJson(movie)
     val dbObject: DBObject = JSON.parse(movieJson.toString).asInstanceOf[DBObject]
 
     val objectId = new ObjectId(movie.id.get)

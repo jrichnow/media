@@ -21,9 +21,9 @@ import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.OneAppPerSuite
 import play.api.test.FakeApplication
 import com.mongodb.casbah.MongoClient
-import model.Movie2
+import model.Movie
 import com.mongodb.casbah.commons.MongoDBObject
-import dao.Movie2Dao
+import dao.MovieDao
 
 class MoviesImdbSpec extends PlaySpec with OneAppPerSuite {
 
@@ -126,7 +126,7 @@ class MoviesImdbSpec extends PlaySpec with OneAppPerSuite {
 
       status(result) must equal(OK)
       contentType(result) mustBe Some("application/json")
-      contentAsJson(result) must equal(successValidationResponse(Movie2Dao.findByImdbId("tt0499603").get.id.get))
+      contentAsJson(result) must equal(successValidationResponse(MovieDao.findByImdbId("tt0499603").get.id.get))
       
       movieColl.drop()
     }
