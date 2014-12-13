@@ -194,22 +194,6 @@ object Movies extends Controller {
     }
   }
 
-  //  private def validateJson(movieJson: JsValue): (Boolean, JsValue, Option[Movie2]) = {
-  //    movieJson.validate[Movie2] match {
-  //      case s: JsSuccess[Movie2] => {
-  //        (true, Json.obj("validation" -> true, "redirectPath" -> "/movie"), Option(s.get))
-  //      }
-  //      case e: JsError => {
-  //        e.errors.foreach(println(_))
-  //        val p = for {
-  //          entry <- e.errors
-  //        } yield Json.obj(entry._1.toString.drop(1) -> entry._2.head.message)
-  //        println(JsArray(p))
-  //        (false, Json.obj("validation" -> false, "errorList" -> JsArray(p)), None)
-  //      }
-  //    }
-  //  }
-
   def image(imdbId: String) = Action { implicit request =>
     println(s"imdbId: $imdbId")
     val referrer = request.headers.get("referer")
@@ -380,5 +364,4 @@ object Movies extends Controller {
     println(omdbJsonString)
     Json.parse(omdbJsonString)
   }
-
 }
