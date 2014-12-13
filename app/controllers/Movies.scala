@@ -1,27 +1,21 @@
 package controllers
 
-import play.api._
-import play.api.mvc._
-import play.api.libs.json._
-import dispatch._
-import dispatch.Defaults._
-import java.net.URLEncoder
-import scala.concurrent.Await
-import scala.concurrent.duration.Duration
-import scala.util.Success
-import scala.util.Failure
+import dao.ActorDao
+import dao.Movie2Dao
+import model.Actor
+import model.Movie2
+import model.MovieShort
 import play.api.libs.json.JsArray
 import play.api.libs.json.JsError
 import play.api.libs.json.JsSuccess
 import play.api.libs.json.JsValue
 import play.api.libs.json.Json
 import play.api.libs.json.Json.toJsFieldJsValueWrapper
-import model.Movie2
-import dao.Movie2Dao
-import model.MovieShort
+import play.api.mvc.Action
+import play.api.mvc.Controller
+import play.api.mvc.RequestHeader
+import utils.OmdbWrapper
 import utils.TheMovieDbWrapper
-import dao.ActorDao
-import model.Actor
 
 object Movies extends Controller {
 
@@ -75,13 +69,14 @@ object Movies extends Controller {
 
     val (isValid, jsonResult, movieOption) = validateImdbMovieJson(movieJson)
     if (isValid) {
-      val omdbJson = getOmdbJsonById(movieOption.get.imdbId)
+      val omdbJson = OmdbWrapper.getOmdbJsonById(movieOption.get.imdbId)
       val imdbId = getValue(omdbJson, "imdbID")
       imdbId match {
         case Some(_) => {
-          val movie = Movie2.fromOmdb(omdbJson, movieOption.get.folder, movieOption.get.dvd)
+          val movie = OmdbWrapper.fromOmdb(omdbJson, movieOption.get.folder, movieOption.get.dvd)
           println(Json.prettyPrint(Json.toJson(movie)))
           val dbMovie = Movie2Dao.add(movie)
+          // TODO Get actor etc info to store in DB
           movies = movies :+ dbMovie
           Ok(Json.obj("validation" -> true, "redirectPath" -> s"/movies/${dbMovie.id.get}"))
         }
@@ -126,6 +121,92 @@ object Movies extends Controller {
       case "Sort" => sortBy(request)
       case _ => BadRequest("Search action not allowed!")
     }
+  }
+
+  def image(imdbId: String) = Action { implicit request =>
+    println(s"imdbId: $imdbId")
+    val referrer = request.headers.get("referer")
+    referrer match {
+      case None => {
+        println("No referrer given")
+        Redirect(checkImdbForImageUrl(imdbId))
+      }
+      case s => {
+        if (s.get.contains("localhost")) {
+          println("referrer is localhost")
+          val movie = Movie2Dao.findByImdbId(imdbId)
+          println(movie)
+          movie match {
+            case s: Some[Movie2] => Redirect(validateImageUrl(movie.get.imageUrl.get))
+            case None => Redirect(checkImdbForImageUrl(imdbId))
+          }
+
+        } else {
+          println("referrer is NOT localhost")
+          Redirect(checkImdbForImageUrl(imdbId))
+        }
+      }
+    }
+  }
+
+  def imageSmall(imdbId: String) = Action { implicit request =>
+    val referrer = request.headers.get("referer")
+    referrer match {
+      case None => Redirect(checkImdbForThumbnailImageUrl(imdbId))
+      case s => {
+        if (s.get.contains("localhost")) {
+          val movie = Movie2Dao.findByImdbId(imdbId)
+          movie match {
+            case s: Some[Movie2] => Redirect(validateImageUrl(movie.get.imageUrl.get))
+            case None => Redirect(checkImdbForThumbnailImageUrl(imdbId))
+          }
+
+        } else {
+          Redirect(checkImdbForThumbnailImageUrl(imdbId))
+        }
+      }
+    }
+  }
+
+  def actor(name: String) = Action {
+    val dbActor = ActorDao.getByFullName(name)
+    dbActor match {
+      case Some(_) => Ok(Actor.toJson(dbActor.get))
+      case None => {
+        val movieDbActor = TheMovieDbWrapper.getActorData(name)
+        movieDbActor match {
+          case Some(_) => {
+            val actor = Actor.fromJson(movieDbActor.get)
+            actor match {
+              case Some(_) => {
+                ActorDao.add(actor.get)
+                Ok(Actor.toJson(actor.get))
+              }
+              case None => Ok(Json.obj("error" -> "Error converting MovieDbActor Json to actor model"))
+            }
+          }
+          case None => Ok(Json.obj("error" -> "No information available"))
+        }
+      }
+    }
+  }
+
+  def newForm = Action {
+    Ok(views.html.movies.form("NewMovieCtrl", "", "Adding New"))
+  }
+
+  def newFormImdb = Action {
+    Ok(views.html.movies.imdbform())
+  }
+
+  def editForm(id: String) = Action {
+    Ok(views.html.movies.form("EditMovieCtrl", id, "Editing"))
+  }
+
+  def delete(id: String) = Action {
+    Movie2Dao.delete(id);
+    movies = Movie2Dao.findAll
+    Ok("")
   }
 
   private def findByActor(implicit request: RequestHeader) = {
@@ -196,32 +277,6 @@ object Movies extends Controller {
     }
   }
 
-  def image(imdbId: String) = Action { implicit request =>
-    println(s"imdbId: $imdbId")
-    val referrer = request.headers.get("referer")
-    referrer match {
-      case None => {
-        println("No referrer given")
-        Redirect(checkImdbForImageUrl(imdbId))
-      }
-      case s => {
-        if (s.get.contains("localhost")) {
-          println("referrer is localhost")
-          val movie = Movie2Dao.findByImdbId(imdbId)
-          println(movie)
-          movie match {
-            case s: Some[Movie2] => Redirect(validateImageUrl(movie.get.imageUrl.get))
-            case None => Redirect(checkImdbForImageUrl(imdbId))
-          }
-
-        } else {
-          println("referrer is NOT localhost")
-          Redirect(checkImdbForImageUrl(imdbId))
-        }
-      }
-    }
-  }
-
   private def validateImageUrl(imageUrl: String): String = {
     imageUrl match {
       case "N/A" => "/assets/images/no-image.jpg"
@@ -236,56 +291,6 @@ object Movies extends Controller {
       case _ => "/assets/images/no-image.jpg"
     }
   }
-  //    val movie = findById(id)
-  //    val imdbId = getImdbId(movie)
-  //    var omdbJson: JsValue = null
-  //    imdbId match {
-  //      case Some(_) => {
-  //        println(s"got imdb id: $imdbId.get")
-  //        omdbJson = getOmdbJsonById(imdbId.get)
-  //      }
-  //      case None => {
-  //        println("did not find imdb ID")
-  //        omdbJson = getOmdbJsonByTitle(movie.title)
-  //      }
-  //    }
-  //
-  //    var posterUrl: String = ""
-  //    val posterUrlOmdb = (omdbJson \ "Poster").validate[String]
-  //    posterUrlOmdb match {
-  //      case s: JsSuccess[String] => {
-  //        val omdb = posterUrlOmdb.get
-  //        omdb match {
-  //          case "N/A" => posterUrl = "/assets/images/no-image.jpg"
-  //          case _ => posterUrl = omdb
-  //        }
-  //        Redirect(posterUrl)
-  //      }
-  //      case e: JsError => {
-  //        println("Errors: " + JsError.toFlatJson(e).toString())
-  //        Redirect("/assets/images/no-image.jpg")
-  //      }
-  //    }
-  //  }
-
-  def imageSmall(imdbId: String) = Action { implicit request =>
-    val referrer = request.headers.get("referer")
-    referrer match {
-      case None => Redirect(checkImdbForThumbnailImageUrl(imdbId))
-      case s => {
-        if (s.get.contains("localhost")) {
-          val movie = Movie2Dao.findByImdbId(imdbId)
-          movie match {
-            case s: Some[Movie2] => Redirect(validateImageUrl(movie.get.imageUrl.get))
-            case None => Redirect(checkImdbForThumbnailImageUrl(imdbId))
-          }
-
-        } else {
-          Redirect(checkImdbForThumbnailImageUrl(imdbId))
-        }
-      }
-    }
-  }
 
   private def checkImdbForThumbnailImageUrl(imdbId: String): String = {
     imdbId match {
@@ -294,48 +299,7 @@ object Movies extends Controller {
     }
   }
 
-  def actor(name: String) = Action {
-    val dbActor = ActorDao.getByFullName(name)
-    dbActor match {
-      case Some(_) => Ok(Actor.toJson(dbActor.get))
-      case None => {
-        val movieDbActor = TheMovieDbWrapper.getActorData(name)
-        movieDbActor match {
-          case Some(_) => {
-            val actor = Actor.fromJson(movieDbActor.get)
-            actor match {
-              case Some(_) => {
-                ActorDao.add(actor.get)
-                Ok(Actor.toJson(actor.get))
-              }
-              case None => Ok(Json.obj("error" -> "Error converting MovieDbActor Json to actor model"))
-            }
-          }
-          case None => Ok(Json.obj("error" -> "No information available"))
-        }
-      }
-    }
-  }
-
-  def newForm = Action {
-    Ok(views.html.movies.form("NewMovieCtrl", "", "Adding New"))
-  }
-
-  def newFormImdb = Action {
-    Ok(views.html.movies.imdbform())
-  }
-
-  def editForm(id: String) = Action {
-    Ok(views.html.movies.form("EditMovieCtrl", id, "Editing"))
-  }
-
-  def delete(id: String) = Action {
-    Movie2Dao.delete(id);
-    movies = Movie2Dao.findAll
-    Ok("")
-  }
-
-  def getImdbId(movie: Movie2): Option[String] = {
+  private def getImdbId(movie: Movie2): Option[String] = {
     movie.url match {
       case Some(_) => {
         val url = movie.url.get
@@ -349,40 +313,7 @@ object Movies extends Controller {
     }
   }
 
-  //  def imdb(id: String) = Action {
-  //    val movie = findById(id)
-  //    val imdbId = getImdbId(movie)
-  //    imdbId match {
-  //      case Some(_) => {
-  //        println(s"got imdb id: $imdbId.get")
-  //        Ok(getOmdbJsonById(imdbId.get))
-  //      }
-  //      case None => {
-  //        println("did not find imdb ID")
-  //        Ok(getOmdbJsonByTitle(movie.title))
-  //      }
-  //    }
-  //  }
-
-  def findById(id: String): Movie2 = {
+  private def findById(id: String): Movie2 = {
     Movie2Dao.findById(id).get
-  }
-
-  private def getOmdbJsonByTitle(title: String): JsValue = {
-    val request = url("http://www.omdbapi.com/?plot=full&t=" + URLEncoder.encode(title, "UTF-8"))
-    val response = Http(request OK as.String)
-
-    val omdbJsonString = Await.result(response, Duration(10, "s"))
-    println(omdbJsonString)
-    Json.parse(omdbJsonString)
-  }
-
-  private def getOmdbJsonById(id: String): JsValue = {
-    val request = url("http://www.omdbapi.com/?plot=full&i=" + id)
-    val response = Http(request OK as.String)
-
-    val omdbJsonString = Await.result(response, Duration(10, "s"))
-    println(omdbJsonString)
-    Json.parse(omdbJsonString)
   }
 }

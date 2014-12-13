@@ -4,6 +4,7 @@ import play.api.libs.json._
 import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
 import utils.TheMovieDbWrapper
+import utils.JsonUtil
 
 case class Movie2(
   val id: Option[String] = None,
@@ -99,46 +100,6 @@ object Movie2 {
       case None => ""
     }
 
-  }
-
-  def fromOmdb(omdbDataJsValue: JsValue, folder: Int, dvd: Int): Movie2 = {
-    val title = getValue(omdbDataJsValue, "Title")
-    val year = getValue(omdbDataJsValue, "Year")
-    val genres = getValue(omdbDataJsValue, "Genre").get.split(", ")
-    genres.foreach(_.trim())
-    val languageRaw = getValue(omdbDataJsValue, "Language")
-    val language = languageRaw.get.split(",")(0).trim()
-    val imdbId = getValue(omdbDataJsValue, "imdbID").get
-    val plot = getValue(omdbDataJsValue, "Plot")
-    val actors = getValue(omdbDataJsValue, "Actors")
-    val writer = getValue(omdbDataJsValue, "Writer")
-    val director = getValue(omdbDataJsValue, "Director")
-    val runtime = getValue(omdbDataJsValue, "Runtime")
-    val rating = getValue(omdbDataJsValue, "imdbRating")
-    val ratingResolved: Option[Double] = rating match {
-      case Some(_) => {
-        rating.get match {
-          case "N/A" => None
-          case _ => Option(rating.get.toDouble)
-        }
-      }
-      case None => None
-    }
-
-    val rated = getValue(omdbDataJsValue, "Rated")
-
-    val posterUrlOmdb = getValue(omdbDataJsValue, "Poster")
-    val imgUrl = posterUrlOmdb.getOrElse("")
-
-    new Movie2(None, title.get, None, None, Option(language), None, Option(genres), Option(s"http://www.imdb.com/title/$imdbId"),
-      year.get.toInt, folder, dvd, Option(imdbId), plot, actors, writer, director, runtime, ratingResolved, rated, Option(imgUrl))
-  }
-
-  def getValue(omdbDataJsValue: JsValue, tag: String): Option[String] = {
-    (omdbDataJsValue \ tag).validate[String] match {
-      case s: JsSuccess[String] => Option(s.get)
-      case e: JsError => None
-    }
   }
 
   def toJson(movie: Movie2): JsValue = {
