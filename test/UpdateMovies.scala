@@ -19,6 +19,9 @@ import com.mongodb.util.JSON
 import org.bson.types.ObjectId
 import model.Movie
 
+/**
+ * TODO Check whether this is still needed.
+ */
 object UpdateMovies {
 
   val client = MongoClient("localhost", 27017)

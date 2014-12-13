@@ -1,19 +1,15 @@
 package mongodb
 
-import org.junit.runner.RunWith
-import org.specs2.mutable.Specification
-import com.mongodb.casbah.MongoClient
-import dao.Movie2Dao
-import model.AudioBook
-import play.api.test.FakeApplication
-import play.api.test.WithApplication
-import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.OneAppPerSuite
-import model.Movie2
-import model.Movie
-import dao.MovieDao
+import org.scalatestplus.play.PlaySpec
 
-class MovieDaoSpec extends PlaySpec with OneAppPerSuite {
+import com.mongodb.casbah.MongoClient
+
+import dao.Movie2Dao
+import model.Movie2
+import play.api.test.FakeApplication
+
+class Movie2DaoSpec extends PlaySpec with OneAppPerSuite {
 
   val testDbName = "mediaTest"
 

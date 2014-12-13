@@ -82,7 +82,7 @@ object Movie2 {
     TheMovieDbWrapper.getBigMoviePosterUrl(imdbId)
   }
   
-  def validateImageUrl(imageUrl: String): String = {
+  private def validateImageUrl(imageUrl: String): String = {
     imageUrl match {
       case "N/A" => "/assets/images/no-image.jpg"
       case "" => "/assets/images/no-image.jpg"
@@ -90,7 +90,7 @@ object Movie2 {
     }
   }
 
-  def wrapActorsUrl(actors: Option[String]): String = {
+  private def wrapActorsUrl(actors: Option[String]): String = {
     actors match {
       case Some(_) => {
         val actorList = actors.get.split(", ").toList

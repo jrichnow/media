@@ -1,13 +1,19 @@
 package utils
 
 import scala.xml.XML
-import model.Movie
-import dao.MovieDao
-import org.scalatestplus.play.PlaySpec
+
 import org.scalatestplus.play.OneAppPerSuite
+import org.scalatestplus.play.PlaySpec
+
 import com.mongodb.casbah.MongoClient
+
+import dao.Movie2Dao
+import model.Movie2
 import play.api.test.FakeApplication
 
+/**
+ * TODO can be removed as XML is outdated anyway.
+ */
 class ImportMovies extends PlaySpec with OneAppPerSuite {
 
   val testDbName = "mediaTest"
@@ -24,7 +30,7 @@ class ImportMovies extends PlaySpec with OneAppPerSuite {
       try {
         val xmlMovies = XML.loadFile("/Users/jensr/Temp/20130421_movies.xml")
         val movies = (xmlMovies \ "movie").map(
-          movie => Movie(
+          movie => Movie2(
             title = (movie \ "@title").text,
             alternativeTitle = Some((movie \ "@alternativeTitle").text),
             originalTitle = Some((movie \ "@originalTitle").text),
@@ -36,7 +42,7 @@ class ImportMovies extends PlaySpec with OneAppPerSuite {
             folder = (movie \ "locations" \ "location" \ "@folder").text.toInt,
             dvd = (movie \ "locations" \ "location" \ "@dvdNumber").text.toInt))
         for (movie <- movies) {
-          MovieDao.add(movie)
+          Movie2Dao.add(movie)
         }
       } catch {
         case e: Throwable => println(e.getMessage(), e)
