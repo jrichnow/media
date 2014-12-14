@@ -16,6 +16,10 @@ import play.api.mvc.Controller
 import play.api.mvc.RequestHeader
 import utils.OmdbWrapper
 import utils.TheMovieDbWrapper
+import scala.concurrent._
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.util.Success
+import scala.util.Failure
 
 object Movies extends Controller {
 
@@ -76,7 +80,7 @@ object Movies extends Controller {
           val movie = OmdbWrapper.fromOmdb(omdbJson, movieOption.get.folder, movieOption.get.dvd)
           println(Json.prettyPrint(Json.toJson(movie)))
           val dbMovie = MovieDao.add(movie)
-          // TODO Get actor etc info to store in DB
+          checkActors(dbMovie)
           movies = movies :+ dbMovie
           Ok(Json.obj("validation" -> true, "redirectPath" -> s"/movies/${dbMovie.id.get}"))
         }
@@ -207,6 +211,37 @@ object Movies extends Controller {
     MovieDao.delete(id);
     movies = MovieDao.findAll
     Ok("")
+  }
+
+  private def checkActors(movie: Movie) {
+    val f = future {
+      movie.actors match {
+        case None =>
+        case actors => {
+          val actorArray = actors.get.split(", ")
+          for (actor <- actorArray) {
+            val dbActor = ActorDao.getByFullName(actor.trim())
+            dbActor match {
+              case None => {
+                val movieDbActor = TheMovieDbWrapper.getActorData(actor)
+                movieDbActor match {
+                  case None => println(s"no actor data for $actor found from MovieDb")
+                  case a => {
+                    val actor = ActorDao.add(Actor.fromJson(a.get).get)
+                    println(s"new actor added to db: $actor")
+                  }
+                }
+              }
+              case a => println(s"actor $a exists already")
+            }
+          }
+        }
+      }
+    }
+    f.onComplete {
+      case Success(value) => println(s"Successfully completed author search for ${movie.actors}")
+      case Failure(error) => println(s"Author search ${movie.actors}resulted in an error: $error")
+    }
   }
 
   private def findByActor(implicit request: RequestHeader) = {
