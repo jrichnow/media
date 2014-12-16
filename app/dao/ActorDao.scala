@@ -36,6 +36,12 @@ object ActorDao {
     updatedActor
   }
   
+  def findAll(): Seq[Actor] = {
+    val results = actorColl.find().sort(MongoDBObject("name" -> 1))
+    val movies = results.map(dbObjectToActor(_).get)
+    movies.toSeq
+  }
+  
   def update(actor: Actor) {
     println(s"Updating actor $actor")
     val actorJson = Actor.toJson(actor)
@@ -60,6 +66,13 @@ object ActorDao {
           case e: JsError => None
         }
       }
+    }
+  }
+  
+  private def dbObjectToActor(dbObject: DBObject): Option[Actor] = {
+    Json.parse(dbObject.toString()).validate[Actor] match {
+      case s: JsSuccess[Actor] => Option(s.get)
+      case e: JsError => None
     }
   }
 }

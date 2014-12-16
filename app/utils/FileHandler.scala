@@ -11,6 +11,7 @@ import play.api.libs.json.JsArray
 import org.joda.time.format._
 import org.joda.time.DateTime
 import dao.MovieDao
+import dao.ActorDao
 
 object FileHandler {
 
@@ -30,6 +31,15 @@ object FileHandler {
     val fileName = backupFolder + "movie_" + dateFormat.print(new DateTime) + ".json"
     val pw = new PrintWriter(new File(fileName))
     pw.print(Json.prettyPrint(Json.toJson(MovieDao.findAll)))
+    pw.close()
+
+    fileName
+  }
+
+  def exportActors(): String = {
+    val fileName = backupFolder + "actor_" + dateFormat.print(new DateTime) + ".json"
+    val pw = new PrintWriter(new File(fileName))
+    pw.print(Json.prettyPrint(Json.toJson(ActorDao.findAll)))
     pw.close()
 
     fileName

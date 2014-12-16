@@ -28,6 +28,10 @@ object Admin extends Controller {
         println("exporting movie data ...")
         FileHandler.exportMovies()
       }
+      case "actor" => {
+        println("exporting actor data ...")
+        FileHandler.exportActors()
+      }
     }
     Ok(views.html.admin.index())
   }
