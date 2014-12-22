@@ -10,20 +10,23 @@ import play.api.libs.json._
 import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
 import play.api.Play
+import play.api.Logger
 
 object AudioBookDao {
+  
+  private val logger = Logger("AudioBookDao")
 
-  val mongoDbHost = Play.current.configuration.getString("mongodb.host").get
-  val mongoDbPort = Play.current.configuration.getInt("mongodb.port").get
-  val mongoDbDatabase = Play.current.configuration.getString("mongodb.media.db").get
-  val mongoDbAudioCollection = Play.current.configuration.getString("mongodb.media.audio.collection").get
+  private val mongoDbHost = Play.current.configuration.getString("mongodb.host").get
+  private val mongoDbPort = Play.current.configuration.getInt("mongodb.port").get
+  private val mongoDbDatabase = Play.current.configuration.getString("mongodb.media.db").get
+  private val mongoDbAudioCollection = Play.current.configuration.getString("mongodb.media.audio.collection").get
 
-  val client = MongoClient(mongoDbHost, mongoDbPort)
-  val db = client(mongoDbDatabase)
-  val audioColl = db(mongoDbAudioCollection)
+  private val client = MongoClient(mongoDbHost, mongoDbPort)
+  private val db = client(mongoDbDatabase)
+  private val audioColl = db(mongoDbAudioCollection)
 
   def add(audioBook: AudioBook): AudioBook = {
-    println(s"Adding new audio book $audioBook")
+    logger.info(s"Adding new audio book $audioBook")
     val audioBookJson = AudioBook.toJson(audioBook)
     val dbObject: DBObject = JSON.parse(audioBookJson.toString).asInstanceOf[DBObject]
 
@@ -38,7 +41,7 @@ object AudioBookDao {
   }
 
   def update(audioBook: AudioBook) {
-    println(s"Updating audio book $audioBook")
+    logger.info(s"Updating audio book $audioBook")
     val audioBookJson = AudioBook.toJson(audioBook)
     val dbObject: DBObject = JSON.parse(audioBookJson.toString).asInstanceOf[DBObject]
 
@@ -90,6 +93,12 @@ object AudioBookDao {
 
   def delete(id: String) {
     val audioBookOption: Option[audioColl.T] = audioColl.findOneByID(new ObjectId(id))
+    logger.info(s"Deleting book ${audioBookOption.getOrElse("No book found for id "+ id)}")
     audioColl.remove(audioBookOption.get)
+  }
+  
+  def shutdown() {
+    logger.info("Closing DB connection")
+    client.close
   }
 }

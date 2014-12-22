@@ -4,7 +4,6 @@
 
 # Home page
 
-POST 	/adscale					controllers.Application.adscale
 GET     /                           controllers.Application.index
 
 GET     /movies                     controllers.Movies.index

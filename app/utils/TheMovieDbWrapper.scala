@@ -12,8 +12,11 @@ import play.api.libs.json.JsObject
 import play.api.libs.json.JsArray
 import play.api.libs.json.JsSuccess
 import dao.ActorDao
+import play.api.Logger
 
 object TheMovieDbWrapper {
+  
+  private val logger = Logger("TheMovieDbWrapper")
 
   private val baseUrl = "https://api.themoviedb.org/3/"
   private val configurationPath = "configuration?"
@@ -42,7 +45,7 @@ object TheMovieDbWrapper {
   def init() {
     val configJson = getBaseConfigurationJson()
     imageBaseUrl = getImageBaseUrl(configJson, "base_url").getOrElse("")
-    println(s"Base URL for TheMovieDb is '$imageBaseUrl'")
+    logger.info(s"Base URL for TheMovieDb is '$imageBaseUrl'")
   }
 
   def getThumbnailMoviePosterUrl(imdbId: String): Option[String] = {
@@ -54,12 +57,12 @@ object TheMovieDbWrapper {
   }
 
   def getActorData(name: String): Option[JsValue] = {
-    println(s"Trying to locate actor data for $name from Movie DB")
+    logger.info(s"Trying to locate actor data for $name from Movie DB")
     val (movieDbId, movieDbPosterName) = getActorIdAndPoster(name)
     movieDbId match {
       case id: Some[Int] => {
         val (biography, birthday, birthplace, deathday, imdbId) = getActorInfo(movieDbId.get)
-        println((biography, birthday, birthplace, deathday, imdbId))
+        logger.debug((biography, birthday, birthplace, deathday, imdbId).toString)
 
         val posterUrl = movieDbPosterName match {
           case poster: Some[String] => s"$imageBaseUrl$largeSize${movieDbPosterName.get}"
@@ -100,12 +103,12 @@ object TheMovieDbWrapper {
             }
           }
         } else {
-          println(s"No information found for actor: $name")
+          logger.info(s"No information found for actor: $name")
           (None, None)
         }
       }
       case None => {
-        println(s"Invalid JSON returned for actor search: $name")
+        logger.info(s"Invalid JSON returned for actor search: $name")
         (None, None)
       }
     }
@@ -138,12 +141,12 @@ object TheMovieDbWrapper {
 
   private def getMoviePosterFileName(imdbId: String): Option[String] = {
     val imageJsJson = getJsonFromRequest(s"${baseUrl}${moviePosterPath.replace("imdbId", imdbId)}${apiKeyParam}&external_source=imdb_id")
-    println(imageJsJson)
+    logger.info(imageJsJson.toString)
     getImage(imageJsJson)
   }
 
   private def getJsonFromRequest(urlString: String): JsValue = {
-    println(urlString)
+    logger.debug(urlString)
     val request = url(urlString)
     val response = Http(request OK as.String)
 

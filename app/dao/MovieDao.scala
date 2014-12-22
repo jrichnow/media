@@ -14,20 +14,23 @@ import com.mongodb.casbah.commons.MongoDBList
 import com.mongodb.BasicDBList
 import com.mongodb.casbah.MongoDB
 import utils.JsonUtil
+import play.api.Logger
 
 object MovieDao {
+  
+  private val logger = Logger("MovieDao")
 
-  val mongoDbHost = Play.current.configuration.getString("mongodb.host").get
-  val mongoDbPort = Play.current.configuration.getInt("mongodb.port").get
-  val mongoDbDatabase = Play.current.configuration.getString("mongodb.media.db").get
-  val mongoDbMovieCollection = Play.current.configuration.getString("mongodb.media.movie.collection").get
+  private val mongoDbHost = Play.current.configuration.getString("mongodb.host").get
+  private val mongoDbPort = Play.current.configuration.getInt("mongodb.port").get
+  private val mongoDbDatabase = Play.current.configuration.getString("mongodb.media.db").get
+  private val mongoDbMovieCollection = Play.current.configuration.getString("mongodb.media.movie.collection").get
 
-  val client = MongoClient(mongoDbHost, mongoDbPort)
-  val db = client(mongoDbDatabase)
-  val movieColl = db(mongoDbMovieCollection)
-
+  private val client = MongoClient(mongoDbHost, mongoDbPort)
+  private val db = client(mongoDbDatabase)
+  private val movieColl = db(mongoDbMovieCollection)
+  
   def add(movie: Movie): Movie = {
-    println(s"Adding new movie $movie")
+    logger.info(s"Adding new movie $movie")
     val movieJson = Movie.toJson(movie)
     val dbObject = JSON.parse(movieJson.toString).asInstanceOf[DBObject]
 
@@ -42,7 +45,7 @@ object MovieDao {
   }
 
   def update(movie: Movie) {
-    println(s"Updating movie $movie")
+    logger.info(s"Updating movie $movie")
     val movieJson = Movie.toJson(movie)
     val dbObject: DBObject = JSON.parse(movieJson.toString).asInstanceOf[DBObject]
 
@@ -166,5 +169,10 @@ object MovieDao {
   def delete(id: String) {
     val movieOption: Option[movieColl.T] = movieColl.findOneByID(new ObjectId(id))
     movieColl.remove(movieOption.get)
+  }
+  
+  def shutdown() {
+    logger.info("Closing DB connection")
+    client.close
   }
 }

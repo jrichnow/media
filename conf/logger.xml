@@ -35,6 +35,22 @@
 			<pattern>%date{yyyy-MM-dd HH:mm:ss} [%level] %logger in %thread{20} %message%n</pattern>
 		</encoder>
 	</appender>
+	
+	<appender name="AUDIOBOOKS" class="ch.qos.logback.core.FileAppender">
+		<file>${path.to.log.file}/media-audio.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${path.to.log.file}/media-audio.%d{yyyy-MM-dd}-%i.log.gz
+			</fileNamePattern>
+			<timeBasedFileNamingAndTriggeringPolicy
+				class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<maxFileSize>100MB</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%date{yyyy-MM-dd HH:mm:ss} [%level] %logger in %thread{20} %message%n</pattern>
+		</encoder>
+	</appender>
 
 	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>
@@ -53,6 +69,26 @@
 
 	<logger name="MovieController" additivity="false" level="INFO">
 		<appender-ref ref="MOVIES" />
+	</logger>
+	
+	<logger name="TheMovieDbWrapper" additivity="false" level="INFO">
+		<appender-ref ref="MOVIES" />
+	</logger>
+	
+	<logger name="MovieDao" additivity="false" level="INFO">
+		<appender-ref ref="MOVIES" />
+	</logger>
+	
+	<logger name="ActorDao" additivity="false" level="INFO">
+		<appender-ref ref="MOVIES" />
+	</logger>
+	
+	<logger name="AudioBookController" additivity="false" level="INFO">
+		<appender-ref ref="AUDIOBOOKS" />
+	</logger>
+	
+	<logger name="AudioBookDao" additivity="false" level="INFO">
+		<appender-ref ref="AUDIOBOOKS" />
 	</logger>
 
 	<root level="ERROR">

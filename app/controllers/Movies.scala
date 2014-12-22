@@ -24,8 +24,8 @@ import scala.util.Failure
 
 object Movies extends Controller {
 
-  val logger = Logger("MovieController")
-  var movies: Seq[Movie] = Seq.empty
+  private val logger = Logger("MovieController")
+  private var movies: Seq[Movie] = Seq.empty
 
   def init() {
     logger.info("initialising controller with all movies from DB")
@@ -141,7 +141,7 @@ object Movies extends Controller {
         Redirect(checkImdbForImageUrl(imdbId))
       }
       case s => {
-    	logger.info(s"referrer is $s")
+    	logger.info(s"referrer is ${s.get}")
         if (s.get.contains("localhost")) {
           val movie = MovieDao.findByImdbId(imdbId)
           movie match {
@@ -160,7 +160,7 @@ object Movies extends Controller {
   }
 
   def imageSmall(imdbId: String) = Action { implicit request =>
-    logger.info(s"thumbnail request for imdbId $imdbId")
+    logger.debug(s"thumbnail request for imdbId $imdbId")
     val referrer = request.headers.get("referer")
     referrer match {
       case None => Redirect(checkImdbForThumbnailImageUrl(imdbId))
@@ -220,6 +220,10 @@ object Movies extends Controller {
     MovieDao.delete(id);
     movies = MovieDao.findAll
     Ok("")
+  }
+  
+  def getSize(): Int = {
+    movies.size
   }
 
   private def checkActors(movie: Movie) {

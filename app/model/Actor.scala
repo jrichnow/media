@@ -46,7 +46,6 @@ object Actor {
   }
 
   def fromJson(actorJson: JsValue): Option[Actor] = {
-    println(s"Converting actor json: $actorJson")
     Json.parse(actorJson.toString()).validate[Actor] match {
       case s: JsSuccess[Actor] => Option(s.get)
       case e: JsError => {

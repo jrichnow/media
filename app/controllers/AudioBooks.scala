@@ -10,11 +10,14 @@ import play.api.libs.json.Json
 import play.api.libs.json.Json.toJsFieldJsValueWrapper
 import play.api.mvc.Action
 import play.api.mvc.Controller
+import play.api.Logger
 
 object AudioBooks extends Controller {
 
-  var audioBooks: Seq[AudioBook] = Seq.empty
-  
+  private val logger = Logger("AudioBookController")
+
+  private var audioBooks: Seq[AudioBook] = Seq.empty
+
   def init() {
     audioBooks = AudioBookDao.findAll
   }
@@ -55,20 +58,20 @@ object AudioBooks extends Controller {
     audioBooks = AudioBookDao.findAll
     Ok("")
   }
-  
+
   def recent = Action {
     Ok(views.html.audio.recent())
   }
-  
+
   def recentList = Action {
     Ok(Json.toJson(AudioBookDao.recent))
   }
 
   def add = Action(parse.json) { request =>
     val audioJsonString = request.body
-    println(s"received add audio request: $audioJsonString")
+    logger.info(s"received add audio request: $audioJsonString")
     val audioJson = Json.toJson(audioJsonString)
-    println(s"converted Json: $audioJson")
+    logger.debug(s"converted Json: $audioJson")
 
     val (isValid, jsonResult, audioBookOption) = validateAudioJson(audioJson)
     if (isValid) {
@@ -79,9 +82,9 @@ object AudioBooks extends Controller {
 
   def edit = Action(parse.json) { request =>
     val audioJsonString = request.body
-    println(s"received edit audio request: $audioJsonString")
+    logger.info(s"received edit audio request: $audioJsonString")
     val audioJson = Json.toJson(audioJsonString)
-    println(s"converted Json: $audioJson")
+    logger.debug(s"converted Json: $audioJson")
 
     val (isValid, jsonResult, audioBookOption) = validateAudioJson(audioJson)
     if (isValid) {
@@ -90,6 +93,10 @@ object AudioBooks extends Controller {
       audioBooks = AudioBookDao.findAll
     }
     Ok(jsonResult)
+  }
+
+  def getSize(): Int = {
+    audioBooks.size
   }
 
   private def validateAudioJson(audioJson: JsValue): (Boolean, JsValue, Option[AudioBook]) = {
@@ -102,7 +109,7 @@ object AudioBooks extends Controller {
         val p = for {
           entry <- e.errors
         } yield Json.obj(entry._1.toString.drop(1) -> entry._2.head.message)
-        println(JsArray(p))
+        logger.debug(JsArray(p).toString)
         (false, Json.obj("validation" -> false, "errorList" -> JsArray(p)), None)
       }
     }
