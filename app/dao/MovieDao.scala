@@ -110,6 +110,11 @@ object MovieDao {
     val results = movieColl.find(MongoDBObject("actors" -> s"$actor".r)).sort(MongoDBObject("year" -> -1))
     results.map(dbObjectToMovie(_).get).toSeq
   }
+  
+  def findByActorPartial(actor: String): Seq[Movie] = {
+    val results = movieColl.find(MongoDBObject("actors" -> s"$actor".r)).sort(MongoDBObject("year" -> -1))
+    results.map(dbObjectToMovie(_).get).toSeq
+  }
 
   def findByDirector(director: String): Seq[Movie] = {
     val results = movieColl.find(MongoDBObject("director" -> s"$director".r)).sort(MongoDBObject("year" -> -1))

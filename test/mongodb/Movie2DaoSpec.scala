@@ -123,6 +123,28 @@ class MovieDaoSpec extends PlaySpec with OneAppPerSuite {
       val resultsBudSpencer = MovieDao.findByActor("Bud Spencer")
       resultsBudSpencer.isEmpty == true
     }
+    
+    "allow partial searching by author names" in {
+      movieColl.drop()
+      MovieDao.add(Movie(title = "Dreamland", year = 2000, folder = 1, dvd = 2, actors = Option("Gene Hackman")))
+      MovieDao.add(Movie(title = "Dreamland", year = 2000, folder = 1, dvd = 2, actors = Option("Gene Wilder, Gene Hackman")))
+      MovieDao.add(Movie(title = "Dreamland", year = 2000, folder = 1, dvd = 2, actors = Option("Bill Wilder")))
+      MovieDao.add(Movie(title = "Dreamland", year = 2000, folder = 1, dvd = 2, actors = Option("Gene Kelly")))
+      
+      val resultGene = MovieDao.findByActorPartial("Gene") // TOOD Case insensitive?
+      resultGene.size must be (3)
+      resultGene.filter(_.actors.get.contains("Gene Hackman")).size must be (2)
+      resultGene.filter(_.actors.get.contains("Gene Wilder")).size must be (1)
+      resultGene.filter(_.actors.get.contains("Gene Kelly")).size must be (1)
+      
+      val resultWilder = MovieDao.findByActorPartial("Wilder")
+      resultWilder.size must be (2)
+      resultWilder.filter(_.actors.get.contains("Gene Wilder")).size must be (1)
+      resultWilder.filter(_.actors.get.contains("Bill Wilder")).size must be (1)
+      
+      val resultTome = MovieDao.findByActorPartial("Tom")
+      resultTome.size must be (0)
+    }
   }
 
   "group by year" in {
