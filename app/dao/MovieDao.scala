@@ -17,7 +17,7 @@ import utils.JsonUtil
 import play.api.Logger
 
 object MovieDao {
-  
+
   private val logger = Logger("MovieDao")
 
   private val mongoDbHost = Play.current.configuration.getString("mongodb.host").get
@@ -113,9 +113,10 @@ object MovieDao {
     val results = movieColl.find(MongoDBObject("actors" -> s"$actor".r)).sort(MongoDBObject("year" -> -1))
     results.map(dbObjectToMovie(_).get).toSeq
   }
-  
-  def findByActorPartial(actor: String): Seq[Movie] = {
-    val results = movieColl.find(MongoDBObject("actors" -> s"$actor".r)).sort(MongoDBObject("year" -> -1))
+
+
+  def findPartial(entity: String, name: String): Seq[Movie] = {
+    val results = movieColl.find(MongoDBObject(entity -> s"$name".r)).sort(MongoDBObject("year" -> -1))
     results.map(dbObjectToMovie(_).get).toSeq
   }
 
@@ -139,17 +140,17 @@ object MovieDao {
     val results = movieColl.find().sort(MongoDBObject("rating" -> -1, "year" -> -1)).limit(100)
     results.map(dbObjectToMovie(_).get).toSeq
   }
-  
-  def groupByYear():Seq[(Int, Int)] = {
+
+  def groupByYear(): Seq[(Int, Int)] = {
     val sort = MongoDBObject("$sort" -> MongoDBObject("year" -> -1))
-	val group = MongoDBObject("$group" -> MongoDBObject(
-	    "_id" -> MongoDBObject("year" -> "$year"),
-	    "num" -> MongoDBObject("$sum" -> 1)))
-	    
-	val pipeline = MongoDBList(sort, group)
-	val result: BasicDBList = db.command(MongoDBObject("aggregate" -> "movie", "pipeline" -> pipeline)).get("result").asInstanceOf[BasicDBList]
-	println(s"groupby: $result")
-	result.toArray().map(entry => dbObjectToTuple(entry.asInstanceOf[DBObject]))
+    val group = MongoDBObject("$group" -> MongoDBObject(
+      "_id" -> MongoDBObject("year" -> "$year"),
+      "num" -> MongoDBObject("$sum" -> 1)))
+
+    val pipeline = MongoDBList(sort, group)
+    val result: BasicDBList = db.command(MongoDBObject("aggregate" -> "movie", "pipeline" -> pipeline)).get("result").asInstanceOf[BasicDBList]
+    println(s"groupby: $result")
+    result.toArray().map(entry => dbObjectToTuple(entry.asInstanceOf[DBObject]))
   }
 
   private def dbObjectToMovie(dbObject: DBObject): Option[Movie] = {
@@ -158,8 +159,8 @@ object MovieDao {
       case e: JsError => None
     }
   }
-  
-  private def dbObjectToTuple(dbObject: DBObject):(Int, Int) = {
+
+  private def dbObjectToTuple(dbObject: DBObject): (Int, Int) = {
     val dbObjectAsJson = Json.parse(dbObject.toString())
     val year = dbObjectAsJson \ "_id" \ "year"
     val count = dbObjectAsJson \ "num"
@@ -170,7 +171,7 @@ object MovieDao {
     val movieOption: Option[movieColl.T] = movieColl.findOneByID(new ObjectId(id))
     movieColl.remove(movieOption.get)
   }
-  
+
   def shutdown() {
     logger.info("Closing DB connection")
     client.close

@@ -38,29 +38,35 @@ mediaApp.controller('MovieListCtrl', function($scope, $http, $filter,
 });
 
 mediaApp.controller('MovieCtrl', function($scope, $http, $attrs, $modal) {
-	$http.get('/movies/data/' + $attrs.movieid).success(function(data) {
-		$scope.movie = data;
-		$scope.movie.actorsWithUrl = $scope.createEntityUrl("Actor", $scope.movie.actors)
-		$scope.movie.directorWithUrl = $scope.createEntityUrl("Director", $scope.movie.director)
-		$scope.movie.writerWithUrl = $scope.createEntityUrl("Writer", $scope.movie.writer)
-	});
+	$http.get('/movies/data/' + $attrs.movieid).success(
+			function(data) {
+				$scope.movie = data;
+				$scope.movie.actorsWithUrl = $scope.createEntityUrl("Actor",
+						$scope.movie.actors)
+				$scope.movie.directorWithUrl = $scope.createEntityUrl(
+						"Director", $scope.movie.director)
+				$scope.movie.writerWithUrl = $scope.createEntityUrl("Writer",
+						$scope.movie.writer)
+			});
 
 	$scope.back = function() {
 		window.history.back();
 	};
-	
+
 	$scope.createEntityUrl = function(entity, actors) {
 		var actorArray = actors.split(", ")
-		var actorWithUrlArray = [] 
+		var actorWithUrlArray = []
 		for (index = 0; index < actorArray.length; ++index) {
 			var name = actorArray[index];
 			var actorUrl = "";
 			if (name.indexOf(' (') > 0) {
 				var nameArray = name.split(' (');
-				actorUrl = "<a href=\"/movies/findUi?entity=" + entity + "&name=" + nameArray[0] + "\">" + nameArray[0] + "</a> (" + nameArray[1];
-			}
-			else {
-				actorUrl = "<a href=\"/movies/findUi?entity=" + entity + "&name=" + name + "\">" + name + "</a>";
+				actorUrl = "<a href=\"/movies/findUi?entity=" + entity
+						+ "&name=" + nameArray[0] + "\">" + nameArray[0]
+						+ "</a> (" + nameArray[1];
+			} else {
+				actorUrl = "<a href=\"/movies/findUi?entity=" + entity
+						+ "&name=" + name + "\">" + name + "</a>";
 			}
 			actorWithUrlArray.push(actorUrl);
 		}
@@ -105,22 +111,26 @@ mediaApp.controller('MovieCtrl', function($scope, $http, $attrs, $modal) {
 	};
 });
 
-mediaApp.controller('MovieFindCtrl', function($scope, $http, $attrs, ngTableParams) {
-	$http.get('/movies/find?entity=' + $attrs.entity + "&name=" + $attrs.name).success(function(data) {
-		$scope.movies = data;
-		
-		$scope.tableParams = new ngTableParams({
-			page: 1,
-			count: 10
-		}, {
-			total: data.length,
-			getData: function($defer, params) {
-				$defer.resolve(data.slice((params.page() - 1) * params.count(), params.page() * params.count()));
-			}
-		});
-	});
-	
-	
+mediaApp.controller('MovieFindCtrl', function($scope, $http, $attrs,
+		ngTableParams) {
+	$http.get('/movies/find?entity=' + $attrs.entity + "&name=" + $attrs.name)
+			.success(
+					function(data) {
+						$scope.movies = data;
+
+						$scope.tableParams = new ngTableParams({
+							page : 1,
+							count : 10
+						}, {
+							total : data.length,
+							getData : function($defer, params) {
+								$defer.resolve(data.slice((params.page() - 1)
+										* params.count(), params.page()
+										* params.count()));
+							}
+						});
+					});
+
 	$scope.back = function() {
 		window.history.back();
 	};
@@ -131,7 +141,6 @@ mediaApp.controller('MovieActorCtrl', function($scope, $http, $attrs) {
 		$scope.actor = data;
 	});
 });
-
 
 mediaApp.controller('EditMovieCtrl', function($scope, $http, $attrs) {
 	$scope.movie = {
@@ -235,9 +244,7 @@ mediaApp.controller('NewImdbMovieCtrl', function($scope, $http) {
 
 	$scope.changeRoute = function(url, forceReload) {
 		$scope = $scope || angular.element(document).scope();
-		if (forceReload || $scope.$$phase) { // that's right
-			// TWO dollar
-			// signs: $$phase
+		if (forceReload || $scope.$$phase) {
 			window.location = url;
 		} else {
 			$location.path(url);
@@ -251,6 +258,38 @@ mediaApp.controller('NewImdbMovieCtrl', function($scope, $http) {
 			url : '/movies/addImdb',
 			method : "POST",
 			data : JSON.stringify($scope.movie),
+			transformRequest : false,
+			headers : {
+				'Content-Type' : 'application/json'
+			}
+		}).success(function(data, status, headers, config) {
+			$scope.movieResponse = data;
+			if (data.validation == true) {
+				$scope.changeRoute(data.redirectPath);
+			} else {
+				$scope.status = data;
+			}
+		}).error(function(data, status, headers, config) {
+			$scope.status = status + ' ' + headers;
+		});
+	};
+});
+
+mediaApp.controller('SearchMovieCtrl', function($scope, $http) {
+	$scope.search = {
+		'entity' : 'Name',
+	};
+
+	$scope.back = function() {
+		window.history.back();
+	};
+
+	$scope.save = function() {
+		console.log('saving ...');
+		var request = $http({
+			url : '/movies/search',
+			method : "POST",
+			data : JSON.stringify($scope.search),
 			transformRequest : false,
 			headers : {
 				'Content-Type' : 'application/json'

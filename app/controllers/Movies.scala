@@ -21,6 +21,7 @@ import scala.concurrent._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.Success
 import scala.util.Failure
+import scala.util.Success
 
 object Movies extends Controller {
 
@@ -141,7 +142,7 @@ object Movies extends Controller {
         Redirect(checkImdbForImageUrl(imdbId))
       }
       case s => {
-    	logger.info(s"referrer is ${s.get}")
+        logger.info(s"referrer is ${s.get}")
         if (s.get.contains("localhost")) {
           val movie = MovieDao.findByImdbId(imdbId)
           movie match {
@@ -202,6 +203,31 @@ object Movies extends Controller {
       }
     }
   }
+  
+  def searchUi = Action {
+    Ok(views.html.movies.searchform())
+  }
+
+  def search = Action(parse.json) { request =>
+    val searchJsonString = request.body
+    logger.info(s"search request: $searchJsonString")
+//    val actors = future { MovieDao.findPartial(Movie.actorField, name) }
+//    val directors = future { MovieDao.findPartial(Movie.directorField, name) }
+//    val writers = future { MovieDao.findPartial(Movie.writerField, name) }
+//
+//    val result = for {
+//      a <- actors
+//      b <- directors
+//      c <- writers
+//    } yield a ++ b ++ c
+//    
+//    result onComplete {
+//      case Success(value) => logger.info(value.toString)
+//      case Failure(error) => logger.info(error.toString)
+//    }
+    
+    Ok("")
+  }
 
   def newForm = Action {
     Ok(views.html.movies.form("NewMovieCtrl", "", "Adding New"))
@@ -221,7 +247,7 @@ object Movies extends Controller {
     movies = MovieDao.findAll
     Ok("")
   }
-  
+
   def getSize(): Int = {
     movies.size
   }

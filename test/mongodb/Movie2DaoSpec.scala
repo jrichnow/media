@@ -131,18 +131,18 @@ class MovieDaoSpec extends PlaySpec with OneAppPerSuite {
       MovieDao.add(Movie(title = "Dreamland", year = 2000, folder = 1, dvd = 2, actors = Option("Bill Wilder")))
       MovieDao.add(Movie(title = "Dreamland", year = 2000, folder = 1, dvd = 2, actors = Option("Gene Kelly")))
       
-      val resultGene = MovieDao.findByActorPartial("Gene") // TOOD Case insensitive?
+      val resultGene = MovieDao.findPartial(Movie.actorField, "Gene") // TOOD Case insensitive?
       resultGene.size must be (3)
       resultGene.filter(_.actors.get.contains("Gene Hackman")).size must be (2)
       resultGene.filter(_.actors.get.contains("Gene Wilder")).size must be (1)
       resultGene.filter(_.actors.get.contains("Gene Kelly")).size must be (1)
       
-      val resultWilder = MovieDao.findByActorPartial("Wilder")
+      val resultWilder = MovieDao.findPartial(Movie.actorField, "Wilder")
       resultWilder.size must be (2)
       resultWilder.filter(_.actors.get.contains("Gene Wilder")).size must be (1)
       resultWilder.filter(_.actors.get.contains("Bill Wilder")).size must be (1)
       
-      val resultTome = MovieDao.findByActorPartial("Tom")
+      val resultTome = MovieDao.findPartial(Movie.actorField, "Tom")
       resultTome.size must be (0)
     }
   }

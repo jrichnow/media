@@ -30,6 +30,10 @@ case class Movie(
 
 object Movie {
 
+  val actorField = "actors" // TODO enums?
+  val directorField = "director"
+  val writerField = "writer"
+
   implicit val movieReads: Reads[Movie] = (
     (__ \ "id").readNullable[String] and
     (__ \ "title").read[String] and
@@ -68,20 +72,20 @@ object Movie {
       "imdbId" -> movie.imdbId,
       "plot" -> movie.plot,
       "actors" -> movie.actors,
-//      "actors" -> wrapActorsUrl(movie.actors),
+      //      "actors" -> wrapActorsUrl(movie.actors),
       "writer" -> movie.writer,
       "director" -> movie.director,
       "runtime" -> movie.runtime,
       "rating" -> movie.rating,
       "rated" -> movie.rated,
       "imageUrl" -> validateImageUrl(movie.imageUrl.getOrElse("")))
-//      "imageUrl" -> validateImageUrl(getTheMovieDbImageUrl(movie.imdbId.get).getOrElse("")))
+    //      "imageUrl" -> validateImageUrl(getTheMovieDbImageUrl(movie.imdbId.get).getOrElse("")))
   }
 
   def getTheMovieDbImageUrl(imdbId: String): Option[String] = {
     TheMovieDbWrapper.getBigMoviePosterUrl(imdbId)
   }
-  
+
   private def validateImageUrl(imageUrl: String): String = {
     imageUrl match {
       case "N/A" => "/assets/images/no-image.jpg"
@@ -105,7 +109,7 @@ object Movie {
   def toJson(movie: Movie): JsValue = {
     Json.toJson(movie)
   }
-  
+
   def toStringShort(movie: Movie): String = {
     s"${movie.title} (${movie.year})"
   }
