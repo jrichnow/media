@@ -105,4 +105,8 @@ object Movie {
   def toJson(movie: Movie): JsValue = {
     Json.toJson(movie)
   }
+  
+  def toStringShort(movie: Movie): String = {
+    s"${movie.title} (${movie.year})"
+  }
 }

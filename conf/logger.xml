@@ -1,0 +1,63 @@
+<configuration debug="true">
+
+	<property resource="application.conf" />
+
+	<conversionRule conversionWord="coloredLevel" converterClass="play.api.Logger$ColoredLevel" />
+
+	<appender name="PLAY-APP" class="ch.qos.logback.core.FileAppender">
+		<file>${path.to.log.file}/media-play-app.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${path.to.log.file}/media-play-app.%d{yyyy-MM-dd}-%i.log.gz
+			</fileNamePattern>
+			<timeBasedFileNamingAndTriggeringPolicy
+				class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<maxFileSize>100MB</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%date{yyyy-MM-dd HH:mm:ss} [%level] %logger in %thread{20} %message%n</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="MOVIES" class="ch.qos.logback.core.FileAppender">
+		<file>${path.to.log.file}/media-movies.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${path.to.log.file}/media-movies.%d{yyyy-MM-dd}-%i.log.gz
+			</fileNamePattern>
+			<timeBasedFileNamingAndTriggeringPolicy
+				class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<maxFileSize>100MB</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%date{yyyy-MM-dd HH:mm:ss} [%level] %logger in %thread{20} %message%n</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%coloredLevel %logger{15} - %message%n%xException{5}
+			</pattern>
+		</encoder>
+	</appender>
+
+	<logger name="play" additivity="true" level="INFO">
+		<appender-ref ref="PLAY-APP" />
+	</logger>
+
+	<logger name="application" additivity="true" level="INFO">
+		<appender-ref ref="PLAY-APP" />
+	</logger>
+
+	<logger name="MovieController" additivity="false" level="INFO">
+		<appender-ref ref="MOVIES" />
+	</logger>
+
+	<root level="ERROR">
+		<appender-ref ref="STDOUT" />
+		<appender-ref ref="PLAY-APP" />
+	</root>
+
+</configuration>

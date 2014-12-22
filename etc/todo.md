@@ -3,3 +3,5 @@
 * try/failure/success on add IMDB
 * display big movie poster as background
 * return distinct movie names on finds 
+* logback
+* release MongoDB connection on automatic restart

@@ -14,6 +14,7 @@ import play.api.libs.json.Json.toJsFieldJsValueWrapper
 import play.api.mvc.Action
 import play.api.mvc.Controller
 import play.api.mvc.RequestHeader
+import play.api.Logger
 import utils.OmdbWrapper
 import utils.TheMovieDbWrapper
 import scala.concurrent._
@@ -23,9 +24,11 @@ import scala.util.Failure
 
 object Movies extends Controller {
 
+  val logger = Logger("MovieController")
   var movies: Seq[Movie] = Seq.empty
 
   def init() {
+    logger.info("initialising controller with all movies from DB")
     movies = MovieDao.findAll
   }
 
@@ -34,6 +37,7 @@ object Movies extends Controller {
   }
 
   def list = Action {
+    logger.info("retrieving movie list.")
     if (movies.isEmpty) {
       movies = MovieDao.findAll
     }
@@ -41,22 +45,23 @@ object Movies extends Controller {
   }
 
   def title(id: String) = Action {
+    logger.info(s"Getting movie by title $id")
     Ok(views.html.movies.details(id))
   }
 
   def movieById(id: String) = Action {
-    println(s"request for movie by ID: $id")
+    logger.info(s"request for movie by ID: $id")
     val movie = findById(id)
-    println(s"Found movie: $movie")
+    logger.info(s"Found movie: ${Movie.toStringShort(movie)}")
 
     Ok(Json.toJson(movie))
   }
 
   def add = Action(parse.json) { request =>
     val movieJsonString = request.body
-    println(s"received add movie request: $movieJsonString")
+    logger.info(s"received add movie request: $movieJsonString")
     val movieJson = Json.toJson(movieJsonString)
-    println(s"converted Json: $movieJson")
+    logger.info(s"converted Json: $movieJson")
 
     val (isValid, jsonResult, movieOption) = validateMovieJson(movieJson)
     if (isValid) {
@@ -67,9 +72,9 @@ object Movies extends Controller {
 
   def addImdb = Action(parse.json) { request =>
     val movieJsonString = request.body
-    println(s"received add movie request for imdb: $movieJsonString")
+    logger.info(s"add movie request for imdb: $movieJsonString")
     val movieJson = Json.toJson(movieJsonString)
-    println(s"converted Json: $movieJson")
+    logger.info(s"converted Json: $movieJson")
 
     val (isValid, jsonResult, movieOption) = validateImdbMovieJson(movieJson)
     if (isValid) {
@@ -78,7 +83,7 @@ object Movies extends Controller {
       imdbId match {
         case Some(_) => {
           val movie = OmdbWrapper.fromOmdb(omdbJson, movieOption.get.folder, movieOption.get.dvd)
-          println(Json.prettyPrint(Json.toJson(movie)))
+          logger.info(Json.prettyPrint(Json.toJson(movie)))
           val dbMovie = MovieDao.add(movie)
           checkActors(dbMovie)
           movies = movies :+ dbMovie
@@ -95,9 +100,9 @@ object Movies extends Controller {
 
   def edit = Action(parse.json) { request =>
     val movieJsonString = request.body
-    println(s"received edit movie request: $movieJsonString")
+    logger.info(s"edit movie request: $movieJsonString")
     val movieJson = Json.toJson(movieJsonString)
-    println(s"converted Json: $movieJson")
+    logger.info(s"converted Json: $movieJson")
 
     val (isValid, jsonResult, movieOption) = validateMovieJson(movieJson)
     if (isValid) {
@@ -111,13 +116,13 @@ object Movies extends Controller {
   def findUi = Action { request =>
     val entity = request.getQueryString("entity").getOrElse("unknown")
     val name = request.getQueryString("name").getOrElse("unknown")
+    logger.info(s"findUI for entity '$entity' and name '$name'")
     Ok(views.html.movies.find(entity, name))
   }
 
   def find = Action { request =>
-    println(request.queryString)
     val entity = request.getQueryString("entity").getOrElse("invalid")
-    println(entity)
+    logger.info(s"find ${request.queryString.toString}")
     entity match {
       case "Actor" => findByActor(request)
       case "Director" => findByDirector(request)
@@ -128,25 +133,26 @@ object Movies extends Controller {
   }
 
   def image(imdbId: String) = Action { implicit request =>
-    println(s"imdbId: $imdbId")
+    logger.info(s"image request for imdbId: $imdbId")
     val referrer = request.headers.get("referer")
     referrer match {
       case None => {
-        println("No referrer given")
+        logger.info("No referrer given")
         Redirect(checkImdbForImageUrl(imdbId))
       }
       case s => {
+    	logger.info(s"referrer is $s")
         if (s.get.contains("localhost")) {
-          println("referrer is localhost")
           val movie = MovieDao.findByImdbId(imdbId)
-          println(movie)
           movie match {
-            case s: Some[Movie] => Redirect(validateImageUrl(movie.get.imageUrl.get))
+            case s: Some[Movie] => {
+              logger.info(Movie.toStringShort(movie.get))
+              Redirect(validateImageUrl(movie.get.imageUrl.get))
+            }
             case None => Redirect(checkImdbForImageUrl(imdbId))
           }
 
         } else {
-          println("referrer is NOT localhost")
           Redirect(checkImdbForImageUrl(imdbId))
         }
       }
@@ -154,6 +160,7 @@ object Movies extends Controller {
   }
 
   def imageSmall(imdbId: String) = Action { implicit request =>
+    logger.info(s"thumbnail request for imdbId $imdbId")
     val referrer = request.headers.get("referer")
     referrer match {
       case None => Redirect(checkImdbForThumbnailImageUrl(imdbId))
@@ -173,6 +180,7 @@ object Movies extends Controller {
   }
 
   def actor(name: String) = Action {
+    logger.info(s"actor request for $name")
     val dbActor = ActorDao.getByFullName(name)
     dbActor match {
       case Some(_) => Ok(Actor.toJson(dbActor.get))
@@ -208,6 +216,7 @@ object Movies extends Controller {
   }
 
   def delete(id: String) = Action {
+    logger.info(s"request to delete movie for id $id")
     MovieDao.delete(id);
     movies = MovieDao.findAll
     Ok("")
@@ -225,43 +234,43 @@ object Movies extends Controller {
               case None => {
                 val movieDbActor = TheMovieDbWrapper.getActorData(actor)
                 movieDbActor match {
-                  case None => println(s"no actor data for $actor found from MovieDb")
+                  case None => logger.info(s"no actor data for $actor found from MovieDb")
                   case a => {
                     val actor = ActorDao.add(Actor.fromJson(a.get).get)
-                    println(s"new actor added to db: $actor")
+                    logger.info(s"new actor added to db: $actor")
                   }
                 }
               }
-              case a => println(s"actor $a exists already")
+              case a => logger.info(s"actor $a exists already")
             }
           }
         }
       }
     }
     f.onComplete {
-      case Success(value) => println(s"Successfully completed author search for ${movie.actors}")
-      case Failure(error) => println(s"Author search ${movie.actors}resulted in an error: $error")
+      case Success(value) => logger.info(s"Successfully completed author search for ${movie.actors}")
+      case Failure(error) => logger.info(s"Author search ${movie.actors}resulted in an error: $error")
     }
   }
 
   private def findByActor(implicit request: RequestHeader) = {
     val actor = request.queryString.get("name").flatMap(_.headOption).getOrElse("")
     val moviesByActor = MovieDao.findByActor(actor)
-    println("movies by actor: " + moviesByActor)
+    logger.info(s"movies by actor: $moviesByActor")
     Ok(Json.toJson(moviesByActor))
   }
 
   private def findByDirector(implicit request: RequestHeader) = {
     val director = request.queryString.get("name").flatMap(_.headOption).getOrElse("")
     val moviesByDirector = MovieDao.findByDirector(director)
-    println("movies by director: " + moviesByDirector)
+    logger.info(s"movies by director: $moviesByDirector")
     Ok(Json.toJson(moviesByDirector))
   }
 
   private def findByWriter(implicit request: RequestHeader) = {
     val writer = request.queryString.get("name").flatMap(_.headOption).getOrElse("")
     val moviesByWriter = MovieDao.findByWriter(writer)
-    println("movies by writer: " + moviesByWriter)
+    logger.info(s"movies by writer: $moviesByWriter")
     Ok(Json.toJson(moviesByWriter))
   }
 
@@ -290,7 +299,7 @@ object Movies extends Controller {
         val p = for {
           entry <- e.errors
         } yield Json.obj(entry._1.toString.drop(1) -> entry._2.head.message)
-        println(JsArray(p))
+        logger.info(JsArray(p).toString)
         (false, Json.obj("validation" -> false, "errorList" -> JsArray(p)), None)
       }
     }
@@ -306,7 +315,7 @@ object Movies extends Controller {
         val p = for {
           entry <- e.errors
         } yield Json.obj(entry._1.toString.drop(1) -> entry._2.head.message)
-        println(JsArray(p))
+        logger.info(JsArray(p).toString)
         (false, Json.obj("validation" -> false, "errorList" -> JsArray(p)), None)
       }
     }
