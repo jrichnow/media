@@ -28,6 +28,7 @@ import scala.concurrent.duration.Duration
 import scala.collection.mutable.Buffer
 import scala.collection.mutable.Map
 import play.api.libs.json.JsArray
+import utils.JsonUtil
 
 object Movies extends Controller {
 
@@ -222,11 +223,7 @@ object Movies extends Controller {
     entity match {
       case a if a.equals("Name") => {
         val resultMap = searchByName(term)
-        resultMap match {
-          case a if a.size == 0 => Ok(Json.obj("result" -> s"No matches found"))
-          case b if b.size == 1 => Ok(searchResultByNameToJson(b))
-          case c if c.size > 1 => Ok(searchResultByNameToJson(c))
-        }
+        Ok(JsonUtil.searchResultByNameToJson(resultMap))
       }
       case b if b.equals("Rating") => {
         logger.info("search by rating")
@@ -284,40 +281,6 @@ object Movies extends Controller {
     //    } yield a ++ b ++ c
     //
     //    Await result (result, 2 seconds)
-  }
-
-  private def searchResultByNameToJson(map: Map[Actor, Seq[(String, Int)]]): JsValue = {
-
-    def getEntityCountAsJson(details: Seq[(String, Int)]): JsArray = {
-      var array = new JsArray
-      for (detail <- details) {
-        array = array.prepend(Json.obj(detail._1 -> detail._2))
-      }
-      array
-    }
-    
-    def mapEntity(entityToMap: String):String = {
-      entityToMap match {
-      	case a if a == "actors" => "Actor"
-      	case b if b == "director" => "Director"
-      	case c if c == "writer" => "Writer"
-      }
-    }
-
-    def asJson(): JsArray = {
-      var array = new JsArray
-      for ((actor, details) <- map) {
-        val actorJson = Json.obj("name" -> actor.name,
-          "posterUrl" -> actor.posterUrl,
-          "entityCount" -> getEntityCountAsJson(details))
-          array = array.prepend(actorJson)
-      }
-      array
-    }
-    val json = Json.obj("count" -> map.size,
-        "" -> asJson)
-    
-    json
   }
 
   private def getSearchResultForName(actor: Actor): Seq[(String, Int)] = {
