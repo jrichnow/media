@@ -136,6 +136,9 @@ class MovieDaoSpec extends PlaySpec with OneAppPerSuite {
       resultGene.filter(_.actors.get.contains("Gene Hackman")).size must be (2)
       resultGene.filter(_.actors.get.contains("Gene Wilder")).size must be (1)
       resultGene.filter(_.actors.get.contains("Gene Kelly")).size must be (1)
+      MovieDao.getMovieCountForName(Movie.actorField, "Gene Hackman") must be (2)
+      MovieDao.getMovieCountForName(Movie.actorField, "Gene Wilder") must be (1)
+      MovieDao.getMovieCountForName(Movie.actorField, "Gene Kelly") must be (1)
       
       val resultWilder = MovieDao.findPartial(Movie.actorField, "Wilder")
       resultWilder.size must be (2)
@@ -144,6 +147,7 @@ class MovieDaoSpec extends PlaySpec with OneAppPerSuite {
       
       val resultTome = MovieDao.findPartial(Movie.actorField, "Tom")
       resultTome.size must be (0)
+      MovieDao.getMovieCountForName(Movie.actorField, "Tom") must be (0)
     }
   }
 

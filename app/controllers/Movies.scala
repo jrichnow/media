@@ -17,6 +17,7 @@ import play.api.mvc.RequestHeader
 import play.api.Logger
 import utils.OmdbWrapper
 import utils.TheMovieDbWrapper
+import scala.collection.mutable.{ Seq => MSeq }
 import scala.concurrent._
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -24,6 +25,9 @@ import scala.util.Success
 import scala.util.Failure
 import scala.util.Success
 import scala.concurrent.duration.Duration
+import scala.collection.mutable.Buffer
+import scala.collection.mutable.Map
+import play.api.libs.json.JsArray
 
 object Movies extends Controller {
 
@@ -217,10 +221,12 @@ object Movies extends Controller {
     val term = (searchJsonString \ "term").as[String]
     entity match {
       case a if a.equals("Name") => {
-        logger.info("search by name")
-        val movies = searchByName(term)
-        logger.info(s"Found ${movies.size} movies")
-        Ok(Json.obj("error" -> s"Searching by $term"))
+        val resultMap = searchByName(term)
+        resultMap match {
+          case a if a.size == 0 => Ok(Json.obj("result" -> s"No matches found"))
+          case b if b.size == 1 => Ok(searchResultByNameToJson(b))
+          case c if c.size > 1 => Ok(searchResultByNameToJson(c))
+        }
       }
       case b if b.equals("Rating") => {
         logger.info("search by rating")
@@ -256,18 +262,83 @@ object Movies extends Controller {
     movies.size
   }
 
-  private def searchByName(name: String):Seq[Movie] = {
-    val actors = future { MovieDao.findPartial(Movie.actorField, name) }
-    val directors = future { MovieDao.findPartial(Movie.directorField, name) }
-    val writers = future { MovieDao.findPartial(Movie.writerField, name) }
+  private def searchByName(name: String): Map[Actor, Seq[(String, Int)]] = {
+    val actors = ActorDao.findPartial(name)
+    logger.info(s"Found matching names: ${actors}")
+    val map = Map.empty[Actor, Seq[(String, Int)]]
 
-    val result = for {
-      a <- actors
-      b <- directors
-      c <- writers
-    } yield a ++ b ++ c
+    val list = Buffer.empty[(String, String, Int)]
+    for (actor <- actors) {
+      map.put(actor, getSearchResultForName(actor))
+    }
 
-    Await result (result, 2 seconds)
+    map
+    //    val actors = future { MovieDao.findByActor(actorNames(0).name) }
+    //    val directors = future { MovieDao.findPartial(Movie.directorField, name) }
+    //    val writers = future { MovieDao.findPartial(Movie.writerField, name) }
+    //
+    //    val result = for {
+    //      a <- actors
+    //      b <- directors
+    //      c <- writers
+    //    } yield a ++ b ++ c
+    //
+    //    Await result (result, 2 seconds)
+  }
+
+  private def searchResultByNameToJson(map: Map[Actor, Seq[(String, Int)]]): JsValue = {
+
+    def getEntityCountAsJson(details: Seq[(String, Int)]): JsArray = {
+      var array = new JsArray
+      for (detail <- details) {
+        array = array.prepend(Json.obj(detail._1 -> detail._2))
+      }
+      array
+    }
+    
+    def mapEntity(entityToMap: String):String = {
+      entityToMap match {
+      	case a if a == "actors" => "Actor"
+      	case b if b == "director" => "Director"
+      	case c if c == "writer" => "Writer"
+      }
+    }
+
+    def asJson(): JsArray = {
+      var array = new JsArray
+      for ((actor, details) <- map) {
+        val actorJson = Json.obj("name" -> actor.name,
+          "posterUrl" -> actor.posterUrl,
+          "entityCount" -> getEntityCountAsJson(details))
+          array = array.prepend(actorJson)
+      }
+      array
+    }
+    val json = Json.obj("count" -> map.size,
+        "" -> asJson)
+    
+    json
+  }
+
+  private def getSearchResultForName(actor: Actor): Seq[(String, Int)] = {
+    val list = Buffer.empty[(String, Int)]
+
+    getMovieCountForNameAndEntity(Movie.actorField, actor.name, list)
+    getMovieCountForNameAndEntity(Movie.directorField, actor.name, list)
+    getMovieCountForNameAndEntity(Movie.writerField, actor.name, list)
+
+    list
+  }
+
+  private def getMovieCountForNameAndEntity(entity: String, name: String, list: Buffer[(String, Int)]) {
+    val count = MovieDao.getMovieCountForName(entity, name)
+    if (count > 0) {
+      val tuple = (entity, count)
+      println(tuple)
+      list += tuple
+    } else {
+      None
+    }
   }
 
   private def checkActors(movie: Movie) {

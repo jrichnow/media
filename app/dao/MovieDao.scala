@@ -114,11 +114,6 @@ object MovieDao {
     results.map(dbObjectToMovie(_).get).toSeq
   }
 
-  def findPartial(entity: String, name: String): Seq[Movie] = {
-   val results = movieColl.find(MongoDBObject(entity -> s"$name".r))
-    results.map(dbObjectToMovie(_).get).toSeq
-  }
-
   def findByDirector(director: String): Seq[Movie] = {
     val results = movieColl.find(MongoDBObject("director" -> s"$director".r)).sort(MongoDBObject("year" -> -1))
     results.map(dbObjectToMovie(_).get).toSeq
@@ -126,6 +121,15 @@ object MovieDao {
 
   def findByWriter(writer: String): Seq[Movie] = {
     val results = movieColl.find(MongoDBObject("writer" -> s"$writer".r)).sort(MongoDBObject("year" -> -1))
+    results.map(dbObjectToMovie(_).get).toSeq
+  }
+  
+  def getMovieCountForName(entity: String, name: String): Int = {
+    movieColl.find(MongoDBObject(entity -> s"$name".r)).count
+  }
+  
+  def findPartial(entity: String, name: String): Seq[Movie] = {
+   val results = movieColl.find(MongoDBObject(entity -> s"$name".r))
     results.map(dbObjectToMovie(_).get).toSeq
   }
 
