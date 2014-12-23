@@ -303,7 +303,7 @@ object Movies extends Controller {
       None
     }
   }
-  
+
   private def mapEntityNames(entity: String): String = {
     entity match {
       case a if a.equals("actors") => "Actor"
@@ -318,28 +318,46 @@ object Movies extends Controller {
         case None =>
         case actors => {
           val actorArray = actors.get.split(", ")
-          for (actor <- actorArray) {
-            val dbActor = ActorDao.getByFullName(actor.trim())
-            dbActor match {
-              case None => {
-                val movieDbActor = TheMovieDbWrapper.getActorData(actor)
-                movieDbActor match {
-                  case None => logger.info(s"no actor data for $actor found from MovieDb")
-                  case a => {
-                    val actor = ActorDao.add(Actor.fromJson(a.get).get)
-                    logger.info(s"new actor added to db: $actor")
-                  }
-                }
-              }
-              case a => logger.info(s"actor $a exists already")
-            }
+          for (actorName <- actorArray) {
+            checkAndGetPersonData(actorName)
+//            val dbActor = ActorDao.getByFullName(actor.trim())
+//            dbActor match {
+//              case None => {
+//                val movieDbActor = TheMovieDbWrapper.getActorData(actor)
+//                movieDbActor match {
+//                  case None => logger.info(s"no actor data for $actor found from MovieDb")
+//                  case a => {
+//                    val actor = ActorDao.add(Actor.fromJson(a.get).get)
+//                    logger.info(s"new actor added to db: $actor")
+//                  }
+//                }
+//              }
+//              case a => logger.info(s"actor $a exists already")
+//            }
           }
         }
       }
     }
     f.onComplete {
-      case Success(value) => logger.info(s"Successfully completed author search for ${movie.actors}")
-      case Failure(error) => logger.info(s"Author search ${movie.actors}resulted in an error: $error")
+      case Success(value) => logger.info(s"Successfully completed actor search for ${movie.actors}")
+      case Failure(error) => logger.info(s"Actor search ${movie.actors}resulted in an error: $error")
+    }
+  }
+
+  private def checkAndGetPersonData(name: String) {
+    val dbActor = ActorDao.getByFullName(name.trim())
+    dbActor match {
+      case None => {
+        val movieDbActor = TheMovieDbWrapper.getActorData(name)
+        movieDbActor match {
+          case None => logger.info(s"no actor data for name found from MovieDb")
+          case a => {
+            val actor = ActorDao.add(Actor.fromJson(a.get).get)
+            logger.info(s"new actor added to db: ${actor.name}")
+          }
+        }
+      }
+      case a => logger.info(s"actor ${a.get.name} exists already")
     }
   }
 

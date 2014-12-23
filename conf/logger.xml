@@ -71,6 +71,10 @@
 		<appender-ref ref="MOVIES" />
 	</logger>
 	
+	<logger name="MovieService" additivity="false" level="INFO">
+		<appender-ref ref="MOVIES" />
+	</logger>
+	
 	<logger name="TheMovieDbWrapper" additivity="false" level="INFO">
 		<appender-ref ref="MOVIES" />
 	</logger>
