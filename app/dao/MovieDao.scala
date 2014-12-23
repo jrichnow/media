@@ -28,7 +28,7 @@ object MovieDao {
   private val client = MongoClient(mongoDbHost, mongoDbPort)
   private val db = client(mongoDbDatabase)
   private val movieColl = db(mongoDbMovieCollection)
-  
+
   def add(movie: Movie): Movie = {
     logger.info(s"Adding new movie $movie")
     val movieJson = Movie.toJson(movie)
@@ -114,9 +114,8 @@ object MovieDao {
     results.map(dbObjectToMovie(_).get).toSeq
   }
 
-
   def findPartial(entity: String, name: String): Seq[Movie] = {
-    val results = movieColl.find(MongoDBObject(entity -> s"$name".r)).sort(MongoDBObject("year" -> -1))
+   val results = movieColl.find(MongoDBObject(entity -> s"$name".r))
     results.map(dbObjectToMovie(_).get).toSeq
   }
 

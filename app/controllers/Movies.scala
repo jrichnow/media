@@ -18,10 +18,12 @@ import play.api.Logger
 import utils.OmdbWrapper
 import utils.TheMovieDbWrapper
 import scala.concurrent._
+import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.Success
 import scala.util.Failure
 import scala.util.Success
+import scala.concurrent.duration.Duration
 
 object Movies extends Controller {
 
@@ -203,7 +205,7 @@ object Movies extends Controller {
       }
     }
   }
-  
+
   def searchUi = Action {
     Ok(views.html.movies.searchform())
   }
@@ -211,22 +213,24 @@ object Movies extends Controller {
   def search = Action(parse.json) { request =>
     val searchJsonString = request.body
     logger.info(s"search request: $searchJsonString")
-//    val actors = future { MovieDao.findPartial(Movie.actorField, name) }
-//    val directors = future { MovieDao.findPartial(Movie.directorField, name) }
-//    val writers = future { MovieDao.findPartial(Movie.writerField, name) }
-//
-//    val result = for {
-//      a <- actors
-//      b <- directors
-//      c <- writers
-//    } yield a ++ b ++ c
-//    
-//    result onComplete {
-//      case Success(value) => logger.info(value.toString)
-//      case Failure(error) => logger.info(error.toString)
-//    }
-    
-    Ok("")
+    val entity = (searchJsonString \ "entity").as[String]
+    val term = (searchJsonString \ "term").as[String]
+    entity match {
+      case a if a.equals("Name") => {
+        logger.info("search by name")
+        val movies = searchByName(term)
+        logger.info(s"Found ${movies.size} movies")
+        Ok(Json.obj("error" -> s"Searching by $term"))
+      }
+      case b if b.equals("Rating") => {
+        logger.info("search by rating")
+        Ok(Json.obj("error" -> "Search by rating is not implemented yet"))
+      }
+      case c if c.equals("Genre") => {
+        logger.info("search by genre")
+        Ok(Json.obj("error" -> "Search by genre is not implemented yet"))
+      }
+    }
   }
 
   def newForm = Action {
@@ -250,6 +254,20 @@ object Movies extends Controller {
 
   def getSize(): Int = {
     movies.size
+  }
+
+  private def searchByName(name: String):Seq[Movie] = {
+    val actors = future { MovieDao.findPartial(Movie.actorField, name) }
+    val directors = future { MovieDao.findPartial(Movie.directorField, name) }
+    val writers = future { MovieDao.findPartial(Movie.writerField, name) }
+
+    val result = for {
+      a <- actors
+      b <- directors
+      c <- writers
+    } yield a ++ b ++ c
+
+    Await result (result, 2 seconds)
   }
 
   private def checkActors(movie: Movie) {

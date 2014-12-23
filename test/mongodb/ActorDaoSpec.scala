@@ -33,16 +33,37 @@ class ActorDaoSpec extends PlaySpec with OneAppPerSuite {
       val actor = ActorDao.getByFullName("Brad Pitt").get
 
       actor.id.get.length() must be > 6
-      actor.movieDbId must be (None)
+      actor.movieDbId must be(None)
       actor.name must be("Brad Pitt")
-      actor.birthDay.get must be ("1999-99-99")
-      actor.birthPlace.get must be ("Christchurch")
-      actor.deathDay must be (None)
-      actor.biography.get must be ("biography")
-      actor.imdbUrl.get must be ("imdbUrl")
-      actor.posterUrl.get must be ("posterUrl")
+      actor.birthDay.get must be("1999-99-99")
+      actor.birthPlace.get must be("Christchurch")
+      actor.deathDay must be(None)
+      actor.biography.get must be("biography")
+      actor.imdbUrl.get must be("imdbUrl")
+      actor.posterUrl.get must be("posterUrl")
     }
 
+    "allow partial searching by author names" in {
+      actorColl.drop()
+      ActorDao.add(Actor(None, None, "Gene Hackman"))
+      ActorDao.add(Actor(None, None, "Gene Wilder"))
+      ActorDao.add(Actor(None, None, "Bill Wilder"))
+      ActorDao.add(Actor(None, None, "Gene Kelly"))
+      
+      val resultGene = ActorDao.findPartial("Gene") // TOOD Case insensitive?
+      resultGene.size must be(3)
+      resultGene.filter(_.name.contains("Gene Hackman")).size must be(1)
+      resultGene.filter(_.name.contains("Gene Wilder")).size must be(1)
+      resultGene.filter(_.name.contains("Gene Kelly")).size must be(1)
+
+      val resultWilder = ActorDao.findPartial("Wilder")
+      resultWilder.size must be(2)
+      resultWilder.filter(_.name.contains("Gene Wilder")).size must be(1)
+      resultWilder.filter(_.name.contains("Bill Wilder")).size must be(1)
+
+      val resultTome = ActorDao.findPartial("Tom")
+      resultTome.size must be(0)
+    }
   }
 
   private def getActor(): Actor = {

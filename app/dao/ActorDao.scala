@@ -72,6 +72,11 @@ object ActorDao {
     }
   }
   
+  def findPartial(name: String): Seq[Actor] = {
+   val results = actorColl.find(MongoDBObject("name" -> s"$name".r))
+    results.map(dbObjectToActor(_).get).toSeq
+  }
+  
   private def dbObjectToActor(dbObject: DBObject): Option[Actor] = {
     Json.parse(dbObject.toString()).validate[Actor] match {
       case s: JsSuccess[Actor] => Option(s.get)
