@@ -32,7 +32,23 @@
 		    	<button type="submit" class="btn btn-default" ng-click="save()" ng-disabled="searchForm.$invalid">Search</button>
 		    </div>
 	  	</div>
-	<pre ng-if="status != null">Errors: {{status}}</pre>
 	</form>
+	<div ng-if="status.count == 0">
+		<div class="col-md-12 col-sm-4" ng-if="status.count == 0">Nothing found.</div>
+	</div>
+	<div ng-if="status.count > 0">
+		<div class="col-md-12 col-sm-4">
+			<table class='table table-striped table-hover table-condensed'>
+			<tbody>
+				<tr ng-repeat="result in status.results">
+					<td width="90"><img width="70" ng-src="{{result.posterUrl}}"/></td>
+					<td><strong>{{result.name}}</strong> ({{result.birthDay}})<br>Biography: {{result.biography}}<br>
+						<span ng-repeat="entity in result.entityCount"><a ng-href="/movies/findUi?entity={{entity.name}}&name={{result.name}}">{{entity.name}}</a>: {{entity.count}} &nbsp;</span>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		</div>
+	</div>
 </div>
 }

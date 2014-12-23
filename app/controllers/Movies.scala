@@ -296,11 +296,19 @@ object Movies extends Controller {
   private def getMovieCountForNameAndEntity(entity: String, name: String, list: Buffer[(String, Int)]) {
     val count = MovieDao.getMovieCountForName(entity, name)
     if (count > 0) {
-      val tuple = (entity, count)
+      val tuple = (mapEntityNames(entity), count)
       println(tuple)
       list += tuple
     } else {
       None
+    }
+  }
+  
+  private def mapEntityNames(entity: String): String = {
+    entity match {
+      case a if a.equals("actors") => "Actor"
+      case b if b.equals("director") => "Director"
+      case c if c.equals("writer") => "Writer"
     }
   }
 

@@ -38,15 +38,25 @@ object JsonUtil {
     def getEntityCountAsJson(details: Seq[(String, Int)]): JsArray = {
       var array = new JsArray
       for (detail <- details) {
-        array = array.prepend(Json.obj(detail._1 -> detail._2))
+        array = array.prepend(Json.obj("name" -> detail._1, "count" -> detail._2))
       }
       array
+    }
+    
+    def shortBiography(fullBiography: Option[String]):String = {
+      fullBiography match {
+        case None => ""
+        case Some(a) if a.length < 300 => a
+        case Some(b) => b.substring(0,300) + " ..."
+      }
     }
 
     def asJson(): JsArray = {
       var array = new JsArray
       for ((actor, details) <- map) {
         val actorJson = Json.obj("name" -> actor.name,
+          "birthDay" -> actor.birthDay,
+          "biography" -> shortBiography(actor.biography),
           "posterUrl" -> actor.posterUrl,
           "entityCount" -> getEntityCountAsJson(details))
         array = array.prepend(actorJson)
@@ -54,7 +64,7 @@ object JsonUtil {
       array
     }
     val json = Json.obj("count" -> map.size,
-      "" -> asJson)
+      "results" -> asJson)
 
     json
   }
