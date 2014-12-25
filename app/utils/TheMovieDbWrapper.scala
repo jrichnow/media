@@ -33,13 +33,13 @@ object TheMovieDbWrapper {
   def main(args: Array[String]) {
     val configJson = getBaseConfigurationJson()
     val baseUrl = getImageBaseUrl(configJson, "base_url")
-    println(baseUrl)
+    logger.info(s"Base URL: ${baseUrl.getOrElse("not found")}")
     val posterFileName = getMoviePosterFileName("tt1790864")
     val imageUrl: Option[String] = posterFileName match {
       case None => None
       case a => Option(baseUrl.get + thumbnailSize + a.get)
     }
-    println(imageUrl)
+    logger.info(s"Image URL: ${imageUrl.getOrElse("not found")}")
   }
 
   def init() {
@@ -56,7 +56,7 @@ object TheMovieDbWrapper {
     getMoviePosterUrlByWidth(imdbId, largeSize)
   }
 
-  def getActorData(name: String): Option[JsValue] = {
+  def getPersonData(name: String): Option[JsValue] = {
     logger.info(s"Trying to locate actor data for $name from Movie DB")
     val (movieDbId, movieDbPosterName) = getActorIdAndPoster(name)
     movieDbId match {
@@ -96,7 +96,7 @@ object TheMovieDbWrapper {
             case None => (None, None)
             case a: Some[JsArray] => {
               val result = a.get(0)
-              println(result)
+              logger.debug(result.toString)
               val movieDbId = JsonUtil.getIntValue(result, "id")
               val movieDbPosterName = JsonUtil.getStringValue(result, "profile_path")
               (movieDbId, movieDbPosterName)

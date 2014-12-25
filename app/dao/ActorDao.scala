@@ -27,7 +27,7 @@ object ActorDao {
   private val actorColl = db(mongoDbActorCollection)
 
   def add(actor: Actor): Actor = {
-    logger.info(s"Adding new actor $actor")
+    logger.info(s"Adding new actor ${actor.name}")
     val actorDbObject = JSON.parse(Actor.toJson(actor).toString()).asInstanceOf[DBObject]
     
     actorColl.insert(actorDbObject)

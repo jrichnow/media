@@ -29,6 +29,7 @@ import scala.collection.mutable.Buffer
 import scala.collection.mutable.Map
 import play.api.libs.json.JsArray
 import utils.JsonUtil
+import services.MovieService
 
 object Movies extends Controller {
 
@@ -61,7 +62,7 @@ object Movies extends Controller {
     logger.info(s"request for movie by ID: $id")
     val movie = findById(id)
     logger.info(s"Found movie: ${Movie.toStringShort(movie)}")
-
+    MovieService.checkPersonDataForMovie(movie)
     Ok(Json.toJson(movie))
   }
 
@@ -93,7 +94,7 @@ object Movies extends Controller {
           val movie = OmdbWrapper.fromOmdb(omdbJson, movieOption.get.folder, movieOption.get.dvd)
           logger.info(Json.prettyPrint(Json.toJson(movie)))
           val dbMovie = MovieDao.add(movie)
-          checkActors(dbMovie)
+          MovieService.checkPersonDataForMovie(dbMovie)
           movies = movies :+ dbMovie
           Ok(Json.obj("validation" -> true, "redirectPath" -> s"/movies/${dbMovie.id.get}"))
         }
@@ -193,7 +194,7 @@ object Movies extends Controller {
     dbActor match {
       case Some(_) => Ok(Actor.toJson(dbActor.get))
       case None => {
-        val movieDbActor = TheMovieDbWrapper.getActorData(name)
+        val movieDbActor = TheMovieDbWrapper.getPersonData(name)
         movieDbActor match {
           case Some(_) => {
             val actor = Actor.fromJson(movieDbActor.get)
@@ -297,7 +298,7 @@ object Movies extends Controller {
     val count = MovieDao.getMovieCountForName(entity, name)
     if (count > 0) {
       val tuple = (mapEntityNames(entity), count)
-      println(tuple)
+//      println(tuple)
       list += tuple
     } else {
       None
@@ -309,55 +310,6 @@ object Movies extends Controller {
       case a if a.equals("actors") => "Actor"
       case b if b.equals("director") => "Director"
       case c if c.equals("writer") => "Writer"
-    }
-  }
-
-  private def checkActors(movie: Movie) {
-    val f = future {
-      movie.actors match {
-        case None =>
-        case actors => {
-          val actorArray = actors.get.split(", ")
-          for (actorName <- actorArray) {
-            checkAndGetPersonData(actorName)
-//            val dbActor = ActorDao.getByFullName(actor.trim())
-//            dbActor match {
-//              case None => {
-//                val movieDbActor = TheMovieDbWrapper.getActorData(actor)
-//                movieDbActor match {
-//                  case None => logger.info(s"no actor data for $actor found from MovieDb")
-//                  case a => {
-//                    val actor = ActorDao.add(Actor.fromJson(a.get).get)
-//                    logger.info(s"new actor added to db: $actor")
-//                  }
-//                }
-//              }
-//              case a => logger.info(s"actor $a exists already")
-//            }
-          }
-        }
-      }
-    }
-    f.onComplete {
-      case Success(value) => logger.info(s"Successfully completed actor search for ${movie.actors}")
-      case Failure(error) => logger.info(s"Actor search ${movie.actors}resulted in an error: $error")
-    }
-  }
-
-  private def checkAndGetPersonData(name: String) {
-    val dbActor = ActorDao.getByFullName(name.trim())
-    dbActor match {
-      case None => {
-        val movieDbActor = TheMovieDbWrapper.getActorData(name)
-        movieDbActor match {
-          case None => logger.info(s"no actor data for name found from MovieDb")
-          case a => {
-            val actor = ActorDao.add(Actor.fromJson(a.get).get)
-            logger.info(s"new actor added to db: ${actor.name}")
-          }
-        }
-      }
-      case a => logger.info(s"actor ${a.get.name} exists already")
     }
   }
 
@@ -403,7 +355,7 @@ object Movies extends Controller {
         (true, Json.obj("validation" -> true, "redirectPath" -> "/movies"), Option(s.get))
       }
       case e: JsError => {
-        e.errors.foreach(println(_))
+//        e.errors.foreach(println(_))
         val p = for {
           entry <- e.errors
         } yield Json.obj(entry._1.toString.drop(1) -> entry._2.head.message)
@@ -419,7 +371,7 @@ object Movies extends Controller {
         (true, Json.obj("validation" -> true, "redirectPath" -> "/movies"), Option(s.get))
       }
       case e: JsError => {
-        e.errors.foreach(println(_))
+//        e.errors.foreach(println(_))
         val p = for {
           entry <- e.errors
         } yield Json.obj(entry._1.toString.drop(1) -> entry._2.head.message)

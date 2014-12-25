@@ -11,7 +11,7 @@ class TheMovieDbWrapperSpec extends PlaySpec {
 
     "provide an actor JSON if found" in {
       TheMovieDbWrapper.init
-      val actorJson = TheMovieDbWrapper.getActorData("Brad Pitt")
+      val actorJson = TheMovieDbWrapper.getPersonData("Brad Pitt")
 
       JsonUtil.getIntValue(actorJson.get, "movieDbId").get mustBe (287)
       JsonUtil.getStringValue(actorJson.get, "name").get mustBe ("Brad Pitt")
@@ -25,7 +25,7 @@ class TheMovieDbWrapperSpec extends PlaySpec {
 
     "provide None if not found" in {
       TheMovieDbWrapper.init
-      val actorJson = TheMovieDbWrapper.getActorData("Not Possible")
+      val actorJson = TheMovieDbWrapper.getPersonData("Not Possible")
       
       actorJson mustBe (None)
     }
