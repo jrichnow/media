@@ -30,7 +30,7 @@ object MovieService {
 
   private def checkPersons(writers: Option[String]) {
     writers match {
-      case None => println("nothing to check")
+      case None => logger.debug("No person data present. Nothing to check.")
       case person => {
         val personsArray = person.get.split(", ")
         for (p <- personsArray) {

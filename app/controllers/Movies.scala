@@ -368,7 +368,7 @@ object Movies extends Controller {
   private def validateMovieJson(movieJson: JsValue): (Boolean, JsValue, Option[Movie]) = {
     movieJson.validate[Movie] match {
       case s: JsSuccess[Movie] => {
-        (true, Json.obj("validation" -> true, "redirectPath" -> "/movies"), Option(s.get))
+        (true, Json.obj("validation" -> true, "redirectPath" -> s"/movies/${s.get.id.get}"), Option(s.get))
       }
       case e: JsError => {
 //        e.errors.foreach(println(_))

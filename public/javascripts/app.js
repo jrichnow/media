@@ -158,8 +158,7 @@ mediaApp.controller('EditMovieCtrl', function($scope, $http, $attrs) {
 
 	$scope.changeRoute = function(url, forceReload) {
 		$scope = $scope || angular.element(document).scope();
-		if (forceReload || $scope.$$phase) { // that's right TWO dollar
-			// signs: $$phase
+		if (forceReload || $scope.$$phase) {	
 			window.location = url;
 		} else {
 			$location.path(url);
@@ -180,7 +179,7 @@ mediaApp.controller('EditMovieCtrl', function($scope, $http, $attrs) {
 		}).success(function(data, status, headers, config) {
 			$scope.movieResponse = data;
 			if (data.validation == true) {
-				$scope.changeRoute('/movies');
+				$scope.changeRoute(data.redirectPath);
 			} else {
 				$scope.status = data;
 			}
