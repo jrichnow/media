@@ -306,6 +306,37 @@ mediaApp.controller('SearchMovieCtrl', function($scope, $http) {
 	};
 });
 
+mediaApp.controller('RequestMovieCtrl', function($scope, $http) {
+	$scope.request = {};
+
+	$scope.back = function() {
+		window.history.back();
+	};
+
+//	$scope.request = function() {
+//		console.log('requesting ...');
+//		var request = $http({
+//			url : '/movies/request',
+//			method : "POST",
+//			data : JSON.stringify($scope.search),
+//			transformRequest : false,
+//			headers : {
+//				'Content-Type' : 'application/json'
+//			}
+//		}).success(function(data, status, headers, config) {
+//			$scope.movieResponse = data;
+//			if (data.validation == true) {
+//				$scope.changeRoute(data.redirectPath);
+//			} else {
+//				$scope.status = data;
+//			}
+//		}).error(function(data, status, headers, config) {
+//			$scope.status = status + ' ' + headers;
+//		});
+//	};
+});
+
+
 mediaApp.controller('AudioListCtrl', function($scope, $http, audioService,
 		$filter, ngTableParams) {
 	$http.get('/audio/list').success(
