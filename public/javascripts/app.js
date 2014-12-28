@@ -158,7 +158,7 @@ mediaApp.controller('EditMovieCtrl', function($scope, $http, $attrs) {
 
 	$scope.changeRoute = function(url, forceReload) {
 		$scope = $scope || angular.element(document).scope();
-		if (forceReload || $scope.$$phase) {	
+		if (forceReload || $scope.$$phase) {
 			window.location = url;
 		} else {
 			$location.path(url);
@@ -307,35 +307,36 @@ mediaApp.controller('SearchMovieCtrl', function($scope, $http) {
 });
 
 mediaApp.controller('RequestMovieCtrl', function($scope, $http) {
-	$scope.request = {};
+	$scope.req = {
+		'subject' : 'Movie',
+	};
 
 	$scope.back = function() {
 		window.history.back();
 	};
 
-//	$scope.request = function() {
-//		console.log('requesting ...');
-//		var request = $http({
-//			url : '/movies/request',
-//			method : "POST",
-//			data : JSON.stringify($scope.search),
-//			transformRequest : false,
-//			headers : {
-//				'Content-Type' : 'application/json'
-//			}
-//		}).success(function(data, status, headers, config) {
-//			$scope.movieResponse = data;
-//			if (data.validation == true) {
-//				$scope.changeRoute(data.redirectPath);
-//			} else {
-//				$scope.status = data;
-//			}
-//		}).error(function(data, status, headers, config) {
-//			$scope.status = status + ' ' + headers;
-//		});
-//	};
+	$scope.submit = function() {
+		var request = $http({
+			url : '/movies/request',
+			method : "POST",
+			data : JSON.stringify($scope.req),
+			transformRequest : false,
+			headers : {
+				'Content-Type' : 'application/json'
+			}
+		}).success(function(data, status, headers, config) {
+			$scope.request = data;
+			if (data.validation == true) {
+				// $scope.changeRoute(data.redirectPath);
+				$scope.status = data;
+			} else {
+				$scope.status = data;
+			}
+		}).error(function(data, status, headers, config) {
+			$scope.status = status + ' ' + headers;
+		});
+	};
 });
-
 
 mediaApp.controller('AudioListCtrl', function($scope, $http, audioService,
 		$filter, ngTableParams) {

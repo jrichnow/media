@@ -4,30 +4,44 @@
 <div class="row">
 	<div class="col-lg-12">
      	<h1 class="page-header">Movies
-     		<small>Library / Movie Requests</small>
+     		<small>Library / Requests</small>
      	</h1>
 	</div>
 </div>
 <div class="row" ng-controller="RequestMovieCtrl" novalidate>
 	<form name="requestForm" class="form-horizontal" role="form" novalidate>
-		<div class="form-group" ng-class="{ 'has-error' : requestForm.title.$invalid && !requestForm.title.$pristine }">
-    		<label class="col-sm-2 control-label">Movie Title</label>
-    		<div class="col-sm-10">
-      			<input type="text" name="title" maxlength="100" class="form-control" placeholder="Movie title" ng-model="movie.title" required>
-      			<p ng-show="requestForm.title.$invalid && !requestForm.title.$pristine" class="help-block">Movie title is required.</p>
+		<div class="form-group">
+    		<label class="col-sm-2 control-label">Subject</label>
+    		<div class="col-sm-2">
+    			<select class="form-control" ng-model="req.subject">
+    				<option>Feature</option>
+    				<option>Movie</option>
+    			</select>
 		    </div>
 		</div>
-		<div class="form-group" ng-class="{ 'has-error' : requestForm.url.$invalid && !requestForm.url.$pristine }">
+		<div class="form-group" ng-class="{ 'has-error' : requestForm.topic.$invalid && !requestForm.topic.$pristine }">
+    		<label class="col-sm-2 control-label">Topic</label>
+    		<div class="col-sm-10">
+      			<input type="text" name="topic" maxlength="100" class="form-control" placeholder="Request topic" ng-model="req.topic" required>
+      			<p ng-show="requestForm.topic.$invalid && !requestForm.topic.$pristine" class="help-block">Request topic is required.</p>
+		    </div>
+		</div>
+		<div class="form-group">
     		<label class="col-sm-2 control-label">IMDB URL</label>
     		<div class="col-sm-10">
-      			<input type="text" name="url" maxlength="100" class="form-control" placeholder="IMDB URL, ie., http://www.imdb.com/title/tt......" ng-model="movie.url" required>
-      			<p ng-show="requestForm.url.$invalid && !requestForm.url.$pristine" class="help-block">IMDB URL is required.</p>
+      			<input type="text" name="imdbUrl" maxlength="100" class="form-control" placeholder="IMDB URL, ie., http://www.imdb.com/title/tt......" ng-model="req.imdbUrl">
+		    </div>
+		</div>
+		<div class="form-group">
+    		<label class="col-sm-2 control-label">Comment</label>
+    		<div class="col-sm-10">
+      			<input type="text" name="comment" maxlength="100" class="form-control" placeholder="Any comment if required ..." ng-model="req.comment">
 		    </div>
 		</div>
 		<div class="form-group">
 		    <div class="col-sm-offset-2 col-sm-10">
 		    	<button type="submit" class="btn btn-default" ng-click="back()" >Cancel</button>
-		    	<button type="submit" class="btn btn-default" ng-click="request()" ng-disabled="requestForm.$invalid">Request</button>
+		    	<button type="submit" class="btn btn-default" ng-click="submit()" ng-disabled="requestForm.$invalid">Request</button>
 		    </div>
 	  	</div>
 	</form>
