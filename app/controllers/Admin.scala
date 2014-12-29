@@ -22,6 +22,10 @@ object Admin extends Controller {
   def requests = Action {
     Ok(Json.toJson(RequestsDao.findAll))
   }
+  
+  def requestsUi = Action {
+	  Ok(views.html.admin.requests())
+  }
 
   def export(media: String) = Action {
     media match {

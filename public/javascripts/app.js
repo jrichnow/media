@@ -306,39 +306,6 @@ mediaApp.controller('SearchMovieCtrl', function($scope, $http) {
 	};
 });
 
-mediaApp.controller('RequestMovieCtrl', function($scope, $http) {
-	$scope.req = {
-		'subject' : 'Movie',
-		'status' : 'New'
-	};
-
-	$scope.back = function() {
-		window.history.back();
-	};
-
-	$scope.submit = function() {
-		var request = $http({
-			url : '/movies/request',
-			method : "POST",
-			data : JSON.stringify($scope.req),
-			transformRequest : false,
-			headers : {
-				'Content-Type' : 'application/json'
-			}
-		}).success(function(data, status, headers, config) {
-			$scope.request = data;
-			if (data.validation == true) {
-				// $scope.changeRoute(data.redirectPath);
-				$scope.status = data;
-			} else {
-				$scope.status = data;
-			}
-		}).error(function(data, status, headers, config) {
-			$scope.status = status + ' ' + headers;
-		});
-	};
-});
-
 mediaApp.controller('AudioListCtrl', function($scope, $http, audioService,
 		$filter, ngTableParams) {
 	$http.get('/audio/list').success(
@@ -688,4 +655,92 @@ mediaApp.controller('FileUploadCtrl', function($scope, $upload) {
 			});
 		}
 	}
+});
+
+mediaApp.controller('RequestCtrl', function($scope, $http) {
+	$scope.req = {
+		'subject' : 'Movie',
+		'status' : 'New'
+	};
+
+	$scope.back = function() {
+		window.history.back();
+	};
+	
+	$scope.changeRoute = function(url, forceReload) {
+		$scope = $scope || angular.element(document).scope();
+		if (forceReload || $scope.$$phase) { // that's right TWO dollar
+			// signs: $$phase
+			window.location = url;
+		} else {
+			$location.path(url);
+			$scope.$apply();
+		}
+	};
+
+	$scope.submit = function() {
+		var request = $http({
+			url : '/movies/request',
+			method : "POST",
+			data : JSON.stringify($scope.req),
+			transformRequest : false,
+			headers : {
+				'Content-Type' : 'application/json'
+			}
+		}).success(function(data, status, headers, config) {
+			$scope.changeRoute('/admin/requestsUi');
+		}).error(function(data, status, headers, config) {
+			$scope.status = status + ' ' + headers;
+		});
+	};
+});
+
+
+mediaApp.controller('RequestsCtrl', function($scope, $http, $filter,
+		ngTableParams) {
+	$http.get('/admin/requests').success(
+			function(data) {
+				$scope.requests = data;
+
+				$scope.tableParams = new ngTableParams({
+					page : 1,
+					count : 10,
+					sorting : {
+						name : 'asc'
+					},
+					filter : {
+						topic : ''
+					}
+				// count per page
+				}, {
+					total : data.length,
+					getData : function($defer, params) {
+						var filteredData = params.filter() ? $filter('filter')(
+								data, params.filter()) : data;
+						var orderedData = params.sorting() ? $filter('orderBy')
+								(filteredData, params.orderBy()) : data;
+						params.total(orderedData.length); // set total for
+						// recalc pagination
+						$defer.resolve(orderedData.slice((params.page() - 1)
+								* params.count(), params.page()
+								* params.count()));
+					}
+				});
+			});
+	$scope.requestProp = 'topic';
+	
+	$scope.changeRoute = function(url, forceReload) {
+		$scope = $scope || angular.element(document).scope();
+		if (forceReload || $scope.$$phase) { // that's right TWO dollar
+			// signs: $$phase
+			window.location = url;
+		} else {
+			$location.path(url);
+			$scope.$apply();
+		}
+	};
+	
+	$scope.new = function() {
+		$scope.changeRoute('/movies/requestUi');
+	};
 });
