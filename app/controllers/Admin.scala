@@ -9,6 +9,7 @@ import java.io.{ File => JavaFile }
 import scala.io.Source
 import model.Movie
 import model.AudioBook
+import dao.RequestsDao
 
 object Admin extends Controller {
 
@@ -16,6 +17,10 @@ object Admin extends Controller {
 
   def index = Action {
     Ok(views.html.admin.index())
+  }
+  
+  def requests = Action {
+    Ok(Json.toJson(RequestsDao.findAll))
   }
 
   def export(media: String) = Action {

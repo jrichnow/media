@@ -30,13 +30,14 @@ class RequestDaoSpec extends PlaySpec with OneAppPerSuite {
 
     "add a new request" in {
       requestColl.drop()
-      val dbRequest = RequestsDao.add(Request(None, "Feature", "Add something", None, None))
+      val dbRequest = RequestsDao.add(Request(None, "Feature", "Add something", Some("Some comment"), None, "New"))
 
       dbRequest.id.get.length() must be > 6
       dbRequest.subject must be("Feature")
       dbRequest.topic must be("Add something")
-      dbRequest.comment must be(None)
-      dbRequest.imdbUrl must be(None)
+      dbRequest.comment.get must be("Some comment")
+      dbRequest.url must be(None)
+      dbRequest.status must be("New")
 
       val request = RequestsDao.findById(dbRequest.id.get)
       dbRequest === request

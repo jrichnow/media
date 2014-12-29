@@ -54,6 +54,7 @@ GET     /admin/file/upload          controllers.Admin.upload
 POST    /admin/file/upload/movie    controllers.Admin.fileUploadMovie
 POST    /admin/file/upload/audio    controllers.Admin.fileUploadAudio
 GET     /admin/file/:name           controllers.Admin.file(name:String)
+GET     /admin/requests             controllers.Admin.requests
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

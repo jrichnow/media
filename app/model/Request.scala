@@ -9,7 +9,8 @@ case class Request(
   val subject: String,
   val topic: String,
   val comment: Option[String],
-  val imdbUrl: Option[String])
+  val url: Option[String],
+  val status: String)
 
 object Request {
 
@@ -18,7 +19,8 @@ object Request {
     (__ \ "subject").read[String] and
     (__ \ "topic").read[String] and
     (__ \ "comment").readNullable[String] and
-    (__ \ "imdbUrl").readNullable[String])(Request.apply _)
+    (__ \ "url").readNullable[String] and
+    (__ \ "status").read[String])(Request.apply _)
 
   implicit val requestJsonWrites = new Writes[Request] {
     def writes(request: Request) = Json.obj(
@@ -26,10 +28,18 @@ object Request {
       "subject" -> request.subject,
       "topic" -> request.topic,
       "comment" -> request.comment,
-      "imdbUrl" -> request.imdbUrl)
+      "url" -> request.url,
+      "status" -> request.status)
   }
 
   def toJson(request: Request): JsValue = {
     Json.toJson(request)
+  }
+  
+  def fromJson(requestJson: JsValue): Option[Request] = {
+    requestJson.validate[Request] match {
+      case s: JsSuccess[Request] => Some(s.get)
+      case e: JsError => None
+    }
   }
 }

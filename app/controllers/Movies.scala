@@ -30,6 +30,8 @@ import scala.collection.mutable.Map
 import play.api.libs.json.JsArray
 import utils.JsonUtil
 import services.MovieService
+import dao.RequestsDao
+import model.Request
 
 object Movies extends Controller {
 
@@ -244,6 +246,8 @@ object Movies extends Controller {
   def request = Action(parse.json) { request =>
     val requestJsonString = request.body
     logger.info(s"search request: $requestJsonString")
+    val requestObj = Request.fromJson(requestJsonString)
+    RequestsDao.add(requestObj.get)
   	Ok("Hello")
   }
 

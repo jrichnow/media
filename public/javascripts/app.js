@@ -309,6 +309,7 @@ mediaApp.controller('SearchMovieCtrl', function($scope, $http) {
 mediaApp.controller('RequestMovieCtrl', function($scope, $http) {
 	$scope.req = {
 		'subject' : 'Movie',
+		'status' : 'New'
 	};
 
 	$scope.back = function() {
