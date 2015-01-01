@@ -92,7 +92,6 @@ mediaApp.controller('MovieCtrl', function($scope, $http, $attrs, $modal) {
 		}, function() {
 			console.log("Do nothing");
 		});
-
 	};
 
 	$scope.changeRoute = function(url, forceReload) {
@@ -697,7 +696,7 @@ mediaApp.controller('RequestCtrl', function($scope, $http) {
 
 
 mediaApp.controller('RequestsCtrl', function($scope, $http, $filter,
-		ngTableParams) {
+		ngTableParams, $attrs, $modal) {
 	$http.get('/admin/requests').success(
 			function(data) {
 				$scope.requests = data;

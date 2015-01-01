@@ -46,5 +46,16 @@ class RequestDaoSpec extends PlaySpec with OneAppPerSuite {
       requests.size must be (1)
       requests(0) === request
     }
+    
+    "remove a request" in {
+      requestColl.drop()
+      val dbRequest = RequestsDao.add(Request(None, "Feature", "Add something", Some("Some comment"), None, "New"))
+      
+      RequestsDao.findAll().size mustBe (1)
+      
+      RequestsDao.delete(dbRequest.id.get)
+      
+      RequestsDao.findAll().size mustBe (0)
+    }
   }
 }

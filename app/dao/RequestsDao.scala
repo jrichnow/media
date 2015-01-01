@@ -50,7 +50,7 @@ object RequestsDao {
 
     requestsColl.findAndModify(query, dbObject)
   }
-
+  
   def findAll(): Seq[Request] = {
     val results = requestsColl.find().sort(MongoDBObject("name" -> 1))
     val requests = results.map(dbObjectToRequest(_).get)
@@ -75,6 +75,11 @@ object RequestsDao {
         }
       }
     }
+  }
+  
+  def delete(id: String) {
+    val requestOption: Option[requestsColl.T] = requestsColl.findOneByID(new ObjectId(id))
+    requestsColl.remove(requestOption.get)
   }
 
   private def dbObjectToRequest(dbObject: DBObject): Option[Request] = {

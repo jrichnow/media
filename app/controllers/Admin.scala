@@ -40,6 +40,12 @@ object Admin extends Controller {
     RequestsDao.add(requestObj.get)
     Ok("Hello")
   }
+  
+  def deleteRequest(id: String) = Action {
+    logger.info(s"request to delete request for id $id")
+    RequestsDao.delete(id)
+    Redirect(routes.Admin.requestsUi)
+  }
 
   def export(media: String) = Action {
     media match {

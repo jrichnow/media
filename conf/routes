@@ -54,6 +54,7 @@ POST    /admin/file/upload/audio    controllers.Admin.fileUploadAudio
 GET     /admin/file/:name           controllers.Admin.file(name:String)
 GET		/admin/requestUi    		controllers.Admin.requestUi
 POST  	/admin/request       		controllers.Admin.request
+GET     /admin/request/delete/:id   controllers.Admin.deleteRequest(id:String)
 GET     /admin/requests             controllers.Admin.requests
 GET     /admin/requestsUi           controllers.Admin.requestsUi
 
