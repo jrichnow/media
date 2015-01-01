@@ -8,8 +8,6 @@ GET     /                           controllers.Application.index
 
 GET     /movies                     controllers.Movies.index
 GET		/movies/actor/:name			controllers.Movies.actor(name:String)
-GET		/movies/requestUi    		controllers.Movies.requestUi
-POST  	/movies/request       		controllers.Movies.request
 GET		/movies/searchUi    		controllers.Movies.searchUi
 POST  	/movies/search       		controllers.Movies.search
 POST    /movies/add                 controllers.Movies.add
@@ -54,6 +52,8 @@ GET     /admin/file/upload          controllers.Admin.upload
 POST    /admin/file/upload/movie    controllers.Admin.fileUploadMovie
 POST    /admin/file/upload/audio    controllers.Admin.fileUploadAudio
 GET     /admin/file/:name           controllers.Admin.file(name:String)
+GET		/admin/requestUi    		controllers.Admin.requestUi
+POST  	/admin/request       		controllers.Admin.request
 GET     /admin/requests             controllers.Admin.requests
 GET     /admin/requestsUi           controllers.Admin.requestsUi
 

@@ -680,7 +680,7 @@ mediaApp.controller('RequestCtrl', function($scope, $http) {
 
 	$scope.submit = function() {
 		var request = $http({
-			url : '/movies/request',
+			url : '/admin/request',
 			method : "POST",
 			data : JSON.stringify($scope.req),
 			transformRequest : false,
@@ -741,6 +741,6 @@ mediaApp.controller('RequestsCtrl', function($scope, $http, $filter,
 	};
 	
 	$scope.new = function() {
-		$scope.changeRoute('/movies/requestUi');
+		$scope.changeRoute('/admin/requestUi');
 	};
 });

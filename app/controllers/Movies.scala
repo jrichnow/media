@@ -239,18 +239,6 @@ object Movies extends Controller {
     }
   }
   
-  def requestUi = Action {
-    Ok(views.html.movies.requestform())
-  }
-  
-  def request = Action(parse.json) { request =>
-    val requestJsonString = request.body
-    logger.info(s"search request: $requestJsonString")
-    val requestObj = Request.fromJson(requestJsonString)
-    RequestsDao.add(requestObj.get)
-  	Ok("Hello")
-  }
-
   def newForm = Action {
     Ok(views.html.movies.form("NewMovieCtrl", "", "Adding New"))
   }

@@ -10,21 +10,35 @@ import scala.io.Source
 import model.Movie
 import model.AudioBook
 import dao.RequestsDao
+import model.Request
 
 object Admin extends Controller {
 
+  private val logger = Logger("AdminController")
   val backupFolder = Play.current.configuration.getString("backup.folder").get
 
   def index = Action {
     Ok(views.html.admin.index())
   }
-  
+
   def requests = Action {
     Ok(Json.toJson(RequestsDao.findAll))
   }
-  
+
   def requestsUi = Action {
-	  Ok(views.html.admin.requests())
+    Ok(views.html.admin.requests())
+  }
+
+  def requestUi = Action {
+    Ok(views.html.admin.requestform())
+  }
+
+  def request = Action(parse.json) { request =>
+    val requestJsonString = request.body
+    logger.info(s"search request: $requestJsonString")
+    val requestObj = Request.fromJson(requestJsonString)
+    RequestsDao.add(requestObj.get)
+    Ok("Hello")
   }
 
   def export(media: String) = Action {
