@@ -18,6 +18,7 @@ case class Movie(
   val year: Int,
   val folder: Option[Int],
   val dvd: Option[Int],
+  val hd: Option[Int] = None,
   val imdbId: Option[String] = None,
   val plot: Option[String] = None,
   val actors: Option[String] = None,
@@ -46,6 +47,7 @@ object Movie {
     (__ \ "year").read[Int](min(0) keepAnd max(2030)) and //TODO reset min year
     (__ \ "folder").readNullable[Int] and
     (__ \ "dvd").readNullable[Int] and
+    (__ \ "hd").readNullable[Int] and
     (__ \ "imdbId").readNullable[String] and
     (__ \ "plot").readNullable[String] and
     (__ \ "actors").readNullable[String] and
@@ -69,6 +71,7 @@ object Movie {
       "url" -> movie.url,
       "folder" -> movie.folder,
       "dvd" -> movie.dvd,
+      "hd" -> movie.hd,
       "imdbId" -> movie.imdbId,
       "plot" -> movie.plot,
       "actors" -> movie.actors,

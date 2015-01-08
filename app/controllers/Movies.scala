@@ -93,7 +93,7 @@ object Movies extends Controller {
       val imdbId = getValue(omdbJson, "imdbID")
       imdbId match {
         case Some(_) => {
-          val movie = OmdbWrapper.fromOmdb(omdbJson, movieOption.get.folder, movieOption.get.dvd)
+          val movie = OmdbWrapper.fromOmdb(omdbJson, movieOption.get.folder, movieOption.get.dvd, movieOption.get.hd)
           logger.info(Json.prettyPrint(Json.toJson(movie)))
           val dbMovie = MovieDao.add(movie)
           MovieService.checkPersonDataForMovie(dbMovie)

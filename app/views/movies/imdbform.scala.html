@@ -32,6 +32,13 @@
 		    </div>
 		</div>
 		<div class="form-group">
+    		<label class="col-sm-2 control-label">HD</label>
+    		<div class="col-sm-1" ng-class="{ 'has-error' : movieForm.hd.$invalid && !movieForm.hd.$pristine }">
+      			<input type="number" name="hd" maxlength="3" min="1" max="5" class="form-control" ng-model="movie.hd" onkeydown="javascript:maskInput()">
+      			<p ng-show="movieForm.hd.$invalid && !movieForm.hd.$pristine" class="help-block">Invalid</p>
+		    </div>
+		</div>
+		<div class="form-group">
 		    <div class="col-sm-offset-2 col-sm-10">
 		    	<button type="submit" class="btn btn-default" ng-click="back()" >Cancel</button>
 		    	<button type="submit" class="btn btn-default" ng-click="save()" ng-disabled="movieForm.$invalid">Save</button>

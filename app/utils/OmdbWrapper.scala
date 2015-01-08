@@ -11,7 +11,7 @@ import scala.concurrent.duration.Duration
 
 object OmdbWrapper {
   
-  def fromOmdb(omdbDataJsValue: JsValue, folder: Int, dvd: Int): Movie = {
+  def fromOmdb(omdbDataJsValue: JsValue, folder: Option[Int], dvd: Option[Int], hd: Option[Int]): Movie = {
     val title = JsonUtil.getStringValue(omdbDataJsValue, "Title")
     val year = JsonUtil.getStringValue(omdbDataJsValue, "Year")
     val genres = JsonUtil.getStringValue(omdbDataJsValue, "Genre").get.split(", ")
@@ -41,7 +41,7 @@ object OmdbWrapper {
     val imgUrl = posterUrlOmdb.getOrElse("")
 
     new Movie(None, title.get, None, None, Option(language), None, Option(genres), Option(s"http://www.imdb.com/title/$imdbId"),
-      year.get.toInt, Some(folder), Some(dvd), Option(imdbId), plot, actors, writer, director, runtime, ratingResolved, rated, Option(imgUrl))
+      year.get.toInt, folder, dvd, hd, Option(imdbId), plot, actors, writer, director, runtime, ratingResolved, rated, Option(imgUrl))
   }
   
     private def getOmdbJsonByTitle(title: String): JsValue = {

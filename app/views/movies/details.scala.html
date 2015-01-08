@@ -42,7 +42,7 @@
 				<tr><td>Writer(s):</td><td ng-bind-html="movie.writerWithUrl"></td></tr>
 				<tr><td>Plot:</td><td>{{movie.plot}}</td></tr>
 				<tr><td>IMDB Rating:</td><td>{{movie.rating}}</td></tr>
-				<tr><td>Location:</td><td>{{movie.folder}}/{{movie.dvd}}</td></tr>
+				<tr><td>Location:</td><td><span ng-if="movie.folder != null">{{movie.folder}}/{{movie.dvd}}</span> <span ng-if="movie.hd != null">HD {{movie.hd}}</span></td></tr>
 			</tbody>
 		</table>
 	</div>

@@ -6,13 +6,15 @@ import play.api.libs.functional.syntax._
 
 case class MovieShort (
   val imdbId: String,
-  val folder: Int,
-  val dvd: Int)
+  val folder: Option[Int],
+  val dvd: Option[Int],
+  val hd: Option[Int])
   
 object MovieShort {
   
   implicit val imdbMovieReads: Reads[MovieShort] = (
     (__ \ "imdbId").read[String] and
-    (__ \ "folder").read[Int](min(1) keepAnd max(10)) and
-    (__ \ "dvd").read[Int](min(1) keepAnd max(300)))(MovieShort.apply _)
+    (__ \ "folder").readNullable[Int] and
+    (__ \ "dvd").readNullable[Int] and
+    (__ \ "hd").readNullable[Int] )(MovieShort.apply _)
 }

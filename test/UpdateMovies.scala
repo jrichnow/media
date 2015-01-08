@@ -71,7 +71,7 @@ object UpdateMovies {
           //          println(s"imgUrl: $imgUrl")
 
           val newMovie = new Movie(movie.id, movie.title, movie.alternativeTitle, movie.originalTitle, movie.language, movie.subTitle,
-            movie.genres, movie.url, movie.year, movie.folder, movie.dvd, imdbId, plot, actors, writer, director, runtime,
+            movie.genres, movie.url, movie.year, movie.folder, movie.dvd, movie.hd, imdbId, plot, actors, writer, director, runtime,
             ratingResolved, rated, Option(imgUrl))
           println(Json.prettyPrint(Json.toJson(newMovie)))
 
