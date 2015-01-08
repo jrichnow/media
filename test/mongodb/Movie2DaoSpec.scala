@@ -32,7 +32,7 @@ class MovieDaoSpec extends PlaySpec with OneAppPerSuite {
 
     "add a movie" in {
       movieColl.drop()
-      val movie = Movie(title = "Dreamland", year = 2012, folder = 1, dvd = 2)
+      val movie = Movie(title = "Dreamland", year = 2012, folder = Some(1), dvd = Some(2))
       movie.id mustBe None
 
       val updatedMovie = MovieDao.add(movie)
@@ -52,7 +52,7 @@ class MovieDaoSpec extends PlaySpec with OneAppPerSuite {
 
     "update a movie" in {
       movieColl.drop()
-      val movie = Movie(title = "Dreamland", year = 2012, folder = 1, dvd = 2)
+      val movie = Movie(title = "Dreamland", year = 2012, folder = Some(1), dvd = Some(2))
       val updatedMovie = MovieDao.add(movie)
       updatedMovie.year must equal(2012)
 
@@ -70,7 +70,7 @@ class MovieDaoSpec extends PlaySpec with OneAppPerSuite {
 
     "delete a movie" in {
       movieColl.drop()
-      val movie = Movie(title = "Dreamland", year = 2012, folder = 1, dvd = 2)
+      val movie = Movie(title = "Dreamland", year = 2012, folder = Some(1), dvd = Some(2))
       val updatedMovie = MovieDao.add(movie)
 
       MovieDao.findAll.size mustEqual (1)
@@ -82,19 +82,19 @@ class MovieDaoSpec extends PlaySpec with OneAppPerSuite {
 
     "return a limited list of recent movies" in {
       movieColl.drop()
-      MovieDao.add(Movie(title = "Dreamland", year = 2000, folder = 1, dvd = 2))
-      MovieDao.add(Movie(title = "Dreamland", year = 2001, folder = 1, dvd = 2))
-      MovieDao.add(Movie(title = "Dreamland", year = 2002, folder = 1, dvd = 2))
-      MovieDao.add(Movie(title = "Dreamland", year = 2003, folder = 1, dvd = 2))
-      MovieDao.add(Movie(title = "Dreamland", year = 2004, folder = 1, dvd = 2))
-      MovieDao.add(Movie(title = "Dreamland", year = 2005, folder = 1, dvd = 2))
-      MovieDao.add(Movie(title = "Dreamland", year = 2006, folder = 1, dvd = 2))
-      MovieDao.add(Movie(title = "Dreamland", year = 2007, folder = 1, dvd = 2))
-      MovieDao.add(Movie(title = "Dreamland", year = 2008, folder = 1, dvd = 2))
-      MovieDao.add(Movie(title = "Dreamland", year = 2009, folder = 1, dvd = 2))
-      MovieDao.add(Movie(title = "Dreamland", year = 2010, folder = 1, dvd = 2))
-      MovieDao.add(Movie(title = "Dreamland", year = 2011, folder = 1, dvd = 2))
-      MovieDao.add(Movie(title = "Dreamland", year = 2012, folder = 1, dvd = 2))
+      MovieDao.add(Movie(title = "Dreamland", year = 2000, folder = Some(1), dvd = Some(2)))
+      MovieDao.add(Movie(title = "Dreamland", year = 2001, folder = Some(1), dvd = Some(2)))
+      MovieDao.add(Movie(title = "Dreamland", year = 2002, folder = Some(1), dvd = Some(2)))
+      MovieDao.add(Movie(title = "Dreamland", year = 2003, folder = Some(1), dvd = Some(2)))
+      MovieDao.add(Movie(title = "Dreamland", year = 2004, folder = Some(1), dvd = Some(2)))
+      MovieDao.add(Movie(title = "Dreamland", year = 2005, folder = Some(1), dvd = Some(2)))
+      MovieDao.add(Movie(title = "Dreamland", year = 2006, folder = Some(1), dvd = Some(2)))
+      MovieDao.add(Movie(title = "Dreamland", year = 2007, folder = Some(1), dvd = Some(2)))
+      MovieDao.add(Movie(title = "Dreamland", year = 2008, folder = Some(1), dvd = Some(2)))
+      MovieDao.add(Movie(title = "Dreamland", year = 2009, folder = Some(1), dvd = Some(2)))
+      MovieDao.add(Movie(title = "Dreamland", year = 2010, folder = Some(1), dvd = Some(2)))
+      MovieDao.add(Movie(title = "Dreamland", year = 2011, folder = Some(1), dvd = Some(2)))
+      MovieDao.add(Movie(title = "Dreamland", year = 2012, folder = Some(1), dvd = Some(2)))
 
       val recentMovies = MovieDao.recent
 
@@ -108,10 +108,10 @@ class MovieDaoSpec extends PlaySpec with OneAppPerSuite {
 
     "allow searching by author names" in {
       movieColl.drop()
-      MovieDao.add(Movie(title = "Dreamland", year = 2000, folder = 1, dvd = 2, actors = Option("Tom Cruise")))
-      MovieDao.add(Movie(title = "Dreamland", year = 2000, folder = 1, dvd = 2, actors = Option("Nicole Kitman")))
-      MovieDao.add(Movie(title = "Dreamland", year = 2000, folder = 1, dvd = 2, actors = Option("Morgan Freeman")))
-      MovieDao.add(Movie(title = "Dreamland", year = 2001, folder = 1, dvd = 2, actors = Option("Tom Cruise")))
+      MovieDao.add(Movie(title = "Dreamland", year = 2000, folder = Some(1), dvd = Some(2), actors = Option("Tom Cruise")))
+      MovieDao.add(Movie(title = "Dreamland", year = 2000, folder = Some(1), dvd = Some(2), actors = Option("Nicole Kitman")))
+      MovieDao.add(Movie(title = "Dreamland", year = 2000, folder = Some(1), dvd = Some(2), actors = Option("Morgan Freeman")))
+      MovieDao.add(Movie(title = "Dreamland", year = 2001, folder = Some(1), dvd = Some(2), actors = Option("Tom Cruise")))
 
       val resultsTomCruise = MovieDao.findByActor("Tom Cruise")
       resultsTomCruise.length mustEqual (2)
@@ -126,10 +126,10 @@ class MovieDaoSpec extends PlaySpec with OneAppPerSuite {
     
     "allow partial searching by author names" in {
       movieColl.drop()
-      MovieDao.add(Movie(title = "Dreamland", year = 2000, folder = 1, dvd = 2, actors = Option("Gene Hackman")))
-      MovieDao.add(Movie(title = "Dreamland", year = 2000, folder = 1, dvd = 2, actors = Option("Gene Wilder, Gene Hackman")))
-      MovieDao.add(Movie(title = "Dreamland", year = 2000, folder = 1, dvd = 2, actors = Option("Bill Wilder")))
-      MovieDao.add(Movie(title = "Dreamland", year = 2000, folder = 1, dvd = 2, actors = Option("Gene Kelly")))
+      MovieDao.add(Movie(title = "Dreamland", year = 2000, folder = Some(1), dvd = Some(2), actors = Option("Gene Hackman")))
+      MovieDao.add(Movie(title = "Dreamland", year = 2000, folder = Some(1), dvd = Some(2), actors = Option("Gene Wilder, Gene Hackman")))
+      MovieDao.add(Movie(title = "Dreamland", year = 2000, folder = Some(1), dvd = Some(2), actors = Option("Bill Wilder")))
+      MovieDao.add(Movie(title = "Dreamland", year = 2000, folder = Some(1), dvd = Some(2), actors = Option("Gene Kelly")))
       
       val resultGene = MovieDao.findPartial(Movie.actorField, "Gene") // TOOD Case insensitive?
       resultGene.size must be (3)
@@ -153,12 +153,12 @@ class MovieDaoSpec extends PlaySpec with OneAppPerSuite {
 
   "group by year" in {
     movieColl.drop()
-    MovieDao.add(Movie(title = "Dreamland", year = 2000, folder = 1, dvd = 2, actors = Option("Tom Cruise")))
-    MovieDao.add(Movie(title = "Dreamland", year = 2010, folder = 1, dvd = 2, actors = Option("Nicole Kitman")))
-    MovieDao.add(Movie(title = "Dreamland", year = 2010, folder = 1, dvd = 2, actors = Option("Nicole Kitman11")))
-    MovieDao.add(Movie(title = "Dreamland", year = 2010, folder = 1, dvd = 2, actors = Option("Nicole Kitman12")))
-    MovieDao.add(Movie(title = "Dreamland", year = 2000, folder = 1, dvd = 2, actors = Option("Morgan Freeman")))
-    MovieDao.add(Movie(title = "Dreamland", year = 2001, folder = 1, dvd = 2, actors = Option("Tom Cruise")))
+    MovieDao.add(Movie(title = "Dreamland", year = 2000, folder = Some(1), dvd = Some(2), actors = Option("Tom Cruise")))
+    MovieDao.add(Movie(title = "Dreamland", year = 2010, folder = Some(1), dvd = Some(2), actors = Option("Nicole Kitman")))
+    MovieDao.add(Movie(title = "Dreamland", year = 2010, folder = Some(1), dvd = Some(2), actors = Option("Nicole Kitman11")))
+    MovieDao.add(Movie(title = "Dreamland", year = 2010, folder = Some(1), dvd = Some(2), actors = Option("Nicole Kitman12")))
+    MovieDao.add(Movie(title = "Dreamland", year = 2000, folder = Some(1), dvd = Some(2), actors = Option("Morgan Freeman")))
+    MovieDao.add(Movie(title = "Dreamland", year = 2001, folder = Some(1), dvd = Some(2), actors = Option("Tom Cruise")))
     
     val groupBy = MovieDao.groupByYear
     

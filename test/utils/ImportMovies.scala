@@ -39,8 +39,8 @@ class ImportMovies extends PlaySpec with OneAppPerSuite {
             genres = Some((movie \ "@genres").text.split(", ")),
             url = Some((movie \ "@url").text),
             year = (movie \ "@releaseYear").text.toInt,
-            folder = (movie \ "locations" \ "location" \ "@folder").text.toInt,
-            dvd = (movie \ "locations" \ "location" \ "@dvdNumber").text.toInt))
+            folder = Some((movie \ "locations" \ "location" \ "@folder").text.toInt),
+            dvd = Some((movie \ "locations" \ "location" \ "@dvdNumber").text.toInt)))
         for (movie <- movies) {
           MovieDao.add(movie)
         }

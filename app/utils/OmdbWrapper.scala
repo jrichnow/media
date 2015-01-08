@@ -41,7 +41,7 @@ object OmdbWrapper {
     val imgUrl = posterUrlOmdb.getOrElse("")
 
     new Movie(None, title.get, None, None, Option(language), None, Option(genres), Option(s"http://www.imdb.com/title/$imdbId"),
-      year.get.toInt, folder, dvd, Option(imdbId), plot, actors, writer, director, runtime, ratingResolved, rated, Option(imgUrl))
+      year.get.toInt, Some(folder), Some(dvd), Option(imdbId), plot, actors, writer, director, runtime, ratingResolved, rated, Option(imgUrl))
   }
   
     private def getOmdbJsonByTitle(title: String): JsValue = {
