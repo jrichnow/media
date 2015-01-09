@@ -25,22 +25,40 @@ object Admin extends Controller {
     Ok(Json.toJson(RequestsDao.findAll))
   }
 
+  def request(id: String) = Action {
+    Ok(Json.toJson(RequestsDao.findById(id)))
+  }
+
   def requestsUi = Action {
     Ok(views.html.admin.requests())
   }
 
   def requestUi = Action {
-    Ok(views.html.admin.requestform())
+    Ok(views.html.admin.requestform("RequestCtrl", ""))
   }
 
-  def request = Action(parse.json) { request =>
+  def requestEditUi(id: String) = Action {
+    logger.info(s"edit request for id $id")
+    Ok(views.html.admin.requestform("EditRequestCtrl", id))
+  }
+
+  def addRequest = Action(parse.json) { request =>
     val requestJsonString = request.body
-    logger.info(s"search request: $requestJsonString")
+    logger.info(s"add request: $requestJsonString")
     val requestObj = Request.fromJson(requestJsonString)
     RequestsDao.add(requestObj.get)
     Ok("Hello")
   }
-  
+
+  def editRequest = Action(parse.json) { request =>
+    val requestJsonString = request.body
+    logger.info(s"edit request: $requestJsonString")
+    val requestObj = Request.fromJson(requestJsonString)
+    logger.info(s"edit request json object: $requestObj")
+    RequestsDao.update(requestObj.get)
+    Ok("Hello")
+  }
+
   def deleteRequest(id: String) = Action {
     logger.info(s"request to delete request for id $id")
     RequestsDao.delete(id)

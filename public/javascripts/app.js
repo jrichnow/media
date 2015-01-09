@@ -679,7 +679,7 @@ mediaApp.controller('RequestCtrl', function($scope, $http) {
 
 	$scope.submit = function() {
 		var request = $http({
-			url : '/admin/request',
+			url : '/admin/request/add',
 			method : "POST",
 			data : JSON.stringify($scope.req),
 			transformRequest : false,
@@ -742,4 +742,46 @@ mediaApp.controller('RequestsCtrl', function($scope, $http, $filter,
 	$scope.new = function() {
 		$scope.changeRoute('/admin/requestUi');
 	};
+});
+
+mediaApp.controller('EditRequestCtrl', function($scope, $http, $attrs) {
+	$scope.req = {
+		'title' : 'test'
+	};
+
+	$http.get('/admin/request/' + $attrs.model).success(function(data) {
+		console.log("request for editing: " + $attrs.model)
+		$scope.req = data;
+	});
+
+	$scope.back = function() {
+		window.history.back();
+	};
+	
+	$scope.changeRoute = function(url, forceReload) {
+		$scope = $scope || angular.element(document).scope();
+		if (forceReload || $scope.$$phase) {
+			window.location = url;
+		} else {
+			$location.path(url);
+			$scope.$apply();
+		}
+	};
+
+	$scope.submit = function() {
+		console.log('editing ...')
+		var request = $http({
+			url : '/admin/request/edit',
+			method : "POST",
+			data : JSON.stringify($scope.req),
+			transformRequest : false,
+			headers : {
+				'Content-Type' : 'application/json'
+			}
+		}).success(function(data, status, headers, config) {
+			$scope.changeRoute('/admin/requestsUi');
+		}).error(function(data, status, headers, config) {
+			$scope.status = status + ' ' + headers;
+		});
+	}
 });

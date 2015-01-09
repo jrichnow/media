@@ -24,7 +24,10 @@
             	<td width="100px" data-title="'Subject'" sortable="'subject'" filter="{'subject': 'text'}">{{request.subject}}</td>
 				<td data-title="'Topic'" sortable="'topic'" filter="{'topic': 'text'}">{{request.topic}}</td>
 				<td width="120px" data-title="'Status'" sortable="'status'" filter="{'status': 'text'}">{{request.status}}</td>
-				<td width="50px" align="right"><a ng-href="/admin/request/delete/{{request.id}}"><img src='@controllers.routes.Assets.at("images/delete.png")' alt="delete" title="Delete request." /></a></td>
+				<td width="50px" align="right">
+					<a ng-href="/admin/editRequestUi/{{request.id}}"><img src='@controllers.routes.Assets.at("images/pencil.png")' alt="edit" title="Edit request." /></a>
+					<a ng-href="/admin/request/delete/{{request.id}}"><img src='@controllers.routes.Assets.at("images/delete.png")' alt="delete" title="Delete request." /></a>
+				</td>
         	</tr>
 		</table>
 		<button ng-click="new()" class="btn btn-default pull-right">New Request</button>

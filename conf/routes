@@ -53,10 +53,13 @@ POST    /admin/file/upload/movie    controllers.Admin.fileUploadMovie
 POST    /admin/file/upload/audio    controllers.Admin.fileUploadAudio
 GET     /admin/file/:name           controllers.Admin.file(name:String)
 GET		/admin/requestUi    		controllers.Admin.requestUi
-POST  	/admin/request       		controllers.Admin.request
+POST  	/admin/request/add    		controllers.Admin.addRequest
 GET     /admin/request/delete/:id   controllers.Admin.deleteRequest(id:String)
+POST  	/admin/request/edit    		controllers.Admin.editRequest
+GET     /admin/request/:id  		controllers.Admin.request(id:String)
 GET     /admin/requests             controllers.Admin.requests
 GET     /admin/requestsUi           controllers.Admin.requestsUi
+GET     /admin/editRequestUi/:id    controllers.Admin.requestEditUi(id:String)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
