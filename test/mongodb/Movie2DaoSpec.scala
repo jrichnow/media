@@ -67,6 +67,22 @@ class MovieDaoSpec extends PlaySpec with OneAppPerSuite {
 
       MovieDao.findAll.size mustEqual (1)
     }
+    
+    "update the movie location" in {
+    	movieColl.drop()
+    	val movie = Movie(title = "Dreamland", year = 2012, folder = Some(1), dvd = Some(2))
+    	val updatedMovie = MovieDao.add(movie)
+    	updatedMovie.hd must be (None)
+    	
+    	// update.
+    	val modifiedMovie = updatedMovie.copy(hd = Some(2))
+    	MovieDao.update(modifiedMovie)
+    	
+    	val modifiedDbMovie = MovieDao.findById(updatedMovie.id.get).get
+    	
+    	modifiedMovie.hd.get must equal(2)
+    	modifiedMovie.id === updatedMovie.id
+    }
 
     "delete a movie" in {
       movieColl.drop()

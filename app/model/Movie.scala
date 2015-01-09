@@ -106,7 +106,6 @@ object Movie {
       }
       case None => ""
     }
-
   }
 
   def toJson(movie: Movie): JsValue = {
