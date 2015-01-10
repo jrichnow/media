@@ -790,4 +790,27 @@ mediaApp.controller('ViewRequestCtrl', function($scope, $http, $attrs) {
 	$http.get('/admin/request/' + $attrs.requestid).success(function(data) {
 		$scope.req = data;
 	});
+	
+	$scope.back = function() {
+		window.history.back();
+	};
+	
+	$scope.remove = function(size) {
+		$scope.changeRoute('/admin/request/delete/' + $attrs.requestid);
+	};
+
+	$scope.changeRoute = function(url, forceReload) {
+		$scope = $scope || angular.element(document).scope();
+		if (forceReload || $scope.$$phase) { // that's right TWO dollar
+			// signs: $$phase
+			window.location = url;
+		} else {
+			$location.path(url);
+			$scope.$apply();
+		}
+	};
+
+	$scope.edit = function() {
+		$scope.changeRoute('/admin/editRequestUi/' + $scope.req.id);
+	};
 });
