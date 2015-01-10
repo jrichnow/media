@@ -785,3 +785,9 @@ mediaApp.controller('EditRequestCtrl', function($scope, $http, $attrs) {
 		});
 	}
 });
+
+mediaApp.controller('ViewRequestCtrl', function($scope, $http, $attrs) {
+	$http.get('/admin/request/' + $attrs.requestid).success(function(data) {
+		$scope.req = data;
+	});
+});

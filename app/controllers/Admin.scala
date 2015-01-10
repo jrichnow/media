@@ -42,6 +42,11 @@ object Admin extends Controller {
     Ok(views.html.admin.requestform("EditRequestCtrl", id))
   }
 
+  def viewRequest(id: String) = Action {
+    logger.info(s"view request for id $id")
+    Ok(views.html.admin.request(id))
+  }
+
   def addRequest = Action(parse.json) { request =>
     val requestJsonString = request.body
     logger.info(s"add request: $requestJsonString")

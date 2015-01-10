@@ -56,6 +56,7 @@ GET		/admin/requestUi    		controllers.Admin.requestUi
 POST  	/admin/request/add    		controllers.Admin.addRequest
 GET     /admin/request/delete/:id   controllers.Admin.deleteRequest(id:String)
 POST  	/admin/request/edit    		controllers.Admin.editRequest
+GET  	/admin/request/viewUi/:id   controllers.Admin.viewRequest(id: String)
 GET     /admin/request/:id  		controllers.Admin.request(id:String)
 GET     /admin/requests             controllers.Admin.requests
 GET     /admin/requestsUi           controllers.Admin.requestsUi
