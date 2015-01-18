@@ -9,7 +9,7 @@
 	</div>
 </div>
 <div class="row" ng-controller="MovieListCtrl">
-	<div class="col-md-2 col-sm-4 sidebar">
+	<div class="col-md-2 col-sm-3 sidebar">
 		<ul class="nav nav-stacked nav-pills">
         	<li><a href="/movies/findUi?entity=Sort&name=time">Recently Added</a>
         	<li><a href="/movies/findUi?entity=Sort&name=rating">Highest Rating</a>
@@ -18,7 +18,7 @@
         	<li><a href="/movies/form/imdb">Add Movie (IMDB)</a>
         </li>
 	</div>	
-	<div class="col-md-10 col-sm-8">
+	<div class="col-md-10 col-sm-9">
 		<button ng-click="tableParams.filter({})" class="btn btn-default pull-right">Clear filter</button>
 		<button ng-click="tableParams.sorting({})" class="btn btn-default pull-right">Clear sorting</button>
 		<p><strong>Movies Found:</strong> {{movieDataSize}}</p>

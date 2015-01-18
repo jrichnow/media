@@ -52,7 +52,7 @@ object RequestsDao {
   }
   
   def findAll(): Seq[Request] = {
-    val results = requestsColl.find().sort(MongoDBObject("name" -> 1))
+    val results = requestsColl.find().sort(MongoDBObject("id" -> -1))
     val requests = results.map(dbObjectToRequest(_).get)
     requests.toSeq
   }

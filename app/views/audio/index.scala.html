@@ -9,13 +9,13 @@
 	</div>
 </div>
 <div class="row" ng-controller="AudioListCtrl">
-	<div class="col-md-2 col-sm-4 sidebar">
+	<div class="col-md-2 col-sm-3 sidebar">
 		<ul class="nav nav-stacked nav-pills">
         	<li><a href="/audio/recent">Recently Added</a>
         	<li><a href="/audio/form/new">Add Audio Book</a>
         </li>
 	</div>	
-	<div class="col-md-10 col-sm-8">
+	<div class="col-md-10 col-sm-9">
 		<button ng-click="tableParams.filter({})" class="btn btn-default pull-right">Clear filter</button>
 		<button ng-click="tableParams.sorting({})" class="btn btn-default pull-right">Clear sorting</button>
 		<p><strong>Audio Books Found:</strong> {{audioDataSize}}</p>

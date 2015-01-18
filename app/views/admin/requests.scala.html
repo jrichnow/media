@@ -9,7 +9,7 @@
 	</div>
 </div>
 <div class="row">
-	<div class="col-md-2 col-sm-4 sidebar">
+	<div class="col-md-2 col-sm-3 sidebar">
 		<ul class="nav nav-stacked nav-pills">
 			<li><a href="/admin/requestsUi">Requests</a>
         	<li><a href="/admin/file/export/audio">Export Audio</a>
@@ -18,7 +18,7 @@
         	<li><a href="/admin/file/upload">Import Data</a>
         </li>
 	</div>	
-	<div class="col-md-10 col-sm-8" ng-controller="RequestsCtrl">
+	<div class="col-md-10 col-sm-9" ng-controller="RequestsCtrl">
 		<table ng-table="tableParams" show-filter="true" class='table table-striped table-hover table-condensed'>
 			<tr ng-repeat="request in $data | filter:query | orderBy:requestProp" >
             	<td width="100px" data-title="'Subject'" sortable="'subject'" filter="{'subject': 'text'}">{{request.subject}}</td>

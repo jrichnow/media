@@ -9,7 +9,7 @@
 	</div>
 </div>
 <div class="row" ng-controller="FileUploadCtrl">
-	<div class="col-md-2 col-sm-4 sidebar">
+	<div class="col-md-2 col-sm-3 sidebar">
 		<ul class="nav nav-stacked nav-pills">
 			<li><a href="/admin/requestsUi">Requests</a>
         	<li><a href="/admin/file/export/audio">Export Audio</a>
@@ -18,7 +18,7 @@
         	<li><a href="/admin/file/upload">Import Data</a>
         </li>
 	</div>	
-	<div class="col-md-10 col-sm-8">
+	<div class="col-md-10 col-sm-9">
 		<table class='table'>
   			<tr><td width="100px">Movies:</td><td><input type="file" name="file" ng-file-select="onMovieFileSelect($files)" multiple><span>{{movie.data}}</span></td></tr>
   			<tr><td width="100px">Audio Books:</td><td><input type="file" name="file" ng-file-select="onAudioFileSelect($files)" multiple><span>{{audio.data}}</span></td></tr>
