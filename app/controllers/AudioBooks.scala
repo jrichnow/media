@@ -75,9 +75,13 @@ object AudioBooks extends Controller {
 
     val (isValid, jsonResult, audioBookOption) = validateAudioJson(audioJson)
     if (isValid) {
-      audioBooks = audioBooks :+ AudioBookDao.add(audioBookOption.get)
+      val newBook = AudioBookDao.add(audioBookOption.get)
+      audioBooks = audioBooks :+ newBook
+      Ok(Json.obj("validation" -> true, "redirectPath" -> s"/audio/detailsForm/${newBook.id.get}"))
     }
-    Ok(jsonResult)
+    else {
+    	Ok(jsonResult)
+    }
   }
 
   def edit = Action(parse.json) { request =>

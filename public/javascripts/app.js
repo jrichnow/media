@@ -417,7 +417,7 @@ mediaApp.controller('EditAudioCtrl', function($scope, $http, $attrs) {
 		}).success(function(data, status, headers, config) {
 			$scope.audioResponse = data;
 			if (data.validation == true) {
-				$scope.changeRoute('/audio');
+				$scope.changeRoute(data.redirectPath);
 			} else {
 				$scope.status = data;
 			}
@@ -463,7 +463,7 @@ mediaApp.controller('NewAudioCtrl', function($scope, $http) {
 		}).success(function(data, status, headers, config) {
 			$scope.audioResponse = data;
 			if (data.validation == true) {
-				$scope.changeRoute('/audio');
+				$scope.changeRoute(data.redirectPath);
 			} else {
 				$scope.status = data;
 			}

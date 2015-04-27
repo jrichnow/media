@@ -17,10 +17,10 @@ class UpdateMovieLocationSpec extends PlaySpec with OneAppPerSuite  {
       println(movies.size)
       
       val folderMovies = movies.filter(filterFolderAndDvd(_))
-      println(folderMovies.size)
+      println(s"number of filtered movies: ${folderMovies.size}")
       
       val updatedMovies = folderMovies.map(movie => movie.copy(hd = Some(1)))
-      println(updatedMovies.size)
+      println(s"number of updated movies: ${updatedMovies.size}")
       
       updatedMovies.foreach(MovieDao.update(_))
     }
@@ -30,7 +30,7 @@ class UpdateMovieLocationSpec extends PlaySpec with OneAppPerSuite  {
     movie.folder match {
       case Some(folder) if folder == 1 => {
         movie.dvd match {
-          case Some(dvd) if dvd >= 118 && dvd <= 144 => true
+          case Some(dvd) if dvd >= 147 && dvd <= 215 => true
           case Some(_) => false
           case None => false
         }
