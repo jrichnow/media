@@ -58,7 +58,7 @@ object AudioBookDao {
   }
 
   def recent(): Seq[AudioBook] = {
-    val results = audioColl.find().sort(MongoDBObject("id" -> -1)).limit(10)
+    val results = audioColl.find().sort(MongoDBObject("id" -> -1))
     results.map(dbObjectToAudioBook(_).get).toSeq
   }
 

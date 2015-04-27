@@ -9,22 +9,20 @@
 	</div>
 </div>
 <div class="row" ng-controller="RecentListCtrl">
-	<div class="col-md-2 col-sm-3 sidebar">
-		<ul class="nav nav-stacked nav-pills">
-        	<li><a href="/audio/recent">Recently Added</a>
-        	<li><a href="/audio/form/new">Add Audio Book</a>
-        </li>
-	</div>	
-	<div class="col-md-10 col-sm-9">
+	<div class="col-md-12 col-sm-12">
 		<p><strong>Recent Audio Books:</strong> {{audioDataSize}}</p>
 		<table ng-table="tableParams" class='table table-striped table-hover table-condensed'>
 			<tr ng-repeat="audio in $data">
-            	<td width="30%" data-title="'Title'" ><a ng-href="/audio/detailsForm/{{audio.id}}">{{audio.title}}</a></td>
-            	<td width="30%" data-title="'Author'"  ng-click="getCurrAudio()">{{audio.author}}</td>
-				<td data-title="'Genre'" filter="{'genre': 'text'}">{{audio.genre.join(', ')}}</td>
-				<td width="100px" data-title="'Language'" >{{audio.language}}</td>
-				<td width="80px" align="center" data-title="'Year'" >{{audio.year}}</td>
-				<td width="60px" data-title="''">{{audio.folder}}/{{audio.dvd}}</td>
+				<td><img width="70" ng-src="{{audio.imageUrl}}"/></td>
+				<td>{{audio.year}}</td>
+				<td><strong><a ng-href="/audio/detailsForm/{{audio.id}}">{{audio.title}}</a></strong> by
+					<strong>{{audio.author}}</strong><br>
+					<strong>Plot</strong>: {{audio.plot.substring(0,300)}} ... <br>
+					<strong>Genre</strong>: {{audio.genre.join(', ')}}; 
+					<strong>Language</strong>: {{audio.language}};
+					<strong>Location</strong>: {{audio.folder}}/{{audio.dvd}};
+					<strong>Runtime</strong>: {{audio.runtime}}
+				</td> 
         	</tr>
 		</table>
 	</div>
