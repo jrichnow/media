@@ -95,8 +95,11 @@ object AudioBooks extends Controller {
       val validatedAudioBook = audioBookOption.get
       AudioBookDao.update(validatedAudioBook)
       audioBooks = AudioBookDao.findAll
+            Ok(Json.obj("validation" -> true, "redirectPath" -> s"/audio/detailsForm/${validatedAudioBook.id.get}"))
     }
-    Ok(jsonResult)
+    else {
+    	Ok(jsonResult)
+    }
   }
 
   def getSize(): Int = {
