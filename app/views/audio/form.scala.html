@@ -130,6 +130,12 @@
 		    </div>
 		</div>
 		<div class="form-group">
+    		<label class="col-sm-2 control-label">Done</label>
+    		<div class="col-sm-1" ng-class="{ 'has-error' : audioForm.done.$invalid && !audioForm.done.$pristine }">
+      			<input type="checkbox" name="done" class="form-control" ng-model="audio.done">
+		    </div>
+		</div>
+		<div class="form-group">
 		    <div class="col-sm-offset-2 col-sm-10">
 		    	<button type="submit" class="btn btn-default" ng-click="back()" >Cancel</button>
 		    	<button type="submit" class="btn btn-default" ng-click="save()" ng-disabled="audioForm.$invalid">Save</button>

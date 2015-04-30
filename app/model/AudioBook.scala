@@ -16,7 +16,8 @@ case class AudioBook(
   val imageUrl: Option[String] = None,
   val genre: Option[Array[String]] = None,
   val folder: Int,
-  val dvd: Int)
+  val dvd: Int,
+  val done: Option[Boolean])
 
 object AudioBook {
   
@@ -32,7 +33,8 @@ object AudioBook {
       (__ \ "imageUrl").readNullable[String] and
       (__ \ "genre").readNullable[Array[String]] and
       (__ \ "folder").read[Int](min(1) keepAnd max(10)) and
-      (__ \ "dvd").read[Int](min(1) keepAnd max(200)))(AudioBook.apply _)
+      (__ \ "dvd").read[Int](min(1) keepAnd max(200)) and
+      (__ \ "done").readNullable[Boolean])(AudioBook.apply _)
 
 
   implicit val audioJsonWrites = new Writes[AudioBook] {
@@ -48,7 +50,8 @@ object AudioBook {
       "imageUrl" -> audio.imageUrl,
       "genre" -> audio.genre,
       "folder" -> audio.folder,
-      "dvd" -> audio.dvd)
+      "dvd" -> audio.dvd,
+      "done" -> audio.done)
   }
 
   def toJson(audioBook: AudioBook): JsValue = {
