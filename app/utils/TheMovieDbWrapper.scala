@@ -97,8 +97,8 @@ object TheMovieDbWrapper {
             case a: Some[JsArray] => {
               val result = a.get(0)
               logger.debug(result.toString)
-              val movieDbId = JsonUtil.getIntValue(result, "id")
-              val movieDbPosterName = JsonUtil.getStringValue(result, "profile_path")
+              val movieDbId = JsonUtil.getIntValue(result.get, "id")
+              val movieDbPosterName = JsonUtil.getStringValue(result.get, "profile_path")
               (movieDbId, movieDbPosterName)
             }
           }

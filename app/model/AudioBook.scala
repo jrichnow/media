@@ -17,7 +17,7 @@ case class AudioBook(
   val genre: Option[Array[String]] = None,
   val folder: Int,
   val dvd: Int,
-  val done: Option[Boolean])
+  val done: Option[Boolean] = Some(false))
 
 object AudioBook {
   

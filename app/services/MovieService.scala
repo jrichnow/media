@@ -21,7 +21,7 @@ object MovieService {
   }
 
   private def checkPersonsByEntity(names: Option[String]) {
-    val writersFuture = future { checkPersons(names) }
+    val writersFuture = Future { checkPersons(names) }
     writersFuture.onComplete {
       case Success(value) => logger.info(s"Successfully completed writer search for ${names}")
       case Failure(error) => logger.info(s"Writer search ${names} resulted in an error: $error")
