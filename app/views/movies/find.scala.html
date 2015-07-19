@@ -43,7 +43,7 @@
 					<td>{{movie.year}}</td>
 					<td>{{movie.rating}}</td>
 					<td><strong><a ng-href="/movies/{{movie.id}}">{{movie.title}}</a></strong><br>
-						<strong><i>Plot</i></strong>: {{movie.plot}}<br>
+						<strong><i>Plot</i></strong>: {{movie.plot.substring(0,300)}} ...<br>
 						<strong><i>Location</i></strong>: <span ng-if="movie.folder != null">{{movie.folder}}/{{movie.dvd}}</span> <span ng-if="movie.hd != null">HD {{movie.hd}}</span>; 
 						<strong><i>Genres</i></strong>: {{movie.genre.join(', ')}}; 
 						<strong><i>Rating</i></strong>: {{movie.rated}}; 
