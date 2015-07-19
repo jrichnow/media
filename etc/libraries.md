@@ -27,13 +27,14 @@
 * still problems with dependencies:
   - needed to add ``"io.netty" % "netty" % "3.9.2.Final" force()`` to run the app
   - cannot run Specs2 atm
+  - scalatestplus or Specs2 possibly needs ``"com.typesafe.play" %% "play-ws" % "2.4.0"``
 
 ## List of libraries
 
 * **[anorm](https://www.playframework.com/documentation/2.4.x/Anorm)** @latest 2.4.0
-* **[Casbah](https://mongodb.github.io/casbah/guide/installation.html)** @latest 2.8.1
+* **[casbah](https://mongodb.github.io/casbah/guide/installation.html)** @latest 2.8.1
 * **[dispatch](http://dispatch.databinder.net/Dispatch.html)** @latest 0.11.2
-* **[salat](https://github.com/novus/salat)** @latest 1.9.9 (serialisation library used in Casbah)
+* **[salat](https://github.com/novus/salat)** @latest 1.9.9 (serialisation library used in Casbah, still based on casbah 2.7.1)
 * **[sbteclipse](https://github.com/typesafehub/sbteclipse)** @latest 4.0.0
   * [Setting up your preferred IDE](https://www.playframework.com/documentation/2.4.x/IDE)
 * **[scalatestplus](http://scalatest.org/plus/play/versions)** @latest 1.4.0-M3
