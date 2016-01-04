@@ -40,7 +40,7 @@
 			<tbody>
 				<tr ng-repeat="movie in $data">
 					<td><img width="70" ng-src="/movies/img/small/{{movie.imdbId}}"/></td>
-					<td>{{movie.year}}</td>
+					<td>{{movie.year}}<br><img ng-if="movie.seen" src='@controllers.routes.Assets.at("images/accept.png")' alt="Seen" title="Movie seen." /></td>
 					<td>{{movie.rating}}</td>
 					<td><strong><a ng-href="/movies/{{movie.id}}">{{movie.title}}</a></strong><br>
 						<strong><i>Plot</i></strong>: {{movie.plot.substring(0,300)}} ...<br>

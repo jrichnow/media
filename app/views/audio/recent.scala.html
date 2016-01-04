@@ -14,15 +14,14 @@
 		<table ng-table="tableParams" class='table table-striped table-hover table-condensed'>
 			<tr ng-repeat="audio in $data">
 				<td><img width="70" ng-src="{{audio.imageUrl}}"/></td>
-				<td>{{audio.year}}</td>
+				<td>{{audio.year}}<br><img ng-if="audio.done" src='@controllers.routes.Assets.at("images/accept.png")' alt="Read" title="Book listened too." /></td>
 				<td><strong><a ng-href="/audio/detailsForm/{{audio.id}}">{{audio.title}}</a></strong> by
 					<strong>{{audio.author}}</strong><br>
 					<strong>Plot</strong>: {{audio.plot.substring(0,300)}} ... <br>
 					<strong>Genre</strong>: {{audio.genre.join(', ')}}; 
 					<strong>Language</strong>: {{audio.language}};
 					<strong>Location</strong>: {{audio.folder}}/{{audio.dvd}};
-					<strong>Runtime</strong>: {{audio.runtime}}; 
-					<strong>Done</strong>: {{audio.done}}
+					<strong>Runtime</strong>: {{audio.runtime}}
 				</td> 
         	</tr>
 		</table>

@@ -35,7 +35,11 @@
 				<tr><td>Runtime:</td><td>{{currentAudio.runtime}}</td></tr>
 				<tr><td>Genres:</td><td>{{currentAudio.genre.join(', ')}}</td></tr>
 				<tr><td>Location:</td><td>{{currentAudio.folder}} / {{currentAudio.dvd}}</td></tr>
-				<tr><td>Done:</td><td>{{currentAudio.done}}</td></tr>
+				<tr><td>Read:</td>
+					<td>
+						<img ng-if="currentAudio.done" src='@controllers.routes.Assets.at("images/accept.png")' alt="Read" title="Book listened too." />
+						<img ng-if="!currentAudio.done" src='@controllers.routes.Assets.at("images/cross.png")' alt="Not Read" title="Book not yet listened too." />
+					</td></tr>
 			</tbody>
 		</table>
 	</div>

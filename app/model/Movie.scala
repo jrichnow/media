@@ -27,7 +27,8 @@ case class Movie(
   val runtime: Option[String] = None,
   val rating: Option[Double] = None,
   val rated: Option[String] = None,
-  val imageUrl: Option[String] = None)
+  val imageUrl: Option[String] = None,
+  val seen: Option[Boolean] = Some(false))
 
 object Movie {
 
@@ -56,7 +57,8 @@ object Movie {
     (__ \ "runtime").readNullable[String] and
     (__ \ "rating").readNullable[Double] and
     (__ \ "rated").readNullable[String] and
-    (__ \ "imageUrl").readNullable[String])(Movie.apply _)
+    (__ \ "imageUrl").readNullable[String] and
+    (__ \ "seen").readNullable[Boolean])(Movie.apply _)
 
   implicit val movieJsonWrites = new Writes[Movie] {
     def writes(movie: Movie) = Json.obj(
@@ -81,7 +83,8 @@ object Movie {
       "runtime" -> movie.runtime,
       "rating" -> movie.rating,
       "rated" -> movie.rated,
-      "imageUrl" -> validateImageUrl(movie.imageUrl.getOrElse("")))
+      "imageUrl" -> validateImageUrl(movie.imageUrl.getOrElse("")),
+      "seen" -> movie.seen)
     //      "imageUrl" -> validateImageUrl(getTheMovieDbImageUrl(movie.imdbId.get).getOrElse("")))
   }
 
