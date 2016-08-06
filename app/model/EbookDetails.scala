@@ -1,11 +1,5 @@
 package model
 
-import anorm._
-import anorm.{ Row, SQL }
-import anorm.SqlParser._
-import play.api.db._
-import play.api.data._
-import play.api.Play.current
 import dispatch._
 import dispatch.Defaults._
 import scala.concurrent.Await
@@ -21,22 +15,9 @@ case class EbookDetails(
   publicationDate: String,
   plot: Option[String])
 
+case class EbookIdentifiers(name: String, value: String)
+
 object EbookDetails {
-
-  val simple = {
-    get[Long]("id") ~
-      get[String]("title") ~
-      get[String]("author_sort") ~
-      get[String]("pub_date") ~
-      get[Option[String]]("text") map {
-        case id ~ title ~ author ~ publicationDate ~ plot => EbookDetails(id, title, author, publicationDate, plot)
-      }
-  }
-
-  def findById(id: Long): Option[EbookDetails] = DB.withConnection { implicit connection =>
-    SQL("""select b.id, title, author_sort, strftime('%d/%m/%Y', date(pubdate)) as pub_date, text from books b 
-        left outer join comments c on b.id = c.book where b.id={id}""").on('id -> id).as(simple.singleOpt)
-  }
 
   private def getOpenLibraryData(isbn: String) {
     val request = url(s"http://openlibrary.org/api/books?bibkeys=ISBN:$isbn&jscmd=data&format=json")

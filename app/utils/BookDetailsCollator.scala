@@ -3,16 +3,20 @@ package utils
 import play.api.libs.json.JsValue
 import model.EbookDetails
 import play.api.libs.json.Json
-import model.EbookIdentifiers
 import dispatch._
 import dispatch.Defaults._
+
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
+import javax.inject.{Inject, Singleton}
 
-object BookDetailsCollator {
+import dao.EbookDao
+
+@Singleton
+class BookDetailsCollator @Inject()(dao: EbookDao) {
 
   def getBookDetails(id: Int): JsValue = {
-    val details = EbookDetails.findById(id)
+    val details = dao.ebookDetailsById(id)
     val imageUrl = getImageUrl(details.get.id)
 
     toJson(details.get, imageUrl.getOrElse("/assets/images/no-image.jpg"))
@@ -36,7 +40,7 @@ object BookDetailsCollator {
   }
 
   private def getImageUrl(sqliteBookId: Long): Option[String] = {
-    val identifiers = EbookIdentifiers.findAll(sqliteBookId)
+    val identifiers = dao.identifiers(sqliteBookId)
     val isbnOption = identifiers.find(_.name == "isbn")
     isbnOption match {
       case Some(_) => { 

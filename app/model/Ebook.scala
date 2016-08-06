@@ -1,10 +1,5 @@
 package model
 
-import anorm._
-import anorm.SQL
-import anorm.SqlParser._
-import play.api.db._
-import play.api.Play.current
 import play.api.libs.json._
 
 case class Ebook(
@@ -16,24 +11,6 @@ case class Ebook(
 
 object Ebook {
   
-  val simple = {
-    get[Long]("id") ~
-      get[String]("title") ~
-      get[String]("author_sort") ~
-      get[String]("pub_date") map {
-        case id ~ title ~ author ~ publicationDate => Ebook(id, title, author, publicationDate)
-      }
-  }
-  
-  def findAll():Seq[Ebook] = DB.withConnection { implicit connection =>
-    val ebooks = SQL("""select id, title, author_sort, strftime('%d/%m/%Y', date(pubdate)) as pub_date from books order by title""")
-    ebooks().map(row => Ebook(row[Long]("id"), row[String]("title"), row[String]("author_sort"), row[String]("pub_date"))).toList
-  }
-
-  def findById(id: Long): Option[Ebook] = DB.withConnection { implicit connection =>
-    SQL("""select id, title, author_sort, strftime('%d/%m/%Y', date(pubdate)) as pub_date from books where id={id}""").on('id -> id).as(simple.singleOpt)
-  }
-
   implicit val ebookJsonWrites = new Writes[Ebook] {
     def writes(ebook: Ebook) = Json.obj(
       "id" -> ebook.id,

@@ -1,7 +1,8 @@
 package controllers
 
-import javax.inject.Singleton
+import javax.inject.{Inject, Singleton}
 
+import dao.EbookDao
 import play.api.mvc._
 import model.Ebook
 import play.api.libs.json.Json
@@ -10,12 +11,12 @@ import play.api.libs.json.JsValue
 import utils.BookDetailsCollator
 
 @Singleton
-class Ebooks extends Controller {
+class Ebooks @Inject()(dao: EbookDao, collator: BookDetailsCollator) extends Controller {
   
   var ebooks: Seq[Ebook] = Seq.empty
   
   def init() {
-    ebooks = Ebook.findAll
+    ebooks = dao.ebooks()
   }
 
   def index = Action {
@@ -24,7 +25,7 @@ class Ebooks extends Controller {
   
   def list = Action {
     if (ebooks.isEmpty) {
-      ebooks = Ebook.findAll
+      ebooks = dao.ebooks()
     }
     Ok(Json.toJson(ebooks))
   }
@@ -34,7 +35,7 @@ class Ebooks extends Controller {
   }
   
   def details(id: Int) = Action {
-    Ok(BookDetailsCollator.getBookDetails(id))
+    Ok(collator.getBookDetails(id))
   }
   
   private def detailsJson(details: EbookDetails): JsValue = {
