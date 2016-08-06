@@ -19,11 +19,7 @@ class AudioBooks @Inject() (dao: AudioBookDao) extends Controller {
 
   private val logger = Logger("AudioBookController")
 
-  private var audioBooks: Seq[AudioBook] = Seq.empty
-
-  def init() {
-    audioBooks = dao.findAll()
-  }
+  private var audioBooks: Seq[AudioBook] = dao.findAll()
 
   def index = Action {
     Ok(views.html.audio.index())

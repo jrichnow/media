@@ -13,12 +13,8 @@ import utils.BookDetailsCollator
 @Singleton
 class Ebooks @Inject()(dao: EbookDao, collator: BookDetailsCollator) extends Controller {
   
-  var ebooks: Seq[Ebook] = Seq.empty
+  var ebooks: Seq[Ebook] = dao.ebooks()
   
-  def init() {
-    ebooks = dao.ebooks()
-  }
-
   def index = Action {
     Ok(views.html.books.index())
   }

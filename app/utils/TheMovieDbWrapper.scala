@@ -29,7 +29,7 @@ class TheMovieDbWrapper {
   private val largeSize = "w342"
   private val thumbnailSize = "w92"
 
-  var imageBaseUrl = ""
+  var imageBaseUrl = getImageBaseUrl(getBaseConfigurationJson(), "base_url").getOrElse("")
 
   def main(args: Array[String]) {
     val configJson = getBaseConfigurationJson()
@@ -43,12 +43,12 @@ class TheMovieDbWrapper {
     logger.info(s"Image URL: ${imageUrl.getOrElse("not found")}")
   }
 
-  def init() {
-    val configJson = getBaseConfigurationJson()
-    imageBaseUrl = getImageBaseUrl(configJson, "base_url").getOrElse("")
-    logger.info(s"Base URL for TheMovieDb is '$imageBaseUrl'")
-  }
-
+//  def init() {
+//    val configJson = getBaseConfigurationJson()
+//    imageBaseUrl = getImageBaseUrl(configJson, "base_url").getOrElse("")
+//    logger.info(s"Base URL for TheMovieDb is '$imageBaseUrl'")
+//  }
+//
   def getThumbnailMoviePosterUrl(imdbId: String): Option[String] = {
     getMoviePosterUrlByWidth(imdbId, thumbnailSize)
   }

@@ -13,9 +13,12 @@ import play.api.libs.json.JsSuccess
 import play.api.libs.json.JsSuccess
 import play.api.libs.json.JsError
 import org.bson.types.ObjectId
+import play.api.inject.ApplicationLifecycle
+
+import scala.concurrent.Future
 
 @Singleton
-class ActorDao @Inject() (configuration: Configuration) {
+class ActorDao @Inject() (configuration: Configuration, applicationLifecycle: ApplicationLifecycle) {
   
   private val logger = Logger("ActorDao")
 
@@ -85,9 +88,15 @@ class ActorDao @Inject() (configuration: Configuration) {
       case e: JsError => None
     }
   }
-  
-  def shutdown() {
-    logger.info("Closing DB connection")
-    client.close
+
+  applicationLifecycle.addStopHook { () =>
+    Future.successful{ () =>
+      logger.info("ActorDao closing DB connection")
+      client.close()}
   }
+  
+//  def shutdown() {
+//    logger.info("Closing DB connection")
+//    client.close
+//  }
 }

@@ -29,12 +29,8 @@ import services.MovieService
 class Movies @Inject() (actorDao: ActorDao, movieService: MovieService, movieDao: MovieDao, wrapper: TheMovieDbWrapper) extends Controller {
 
   private val logger = Logger("MovieController")
-  private var movies: Seq[Movie] = Seq.empty
 
-  def init() {
-    logger.info("initialising controller with all movies from DB")
-    movies = movieDao.findAll()
-  }
+  private var movies: Seq[Movie] = movieDao.findAll()
 
   def index = Action {
     Ok(views.html.movies.index())
