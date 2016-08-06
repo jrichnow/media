@@ -11,15 +11,15 @@ import utils.TheMovieDbWrapper
 object Global extends GlobalSettings {
 
   override def onStart(app: Application) {
-    Movies.init
-    AudioBooks.init
-    Ebooks.init
-    TheMovieDbWrapper.init
+//    Movies.init
+//    AudioBooks.init
+//    Ebooks.init
+//    TheMovieDbWrapper.init
   }
   
   override def onStop(app: Application) {
-    MovieDao.shutdown
-    ActorDao.shutdown
-    AudioBookDao.shutdown
+//    MovieDao.shutdown
+//    ActorDao.shutdown
+//    AudioBookDao.shutdown
   }
 }

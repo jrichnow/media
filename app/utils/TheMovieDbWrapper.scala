@@ -1,20 +1,21 @@
 package utils
 
+import javax.inject.Singleton
+
 import dispatch._
 import dispatch.Defaults._
+
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 import play.api.libs.json.Json
 import play.api.libs.json.JsValue
-import play.api.libs.json.JsSuccess
 import play.api.libs.json.JsError
-import play.api.libs.json.JsObject
 import play.api.libs.json.JsArray
 import play.api.libs.json.JsSuccess
-import dao.ActorDao
 import play.api.Logger
 
-object TheMovieDbWrapper {
+@Singleton
+class TheMovieDbWrapper {
   
   private val logger = Logger("TheMovieDbWrapper")
 

@@ -4,31 +4,30 @@ import play.api.libs.json._
 import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
 import utils.TheMovieDbWrapper
-import utils.JsonUtil
 
 case class Movie(
-  val id: Option[String] = None,
-  val title: String,
-  val alternativeTitle: Option[String] = None,
-  val originalTitle: Option[String] = None,
-  val language: Option[String] = None,
-  val subTitle: Option[String] = None,
-  val genres: Option[Array[String]] = None,
-  val url: Option[String] = None,
-  val year: Int,
-  val folder: Option[Int],
-  val dvd: Option[Int],
-  val hd: Option[Int] = None,
-  val imdbId: Option[String] = None,
-  val plot: Option[String] = None,
-  val actors: Option[String] = None,
-  val writer: Option[String] = None,
-  val director: Option[String] = None,
-  val runtime: Option[String] = None,
-  val rating: Option[Double] = None,
-  val rated: Option[String] = None,
-  val imageUrl: Option[String] = None,
-  val seen: Option[Boolean] = Some(false))
+  id: Option[String] = None,
+  title: String,
+  alternativeTitle: Option[String] = None,
+  originalTitle: Option[String] = None,
+  language: Option[String] = None,
+  subTitle: Option[String] = None,
+  genres: Option[Array[String]] = None,
+  url: Option[String] = None,
+  year: Int,
+  folder: Option[Int],
+  dvd: Option[Int],
+  hd: Option[Int] = None,
+  imdbId: Option[String] = None,
+  plot: Option[String] = None,
+  actors: Option[String] = None,
+  writer: Option[String] = None,
+  director: Option[String] = None,
+  runtime: Option[String] = None,
+  rating: Option[Double] = None,
+  rated: Option[String] = None,
+  imageUrl: Option[String] = None,
+  seen: Option[Boolean] = Some(false))
 
 object Movie {
 
@@ -89,7 +88,7 @@ object Movie {
   }
 
   def getTheMovieDbImageUrl(imdbId: String): Option[String] = {
-    TheMovieDbWrapper.getBigMoviePosterUrl(imdbId)
+    new TheMovieDbWrapper().getBigMoviePosterUrl(imdbId)
   }
 
   private def validateImageUrl(imageUrl: String): String = {

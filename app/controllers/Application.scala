@@ -1,11 +1,12 @@
 package controllers
 
-import play.api._
+import javax.inject.Inject
+
 import play.api.mvc._
 
-object Application extends Controller {
+class Application @Inject()(movies: Movies, audioBooks: AudioBooks, ebooks: Ebooks) extends Controller {
 
   def index = Action {
-    Ok(views.html.home(Movies.getSize(), AudioBooks.getSize(), Ebooks.ebooks.size))
+    Ok(views.html.home(movies.getSize(), audioBooks.getSize(), ebooks.ebooks.size))
   }
 }

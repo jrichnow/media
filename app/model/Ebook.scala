@@ -1,19 +1,11 @@
 package model
 
 import anorm._
-import anorm.{ Row, SQL }
+import anorm.SQL
 import anorm.SqlParser._
 import play.api.db._
-import play.api.data._
 import play.api.Play.current
-import dispatch._
-import dispatch.Defaults._
-import scala.concurrent.Await
-import scala.concurrent.duration.Duration
 import play.api.libs.json._
-import play.api.libs.functional.syntax._
-import java.util.Date
-import java.text.SimpleDateFormat
 
 case class Ebook(
   id: Long,

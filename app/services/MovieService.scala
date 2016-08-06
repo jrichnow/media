@@ -1,16 +1,20 @@
 package services
 
+import javax.inject.{Inject, Singleton}
+
 import dao.ActorDao
 import utils.TheMovieDbWrapper
 import play.api.Logger
 import model.Actor
 import model.Movie
+
 import scala.concurrent._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.Failure
 import scala.util.Success
 
-object MovieService {
+@Singleton
+class MovieService @Inject()(dao: ActorDao, wrapper: TheMovieDbWrapper) {
 
   private val logger = Logger("MovieService")
 
@@ -23,8 +27,8 @@ object MovieService {
   private def checkPersonsByEntity(names: Option[String]) {
     val writersFuture = Future { checkPersons(names) }
     writersFuture.onComplete {
-      case Success(value) => logger.info(s"Successfully completed writer search for ${names}")
-      case Failure(error) => logger.info(s"Writer search ${names} resulted in an error: $error")
+      case Success(value) => logger.info(s"Successfully completed writer search for $names")
+      case Failure(error) => logger.info(s"Writer search $names resulted in an error: $error")
     }
   }
 
@@ -46,14 +50,14 @@ object MovieService {
   }
 
   private def checkAndGetPersonData(name: String) {
-    val dbActor = ActorDao.getByFullName(name.trim())
+    val dbActor = dao.getByFullName(name.trim())
     dbActor match {
       case None => {
-        val movieDbActor = TheMovieDbWrapper.getPersonData(name)
+        val movieDbActor = wrapper.getPersonData(name)
         movieDbActor match {
           case None => logger.info(s"no person data for name found from MovieDb")
           case a => {
-            val actor = ActorDao.add(Actor.fromJson(a.get).get)
+            val actor = dao.add(Actor.fromJson(a.get).get)
             logger.info(s"new person added to db: ${actor.name}")
           }
         }

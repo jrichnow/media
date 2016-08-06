@@ -2,7 +2,7 @@
 
 	<property resource="application.conf" />
 
-	<conversionRule conversionWord="coloredLevel" converterClass="play.api.Logger$ColoredLevel" />
+	<conversionRule conversionWord="coloredLevel" converterClass="play.api.libs.logback.ColoredLevel" />
 
 	<appender name="PLAY-APP" class="ch.qos.logback.core.FileAppender">
 		<file>${path.to.log.file}/media-play-app.log</file>

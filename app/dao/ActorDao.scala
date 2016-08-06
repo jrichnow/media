@@ -1,7 +1,9 @@
 package dao
 
+import javax.inject.{Inject, Singleton}
+
 import com.mongodb.casbah.MongoClient
-import play.api.Play
+import play.api.{Configuration, Logger, Play}
 import model.Actor
 import com.mongodb.util.JSON
 import com.mongodb.DBObject
@@ -11,16 +13,16 @@ import play.api.libs.json.JsSuccess
 import play.api.libs.json.JsSuccess
 import play.api.libs.json.JsError
 import org.bson.types.ObjectId
-import play.api.Logger
 
-object ActorDao {
+@Singleton
+class ActorDao @Inject() (configuration: Configuration) {
   
   private val logger = Logger("ActorDao")
-  
-  private val mongoDbHost = Play.current.configuration.getString("mongodb.host").get
-  private val mongoDbPort = Play.current.configuration.getInt("mongodb.port").get
-  private val mongoDbDatabase = Play.current.configuration.getString("mongodb.media.db").get
-  private val mongoDbActorCollection = Play.current.configuration.getString("mongodb.media.actor.collection").get
+
+  private val mongoDbHost = configuration.getString("mongodb.host").get
+  private val mongoDbPort = configuration.getInt("mongodb.port").get
+  private val mongoDbDatabase = configuration.getString("mongodb.media.db").get
+  private val mongoDbActorCollection = configuration.getString("mongodb.media.actor.collection").get
 
   private val client = MongoClient(mongoDbHost, mongoDbPort)
   private val db = client(mongoDbDatabase)

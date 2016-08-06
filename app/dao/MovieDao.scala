@@ -1,29 +1,29 @@
 package dao
 
+import javax.inject.{Inject, Singleton}
+
 import org.bson.types.ObjectId
 import com.mongodb.DBObject
 import com.mongodb.casbah.MongoClient
 import com.mongodb.casbah.commons.MongoDBObject
 import com.mongodb.util.JSON
-import play.api.Play
+import play.api.{Configuration, Logger}
 import play.api.libs.json.JsError
 import play.api.libs.json.JsSuccess
 import play.api.libs.json.Json
 import model.Movie
 import com.mongodb.casbah.commons.MongoDBList
 import com.mongodb.BasicDBList
-import com.mongodb.casbah.MongoDB
-import utils.JsonUtil
-import play.api.Logger
 
-object MovieDao {
+@Singleton
+class MovieDao @Inject() (configuration: Configuration){
 
   private val logger = Logger("MovieDao")
 
-  private val mongoDbHost = Play.current.configuration.getString("mongodb.host").get
-  private val mongoDbPort = Play.current.configuration.getInt("mongodb.port").get
-  private val mongoDbDatabase = Play.current.configuration.getString("mongodb.media.db").get
-  private val mongoDbMovieCollection = Play.current.configuration.getString("mongodb.media.movie.collection").get
+  private val mongoDbHost = configuration.getString("mongodb.host").get
+  private val mongoDbPort = configuration.getInt("mongodb.port").get
+  private val mongoDbDatabase = configuration.getString("mongodb.media.db").get
+  private val mongoDbMovieCollection = configuration.getString("mongodb.media.movie.collection").get
 
   private val client = MongoClient(mongoDbHost, mongoDbPort)
   private val db = client(mongoDbDatabase)
@@ -32,7 +32,7 @@ object MovieDao {
   def add(movie: Movie): Movie = {
     logger.info(s"Adding new movie $movie")
     val movieJson = Movie.toJson(movie)
-    val dbObject = JSON.parse(movieJson.toString).asInstanceOf[DBObject]
+    val dbObject = JSON.parse(movieJson.toString()).asInstanceOf[DBObject]
 
     movieColl.insert(dbObject)
 

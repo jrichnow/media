@@ -5,28 +5,32 @@ import play.api.mvc._
 import utils.FileHandler
 import model.File
 import play.api.libs.json.Json
-import java.io.{ File => JavaFile }
+import java.io.{File => JavaFile}
+import javax.inject.{Inject, Singleton}
+
 import scala.io.Source
 import model.Movie
 import model.AudioBook
 import dao.RequestsDao
 import model.Request
 
-object Admin extends Controller {
+@Singleton
+class Admin @Inject()(config: Configuration, fileHandler: FileHandler, dao: RequestsDao) extends Controller {
 
   private val logger = Logger("AdminController")
-  val backupFolder = Play.current.configuration.getString("backup.folder").get
+
+  val backupFolder = config.getString("backup.folder").get
 
   def index = Action {
     Ok(views.html.admin.index())
   }
 
   def requests = Action {
-    Ok(Json.toJson(RequestsDao.findAll))
+    Ok(Json.toJson(dao.findAll()))
   }
 
   def request(id: String) = Action {
-    Ok(Json.toJson(RequestsDao.findById(id)))
+    Ok(Json.toJson(dao.findById(id)))
   }
 
   def requestsUi = Action {
@@ -47,43 +51,40 @@ object Admin extends Controller {
     Ok(views.html.admin.request(id))
   }
 
-  def addRequest = Action(parse.json) { request =>
+  def addRequest() = Action(parse.json) { request =>
     val requestJsonString = request.body
     logger.info(s"add request: $requestJsonString")
     val requestObj = Request.fromJson(requestJsonString)
-    RequestsDao.add(requestObj.get)
+    dao.add(requestObj.get)
     Ok("Hello")
   }
 
-  def editRequest = Action(parse.json) { request =>
+  def editRequest() = Action(parse.json) { request =>
     val requestJsonString = request.body
     logger.info(s"edit request: $requestJsonString")
     val requestObj = Request.fromJson(requestJsonString)
     logger.info(s"edit request json object: $requestObj")
-    RequestsDao.update(requestObj.get)
+    dao.update(requestObj.get)
     Ok("Hello")
   }
 
   def deleteRequest(id: String) = Action {
     logger.info(s"request to delete request for id $id")
-    RequestsDao.delete(id)
-    Redirect(routes.Admin.requestsUi)
+    dao.delete(id)
+    Redirect(routes.Admin.requestsUi())
   }
 
   def export(media: String) = Action {
     media match {
-      case "audio" => {
+      case "audio" =>
         println("exporting audio data ...")
-        FileHandler.exportAudio()
-      }
-      case "movie" => {
+        fileHandler.exportAudio()
+      case "movie" =>
         println("exporting movie data ...")
-        FileHandler.exportMovies()
-      }
-      case "actor" => {
+        fileHandler.exportMovies()
+      case "actor" =>
         println("exporting actor data ...")
-        FileHandler.exportActors()
-      }
+        fileHandler.exportActors()
     }
     Ok(views.html.admin.index())
   }
@@ -102,7 +103,7 @@ object Admin extends Controller {
       val fileName = file.filename
       println(s"received $fileName")
       if (fileName.endsWith(".json")) {
-        println("can process...");
+        println("can process...")
         val newFile = new JavaFile("/tmp/" + file.filename)
         if (newFile.exists())
           newFile.delete()
@@ -124,7 +125,7 @@ object Admin extends Controller {
       val fileName = file.filename
       println(s"received $fileName")
       if (fileName.endsWith(".json")) {
-        println("can process...");
+        println("can process...")
         val newFile = new JavaFile("/tmp/" + file.filename)
         if (newFile.exists())
           newFile.delete()
@@ -146,12 +147,12 @@ object Admin extends Controller {
   }
 
   def delete(name: String) = Action {
-    FileHandler.delete(name)
-    Redirect(routes.Admin.index)
+    fileHandler.delete(name)
+    Redirect(routes.Admin.index())
   }
 
   def list() = Action {
-    val files = FileHandler.getBackupFiles
+    val files = fileHandler.getBackupFiles()
     val fileList = files.map(file => File(file.getName(), file.length() / 1045 + "kb", file.lastModified()))
     Ok(Json.toJson(fileList))
   }

@@ -1,6 +1,7 @@
 package controllers
 
-import play.api._
+import javax.inject.Singleton
+
 import play.api.mvc._
 import model.Ebook
 import play.api.libs.json.Json
@@ -8,7 +9,8 @@ import model.EbookDetails
 import play.api.libs.json.JsValue
 import utils.BookDetailsCollator
 
-object Ebooks extends Controller {
+@Singleton
+class Ebooks extends Controller {
   
   var ebooks: Seq[Ebook] = Seq.empty
   

@@ -1,5 +1,7 @@
 package controllers
 
+import javax.inject.{Inject, Singleton}
+
 import dao.AudioBookDao
 import model.AudioBook
 import play.api.libs.json.JsArray
@@ -12,14 +14,15 @@ import play.api.mvc.Action
 import play.api.mvc.Controller
 import play.api.Logger
 
-object AudioBooks extends Controller {
+@Singleton
+class AudioBooks @Inject() (dao: AudioBookDao) extends Controller {
 
   private val logger = Logger("AudioBookController")
 
   private var audioBooks: Seq[AudioBook] = Seq.empty
 
   def init() {
-    audioBooks = AudioBookDao.findAll
+    audioBooks = dao.findAll()
   }
 
   def index = Action {
@@ -28,7 +31,7 @@ object AudioBooks extends Controller {
 
   def list = Action {
     if (audioBooks.isEmpty) {
-      audioBooks = AudioBookDao.findAll
+      audioBooks = dao.findAll()
     }
     Ok(Json.toJson(audioBooks))
   }
@@ -54,8 +57,8 @@ object AudioBooks extends Controller {
   }
 
   def delete(id: String) = Action {
-    AudioBookDao.delete(id);
-    audioBooks = AudioBookDao.findAll
+    dao.delete(id)
+    audioBooks = dao.findAll()
     Ok("")
   }
 
@@ -64,7 +67,7 @@ object AudioBooks extends Controller {
   }
 
   def recentList = Action {
-    Ok(Json.toJson(AudioBookDao.recent))
+    Ok(Json.toJson(dao.recent()))
   }
 
   def add = Action(parse.json) { request =>
@@ -75,7 +78,7 @@ object AudioBooks extends Controller {
 
     val (isValid, jsonResult, audioBookOption) = validateAudioJson(audioJson)
     if (isValid) {
-      val newBook = AudioBookDao.add(audioBookOption.get)
+      val newBook = dao.add(audioBookOption.get)
       audioBooks = audioBooks :+ newBook
       Ok(Json.obj("validation" -> true, "redirectPath" -> s"/audio/detailsForm/${newBook.id.get}"))
     }
@@ -93,8 +96,8 @@ object AudioBooks extends Controller {
     val (isValid, jsonResult, audioBookOption) = validateAudioJson(audioJson)
     if (isValid) {
       val validatedAudioBook = audioBookOption.get
-      AudioBookDao.update(validatedAudioBook)
-      audioBooks = AudioBookDao.findAll
+      dao.update(validatedAudioBook)
+      audioBooks = dao.findAll()
             Ok(Json.obj("validation" -> true, "redirectPath" -> s"/audio/detailsForm/${validatedAudioBook.id.get}"))
     }
     else {

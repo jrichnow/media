@@ -1,5 +1,7 @@
 package dao
 
+import javax.inject.{Inject, Singleton}
+
 import model.AudioBook
 import com.mongodb.casbah.MongoClient
 import com.mongodb.DBObject
@@ -7,19 +9,17 @@ import com.mongodb.util.JSON
 import org.bson.types.ObjectId
 import com.mongodb.casbah.commons.MongoDBObject
 import play.api.libs.json._
-import play.api.libs.json.Reads._
-import play.api.libs.functional.syntax._
-import play.api.Play
-import play.api.Logger
+import play.api.{Configuration, Logger}
 
-object AudioBookDao {
+@Singleton
+class AudioBookDao @Inject() (configuration: Configuration) {
   
   private val logger = Logger("AudioBookDao")
 
-  private val mongoDbHost = Play.current.configuration.getString("mongodb.host").get
-  private val mongoDbPort = Play.current.configuration.getInt("mongodb.port").get
-  private val mongoDbDatabase = Play.current.configuration.getString("mongodb.media.db").get
-  private val mongoDbAudioCollection = Play.current.configuration.getString("mongodb.media.audio.collection").get
+  private val mongoDbHost = configuration.getString("mongodb.host").get
+  private val mongoDbPort = configuration.getInt("mongodb.port").get
+  private val mongoDbDatabase = configuration.getString("mongodb.media.db").get
+  private val mongoDbAudioCollection = configuration.getString("mongodb.media.audio.collection").get
 
   private val client = MongoClient(mongoDbHost, mongoDbPort)
   private val db = client(mongoDbDatabase)
