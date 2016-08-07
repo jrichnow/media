@@ -14,9 +14,12 @@ import play.api.libs.json.Json
 import model.Movie
 import com.mongodb.casbah.commons.MongoDBList
 import com.mongodb.BasicDBList
+import play.api.inject.ApplicationLifecycle
+
+import scala.concurrent.Future
 
 @Singleton
-class MovieDao @Inject() (configuration: Configuration){
+class MovieDao @Inject() (configuration: Configuration, applicationLifecycle: ApplicationLifecycle){
 
   private val logger = Logger("MovieDao")
 
@@ -176,8 +179,9 @@ class MovieDao @Inject() (configuration: Configuration){
     movieColl.remove(movieOption.get)
   }
 
-  def shutdown() {
-    logger.info("Closing DB connection")
-    client.close
+  applicationLifecycle.addStopHook { () =>
+    Future.successful{
+      logger.info("MovieDao closing DB connection")
+      client.close()}
   }
 }

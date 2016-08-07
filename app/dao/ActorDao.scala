@@ -90,13 +90,8 @@ class ActorDao @Inject() (configuration: Configuration, applicationLifecycle: Ap
   }
 
   applicationLifecycle.addStopHook { () =>
-    Future.successful{ () =>
+    Future.successful{
       logger.info("ActorDao closing DB connection")
       client.close()}
   }
-  
-//  def shutdown() {
-//    logger.info("Closing DB connection")
-//    client.close
-//  }
 }

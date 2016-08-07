@@ -8,11 +8,14 @@ import com.mongodb.DBObject
 import com.mongodb.util.JSON
 import org.bson.types.ObjectId
 import com.mongodb.casbah.commons.MongoDBObject
+import play.api.inject.ApplicationLifecycle
 import play.api.libs.json._
 import play.api.{Configuration, Logger}
 
+import scala.concurrent.Future
+
 @Singleton
-class AudioBookDao @Inject() (configuration: Configuration) {
+class AudioBookDao @Inject() (configuration: Configuration, applicationLifecycle: ApplicationLifecycle) {
   
   private val logger = Logger("AudioBookDao")
 
@@ -96,9 +99,10 @@ class AudioBookDao @Inject() (configuration: Configuration) {
     logger.info(s"Deleting book ${audioBookOption.getOrElse("No book found for id "+ id)}")
     audioColl.remove(audioBookOption.get)
   }
-  
-  def shutdown() {
-    logger.info("Closing DB connection")
-    client.close
+
+  applicationLifecycle.addStopHook { () =>
+    Future.successful{
+      logger.info("AudioBookDao closing DB connection")
+      client.close()}
   }
 }
