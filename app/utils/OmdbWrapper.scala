@@ -54,7 +54,7 @@ object OmdbWrapper {
   }
 
   def getOmdbJsonById(id: String): JsValue = {
-    val request = url("http://www.omdbapi.com/?plot=full&i=" + id)
+    val request = url("http://www.omdbapi.com/?plot=full&apikey=ec73bd55&i=" + id)
     val response = Http(request OK as.String)
 
     val omdbJsonString = Await.result(response, Duration(10, "s"))
